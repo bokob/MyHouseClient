@@ -21,6 +21,6 @@ public class LobbyListItemUI : MonoBehaviour
     {
         lobby = _lobby;
         lobbyText.text = lobby.Name;
-        playerCount.text = "" + lobby.Players.Count.ToString() + "/12";
+        playerCount.text = "" + lobby.Players.Count.ToString() + "/4";
     }
 }

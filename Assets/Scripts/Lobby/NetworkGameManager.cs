@@ -148,7 +148,7 @@ public class NetworkGameManager : NetworkBehaviour
             }
         }
 
-        if (SceneManager.GetActiveScene().name == "MapScene")
+        if (SceneManager.GetActiveScene().name == "PlayerRefactoringScene")
         {
             //Scoreboard.Instance.ResetScoreboard();
         }
@@ -173,7 +173,7 @@ public class NetworkGameManager : NetworkBehaviour
     private void Network_Client_OnClientConnectedCallback(ulong obj)
     {
         SetUsernameServerRpc(GetUsername());
-        if (SceneManager.GetActiveScene().name == "MapScene")
+        if (SceneManager.GetActiveScene().name == "PlayerRefactoringScene")
         {
             //Scoreboard.Instance.ResetScoreboard();
         }
@@ -239,7 +239,7 @@ public class NetworkGameManager : NetworkBehaviour
         LobbyManager.instance.DeleteLobby();
 
         //string map = PlayerPrefs.GetString("ZOMBIES_MAP", "LAB");
-        NetworkManager.Singleton.SceneManager.LoadScene("MapScene", LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("PlayerRefactoringScene", LoadSceneMode.Single);
     }
 
     public void SpawnPlayers() // server

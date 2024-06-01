@@ -9,8 +9,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Processors;
 using UnityEngine.SceneManagement;
+using Unity.Netcode;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     [Header("Player")]
     public bool IsDead = false;
@@ -128,7 +129,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (PlayerRole == Define.Role.None) return;
+        if (!IsOwner && PlayerRole == Define.Role.None) return;
 
         JumpAndGravity();   // 점프
         GroundedCheck();    // 지면체크
