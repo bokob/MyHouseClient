@@ -7,47 +7,47 @@ using static UnityEngine.UIElements.UxmlAttributeDescription;
 // 진짜 집주인 컨트롤러
 public class HouseownerController : MonoBehaviour
 {
-    PlayerController playerController;
-    WeaponManager weaponManager;
+    PlayerController _playerController;
+    WeaponManager _weaponManager;
 
     [Tooltip("카메라")]
-    GameObject cameras;
-    GameObject quaterFollowCamera;
-    GameObject thirdFollowCamera;
-    GameObject aimCamera;
+    GameObject _cameras;
+    GameObject _quaterFollowCamera;
+    GameObject _thirdFollowCamera;
+    GameObject _aimCamera;
 
-    private void Awake()
+    void Awake()
     {
-        playerController = transform.parent.GetComponent<PlayerController>();
-        weaponManager = transform.parent.GetComponent<WeaponManager>();
+        _playerController = transform.parent.GetComponent<PlayerController>();
+        _weaponManager = transform.parent.GetComponent<WeaponManager>();
     }
 
-    private void Start()
+    void Start()
     {
         HouseownerInit();
     }
-    private void Update()
+    void Update()
     {
         // 시체면 가만히 있게 하기
-        if (playerController.PlayerRole == Define.Role.None) return;
+        if (_playerController.PlayerRole == Define.Role.None) return;
 
         // 총 관련해서 행동 안하고 있을 때만 무기 바꾸기
-        if (!playerController._input.aim && !playerController._input.reload)
-            weaponManager.HandleWeaponSwitching();
+        if (!_playerController._input.aim && !_playerController._input.reload)
+            _weaponManager.HandleWeaponSwitching();
 
-        if (weaponManager._melee.activeSelf) // 근접 무기가 있는 경우에만 공격
-            playerController.MeleeAttack();
-        else if (weaponManager._gun.activeSelf)
-            weaponManager.gunWeapon.Use();
+        if (_weaponManager._melee.activeSelf) // 근접 무기가 있는 경우에만 공격
+            _playerController.MeleeAttack();
+        else if (_weaponManager._gun.activeSelf)
+            _weaponManager._gunWeapon.Use();
 
         // 총 관련해서 행동 안하고 있을 때만 무기 바꾸기
-        if (!playerController._input.aim && !playerController._input.reload)
-            weaponManager.HandleWeaponSwitching();
+        if (!_playerController._input.aim && !_playerController._input.reload)
+            _weaponManager.HandleWeaponSwitching();
     }
 
-    private void HouseownerInit()
+    void HouseownerInit()
     {
-        playerController.PlayerRole = Define.Role.Houseowner;
+        _playerController.PlayerRole = Define.Role.Houseowner;
 
         Animator houseownerAnimator = gameObject.GetComponent<Animator>();
         RuntimeAnimatorController houseAnimController = houseownerAnimator.runtimeAnimatorController;
@@ -57,7 +57,7 @@ public class HouseownerController : MonoBehaviour
         houseownerAnimator.runtimeAnimatorController = null;
         houseownerAnimator.avatar = null;
 
-        playerController.SetRoleAnimator(houseAnimController, houseAvatar);
+        _playerController.SetRoleAnimator(houseAnimController, houseAvatar);
 
         CameraInit();
     }
@@ -65,14 +65,14 @@ public class HouseownerController : MonoBehaviour
     void CameraInit() // 카메라 세팅
     {
         // 카메라 오브젝트 세팅
-        cameras = Camera.main.gameObject.transform.parent.gameObject;
-        quaterFollowCamera = cameras.transform.GetChild(1).gameObject;
-        thirdFollowCamera = cameras.transform.GetChild(2).gameObject;
-        aimCamera = cameras.transform.GetChild(3).gameObject;
+        _cameras = Camera.main.gameObject.transform.parent.gameObject;
+        _quaterFollowCamera = _cameras.transform.GetChild(1).gameObject;
+        _thirdFollowCamera = _cameras.transform.GetChild(2).gameObject;
+        _aimCamera = _cameras.transform.GetChild(3).gameObject;
 
         // 집주인에 맞는 카메라 설정
-        quaterFollowCamera.SetActive(false);
-        thirdFollowCamera.SetActive(true);
-        aimCamera.SetActive(true);
+        _quaterFollowCamera.SetActive(false);
+        _thirdFollowCamera.SetActive(true);
+        _aimCamera.SetActive(true);
     }
 }

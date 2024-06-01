@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2722,7 +2722,7 @@ GameObject:
   - component: {fileID: 1585677555}
   - component: {fileID: 1585677554}
   - component: {fileID: 1585677553}
-  m_Layer: 16
+  m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3302,9 +3302,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e658ac92c87cf514e8faee1d98bd7942, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quaterCamera: {fileID: 1806577761}
-  thirdCamera: {fileID: 0}
-  manager: 0
 --- !u!95 &1853040808
 Animator:
   serializedVersion: 5
@@ -3973,6 +3970,7 @@ GameObject:
   - component: {fileID: 135756641397003125}
   - component: {fileID: 4416926083396964101}
   - component: {fileID: 5885216829486622202}
+  - component: {fileID: 5885216829486622204}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -4050,6 +4048,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1132f8e9b1e3f244092fb4ae915a3b69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsDead: 0
   MoveSpeed: 2
   SprintSpeed: 5.335
   RotationSmoothTime: 0.12
@@ -4074,7 +4073,20 @@ MonoBehaviour:
   CameraAngleOverride: 0
   LockCameraPosition: 0
   _input: {fileID: 0}
+  _status: {fileID: 0}
   weaponManager: {fileID: 0}
+--- !u!114 &5885216829486622204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4416926083396964105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed68a1cd6a937c64e890a0ab94011732, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

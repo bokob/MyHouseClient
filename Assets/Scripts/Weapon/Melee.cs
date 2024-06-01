@@ -7,24 +7,23 @@ using UnityEngine;
 /// </summary>
 public class Melee : Weapon
 {
-    BoxCollider meleeArea;       // 근접 공격 범위
-    TrailRenderer trailEffet;    // 휘두를 때 효과
+    BoxCollider _meleeArea;       // 근접 공격 범위
+    TrailRenderer _trailEffet;    // 휘두를 때 효과
 
     #region 절단 효과
-    public LayerMask sliceMask; // 자를 대상인 레이어 마스크
-    public float cutForce = 250f; // 자를 때 가해지는 힘
+    public LayerMask _sliceMask; // 자를 대상인 레이어 마스크
+    public float _cutForce = 250f; // 자를 때 가해지는 힘
 
-    private Vector3 entryPoint; // 오브젝트에 들어간 지점
-    private Vector3 exitPoint; // 오브젝트를 뚫고 나간 지점
-    private Vector3 cutDirection; // 자르는 방향
-    private bool hasExited = false; // 오브젝트를 뚫고 나갔는지 여부를 저장하는 변수
+    Vector3 _entryPoint; // 오브젝트에 들어간 지점
+    Vector3 _exitPoint; // 오브젝트를 뚫고 나간 지점
+    bool _hasExited = false; // 오브젝트를 뚫고 나갔는지 여부를 저장하는 변수
     #endregion
 
     void Awake()
     {
         base.Type = Define.Type.Melee;
-        meleeArea = gameObject.GetComponent<BoxCollider>();
-        trailEffet = gameObject.GetComponentInChildren<TrailRenderer>();
+        _meleeArea = gameObject.GetComponent<BoxCollider>();
+        _trailEffet = gameObject.GetComponentInChildren<TrailRenderer>();
 
         // TODO
         /*
@@ -52,43 +51,43 @@ public class Melee : Weapon
     IEnumerator MeleeAttackOn()
     {
         yield return new WaitForSeconds(0.5f);
-        meleeArea.enabled = true;
-        trailEffet.enabled = true;
+        _meleeArea.enabled = true;
+        _trailEffet.enabled = true;
 
         yield return new WaitForSeconds(0.5f);
-        meleeArea.enabled = false;
+        _meleeArea.enabled = false;
 
         yield return new WaitForSeconds(0.5f);
-        trailEffet.enabled = false;
+        _trailEffet.enabled = false;
     }
 
     // 칼이 트리거 안에 있을 때 hasExited를 false로 설정
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
-        hasExited = false;
-        entryPoint = other.ClosestPoint(transform.position);
+        _hasExited = false;
+        _entryPoint = other.ClosestPoint(transform.position);
     }
 
-    private void OnTriggerStay(Collider other)
+    void OnTriggerStay(Collider other)
     {
         Debug.Log("관통");
     }
-    private void OnTriggerExit(Collider other) // 관통 다 되면 레이어에 따라 절단
+    void OnTriggerExit(Collider other) // 관통 다 되면 레이어에 따라 절단
     {
         // 충돌 지점의 방향을 자르는 방향으로 설정
-        exitPoint = other.ClosestPoint(transform.position);
+        _exitPoint = other.ClosestPoint(transform.position);
 
-        Vector3 cutDirection = exitPoint - entryPoint;
-        Vector3 cutInPlane = (entryPoint + exitPoint) / 2;
+        Vector3 cutDirection = _exitPoint - _entryPoint;
+        Vector3 cutInPlane = (_entryPoint + _exitPoint) / 2;
 
         //Vector3 cutPlaneNormal = Vector3.Cross((entryPoint - exitPoint), (entryPoint - transform.position)).normalized;
-        Vector3 cutPlaneNormal = Vector3.Cross((entryPoint - exitPoint), (entryPoint - transform.position)).normalized;
+        Vector3 cutPlaneNormal = Vector3.Cross((_entryPoint - _exitPoint), (_entryPoint - transform.position)).normalized;
         Debug.Log(cutPlaneNormal.x + ", " + cutPlaneNormal.y + ", " + cutPlaneNormal.z);
 
         if (cutPlaneNormal.x == 0 && cutPlaneNormal.y == 0 && cutPlaneNormal.z == 0)
         {
             // 원래 자르던 방향을 normalize 해서 넣어줘야 됨
-            cutPlaneNormal = (entryPoint - exitPoint).normalized;
+            cutPlaneNormal = (_entryPoint - _exitPoint).normalized;
             Debug.Log("대체: " + cutPlaneNormal.x + " " + cutPlaneNormal.y + " " + cutPlaneNormal.z);
 
             bool isHorizontalCut = Mathf.Abs(cutDirection.x) > Mathf.Abs(cutDirection.y);
@@ -108,7 +107,7 @@ public class Melee : Weapon
 
         LayerMask cutableMask = LayerMask.GetMask(LayerMask.LayerToName(other.gameObject.layer));
         //Debug.Log("잘릴 레이어: " + LayerMask.LayerToName(other.gameObject.layer));
-        if (sliceMask.value == cutableMask)
+        if (_sliceMask.value == cutableMask)
         {
             Debug.LogWarning("자를 수 있는 오브젝트");
             // 오브젝트를 자르기
@@ -118,10 +117,10 @@ public class Melee : Weapon
             Rigidbody rb = other.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.AddForce(-cutPlaneNormal * cutForce); // cutDirection 대신에 cutPlaneNormal을 사용
+                rb.AddForce(-cutPlaneNormal * _cutForce); // cutDirection 대신에 cutPlaneNormal을 사용
             }
 
-            hasExited = true;
+            _hasExited = true;
         }
         else
         {

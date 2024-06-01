@@ -37,17 +37,17 @@ public class Weapon : MonoBehaviour
     /// <summary>
     /// 현재 주인이 누구인지 확인
     /// </summary>
-    public virtual void MasterPerception()
-    {
-        if (Master != null)
-        {
-            Debug.Log("Master: " + Master.name);
-        }
-        else
-        {
-            Debug.Log("No master assigned.");
-        }
-    }
+    //public virtual void MasterPerception()
+    //{
+    //    if (Master != null)
+    //    {
+    //        Debug.Log("Master: " + Master.name);
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("No master assigned.");
+    //    }
+    //}
 
     /// <summary>
     /// 최상위 부모를 주인으로 기록하는 메서드
