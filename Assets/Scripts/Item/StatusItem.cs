@@ -5,17 +5,17 @@ using UnityEngine;
 public class StatusItem : Item
 {
     [SerializeField]
-    float pickupRange;
-    new void Start()
+    float _pickupRange;
+    void Start()
     {
-        ItemInit();
-        pickupRange = 2f;
+        base.ItemInit();
+        _pickupRange = 2f;
     }
 
     // Update is called once per frame
-    new void Update()
+    void Update()
     {
-        Floating();
+        base.Floating();
     }
 
     // 상태 아이템 섭취
@@ -52,6 +52,6 @@ public class StatusItem : Item
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, pickupRange);
+        Gizmos.DrawWireSphere(transform.position, _pickupRange);
     }
 }

@@ -268,7 +268,7 @@ public class LobbyManager : MonoBehaviour
     void LobbyListUpdate()
     {
         if (joinedLobby == null && AuthenticationService.Instance.IsSignedIn &&
-            SceneManager.GetSceneByName("RoomScene") == SceneManager.GetActiveScene())
+            SceneManager.GetSceneByName("LoadingScene") == SceneManager.GetActiveScene())
         {
             listLobbiesTimer -= Time.deltaTime;
             if (listLobbiesTimer <= 0)

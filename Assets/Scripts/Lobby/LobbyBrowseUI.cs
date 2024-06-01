@@ -25,10 +25,16 @@ public class LobbyBrowseUI : MonoBehaviour
 
 
     public static LobbyBrowseUI instance;
-    private void Awake() {
+    private void Awake() 
+    {
         instance = this;
+
+        lobbyListTemplate.SetActive(false);
+        lobbyContainer.SetActive(true);
     }
-    private void Start() {
+    private void Start() 
+    {
+        SoundManager.Soundinstance.PlayBGM(0);
         usernameInput.text = NetworkGameManager.instance.GetUsername();
         usernameInput.onValueChanged.AddListener((string newText) =>
         {
@@ -93,12 +99,12 @@ public class LobbyBrowseUI : MonoBehaviour
     public void LobbyConnectError(string reason)
     {
         messsageText.text = reason;
-        Debug.Log("Lobby Connect Failed!");
+        connectionResponseCloseButton.SetActive(true);
     }
     public void ConnectionFailed()
     {
         messsageText.text = NetworkManager.Singleton.DisconnectReason.ToString();
-        Debug.Log("Connect Failed!");
+        connectionResponseCloseButton.SetActive(true);
     }
     public void CodeInputActive()
     {
@@ -109,5 +115,9 @@ public class LobbyBrowseUI : MonoBehaviour
     {
         connectionResponseUI.SetActive(false);
         connectionResponseCloseButton.SetActive(false);
+    }
+    private void OnDestroy()
+    {
+        LobbyManager.instance.OnLobbyListChanged -= GameLobby_OnLobbyListChanged;
     }
 }

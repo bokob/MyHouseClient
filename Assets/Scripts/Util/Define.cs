@@ -16,12 +16,6 @@ public class Define
         Range,
     }
 
-    public enum View
-    {
-        Quater,
-        Third
-    }
-
     public enum Item
     {
         Heart,

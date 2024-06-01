@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class InGameUI : MonoBehaviour
 {
     GameObject _player;
-    PlayerController _playerController;
     Status _status;
     WeaponManager _weaponManager;
 
@@ -23,7 +22,7 @@ public class InGameUI : MonoBehaviour
 
     // ¹«±â
     RawImage _weaponIcon;
-    public Texture2D[] weaponImages = new Texture2D[2];
+    public Texture2D[] _weaponImages = new Texture2D[2];
     TextMeshProUGUI _currentBullet;
     TextMeshProUGUI _totalBullet;
 
@@ -33,7 +32,6 @@ public class InGameUI : MonoBehaviour
     void Start()
     {
         _player = GameObject.FindWithTag("Player");
-        _playerController = _player.GetComponent<PlayerController>();
         _status = _player.GetComponent<Status>();
         _weaponManager = _player.GetComponent<WeaponManager>();
 
@@ -68,12 +66,12 @@ public class InGameUI : MonoBehaviour
         _timeSecond.text = ((int)_timer).ToString();
     }
 
-    void DisplayHp()
+    public void DisplayHp()
     {
         _hpBar.value = _status.Hp / 100;
     }
 
-    void DisplaySp()
+    public void DisplaySp()
     {
         _spBar.value = _status.Sp / 100;
     }
@@ -103,17 +101,17 @@ public class InGameUI : MonoBehaviour
 
     public void DisplayCurrentBullet()
     {
-        _currentBullet.text =  _weaponManager.weaponList[1].GetComponent<Gun>().GetCurrentBullet().ToString();
+        _currentBullet.text =  _weaponManager._weaponList[1].GetComponent<Gun>().GetCurrentBullet().ToString();
     }
 
     public void DisplayTotalBullet()
     {
-        _totalBullet.text = _weaponManager.weaponList[1].GetComponent<Gun>().GetTotalBullet().ToString();
+        _totalBullet.text = _weaponManager._weaponList[1].GetComponent<Gun>().GetTotalBullet().ToString();
     }
 
     public void DisplayWeaponIcon(int iconIndex)
     {
-        _weaponIcon.texture = weaponImages[iconIndex];
+        _weaponIcon.texture = _weaponImages[iconIndex];
     }
 
     public void DisplayConnectedPlayers()

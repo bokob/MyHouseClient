@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
+    // 0 == MainMenu bgm / 1 == Game Scene bgm
     public static SoundManager Soundinstance = null;
     public AudioSource bgmSource;
     public AudioSource sfxSource;
@@ -29,6 +30,10 @@ public class SoundManager : MonoBehaviour
             bgmSource.Play();
             bgmSource.loop = true;
         }
+    }
+    public void StopBGM()
+    {
+        bgmSource.Stop();
     }
 
     public void PlaySFX(int index)

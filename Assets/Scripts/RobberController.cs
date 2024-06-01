@@ -11,24 +11,16 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class RobberController : MonoBehaviour
 {
-    PlayerController playerController;
-    WeaponManager weaponManager;
-
-    [Tooltip("집주인으로 변할 때 사용")]
-    RuntimeAnimatorController houseownerAnimController;
-    Avatar houseownerAvatar;
+    PlayerController _playerController;
+    WeaponManager _weaponManager;
 
     [Tooltip("카메라")]
-    GameObject cameras;
-    GameObject quaterFollowCamera;
-    GameObject thirdFollowCamera;
-    GameObject aimCamera;
+    GameObject _cameras;
+    GameObject _quaterFollowCamera;
+    GameObject _thirdFollowCamera;
+    GameObject _aimCamera;
 
-    void Awake()
-    {
-    }
-
-    private void Start()
+    void Start()
     {
         // 강도 세팅
         RobberInit();
@@ -42,51 +34,43 @@ public class RobberController : MonoBehaviour
 
     void RobberInit()
     {
-        playerController = transform.parent.GetComponent<PlayerController>();
-        weaponManager = transform.parent.GetComponent<WeaponManager>();
+        _playerController = transform.parent.GetComponent<PlayerController>();
+        _weaponManager = transform.parent.GetComponent<WeaponManager>();
 
-        playerController.PlayerRole = Define.Role.Robber;
+        _playerController.PlayerRole = Define.Role.Robber;
 
-        PrepareToBeHouseowner();
         CameraInit();
         RobberWeaponInit();
-    }
-
-    void PrepareToBeHouseowner()
-    {
-        // 강도->집주인 시에 사용할 집주인 애니메이션 관련된 것들 준비
-        houseownerAnimController = Resources.Load<RuntimeAnimatorController>("Animations/HouseownerAnimations/HouseownerAnimationController");
-        houseownerAvatar = Resources.Load<Avatar>("Animations/HouseownerAnimations/HouseownerAvatar");
     }
 
     void CameraInit() // 카메라 세팅
     {
         // 카메라 오브젝트 세팅
-        cameras = Camera.main.gameObject.transform.parent.gameObject;
-        quaterFollowCamera = cameras.transform.GetChild(1).gameObject;
-        thirdFollowCamera = cameras.transform.GetChild(2).gameObject;
-        aimCamera = cameras.transform.GetChild(3).gameObject;
+        _cameras = Camera.main.gameObject.transform.parent.gameObject;
+        _quaterFollowCamera = _cameras.transform.GetChild(1).gameObject;
+        _thirdFollowCamera = _cameras.transform.GetChild(2).gameObject;
+        _aimCamera = _cameras.transform.GetChild(3).gameObject;
 
         // 강도에 맞는 카메라 설정
-        quaterFollowCamera.SetActive(true);
-        thirdFollowCamera.SetActive(false);
-        aimCamera.SetActive(false);
+        _quaterFollowCamera.SetActive(true);
+        _thirdFollowCamera.SetActive(false);
+        _aimCamera.SetActive(false);
     }
 
     void RobberWeaponInit() // 강도 무기 세팅
     {
-        weaponManager.InitializeWeapon();
+        _weaponManager.InitializeWeapon();
     }
 
     void TransformationHouseowner()
     {
         transform.parent.GetChild(0).gameObject.SetActive(false); // 강도 비활성화
         transform.parent.GetChild(1).gameObject.SetActive(true);  // 집주인 활성화
-        playerController.PlayerRole = Define.Role.Houseowner;
+        _playerController.PlayerRole = Define.Role.Houseowner;
 
-        Debug.Log(playerController.PlayerRole);
+        Debug.Log(_playerController.PlayerRole);
 
-        weaponManager.InitializeWeapon();                         // 집주인 무기 세팅
+        _weaponManager.InitializeWeapon();                         // 집주인 무기 세팅
         Debug.Log("집주인으로 변신 완료");
     }
 }
