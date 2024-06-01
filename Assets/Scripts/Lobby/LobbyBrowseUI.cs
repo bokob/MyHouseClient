@@ -34,6 +34,7 @@ public class LobbyBrowseUI : MonoBehaviour
     }
     private void Start() 
     {
+        SoundManager.Soundinstance.PlayBGM(0);
         usernameInput.text = NetworkGameManager.instance.GetUsername();
         usernameInput.onValueChanged.AddListener((string newText) =>
         {
