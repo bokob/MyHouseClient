@@ -30,6 +30,7 @@ namespace SlimUI.ModernMenu{
         [Header("PANELS")]
         [Tooltip("The UI Panel parenting all sub menus")]
         public GameObject mainCanvas;
+		public GameObject settingCanvas;
         [Tooltip("The UI Panel that holds the CONTROLS window tab")]
         public GameObject PanelControls;
         [Tooltip("The UI Panel that holds the VIDEO window tab")]
@@ -44,6 +45,8 @@ namespace SlimUI.ModernMenu{
         public GameObject PanelCombat;
         [Tooltip("The UI Sub-Panel under KEY BINDINGS for GENERAL")]
         public GameObject PanelGeneral;
+		[Tooltip("The UI Panel for Lobby")]
+		public GameObject PanelLobby;
         
 
         // highlights in settings screen
@@ -62,6 +65,7 @@ namespace SlimUI.ModernMenu{
         public GameObject lineCombat;
         [Tooltip("Highlight Image for when GENERAL Sub-Tab is selected in KEY BINDINGS")]
         public GameObject lineGeneral;
+		
 
         [Header("LOADING SCREEN")]
 		[Tooltip("If this is true, the loaded scene won't load until receiving user input")]
@@ -219,6 +223,16 @@ namespace SlimUI.ModernMenu{
 			PanelKeyBindings.SetActive(true);
 			PanelGeneral.SetActive(true);
 			lineGeneral.SetActive(true);
+		}
+		public void EnterLobby()
+		{
+			PanelLobby.SetActive(true);
+			settingCanvas.SetActive(false);
+		}
+		public void EnterSetting()
+		{
+			PanelLobby.SetActive(false);
+			settingCanvas.SetActive(true);
 		}
 
 		public void PlayHover(){
