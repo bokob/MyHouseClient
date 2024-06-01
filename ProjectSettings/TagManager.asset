@@ -3,21 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - Hand
-  - Melee
-  - Gun
-  - CinemachineTarget
+  tags: []
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Ground
+  - 
   - Water
   - UI
   - 
   - 
-<<<<<<< HEAD
   - 
   - 
   - 
@@ -26,19 +21,6 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-=======
-  - Player
-  - Item
-  - 
-  - 
-  - FrozenChunks
-  - Cutable
-  - Breakable
-  - Destructible
->>>>>>> main
   - 
   - 
   - 
