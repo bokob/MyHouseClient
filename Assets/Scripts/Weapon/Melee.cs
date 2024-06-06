@@ -75,6 +75,15 @@ public class Melee : Weapon
         if (other.GetComponent<Status>() != null)
         {
             other.GetComponent<Status>().TakedDamage(Attack);
+
+            if (other.GetComponent<PlayerController>() != null)
+            {
+                other.GetComponent<PlayerController>().HitChangeMaterials();
+            }
+            if (other.GetComponent<Person>() != null)
+            {
+                other.GetComponent<Person>().HitChangeMaterials();
+            }
         }
     }
 
