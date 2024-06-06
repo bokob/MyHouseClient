@@ -462,7 +462,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 46f311046d2104da8b56be3d0a49a119,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2546548812389723016, guid: 46f311046d2104da8b56be3d0a49a119,
         type: 3}
@@ -13662,6 +13662,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1619952440444675428, guid: bf932ca6221897f4e87f5c9c20a7a564,
+        type: 3}
+      propertyPath: _pickupRange
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 6323451398378794324, guid: bf932ca6221897f4e87f5c9c20a7a564,
         type: 3}
       propertyPath: m_Name
@@ -17281,7 +17286,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 46f311046d2104da8b56be3d0a49a119,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2546548812389723016, guid: 46f311046d2104da8b56be3d0a49a119,
         type: 3}
@@ -18058,7 +18063,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 46f311046d2104da8b56be3d0a49a119,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2546548812389723016, guid: 46f311046d2104da8b56be3d0a49a119,
         type: 3}
@@ -19792,7 +19797,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sliceMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8192
   _cutForce: 250
 --- !u!65 &1767700901
 BoxCollider:
