@@ -122,13 +122,6 @@ namespace SlimUI.ModernMenu{
 			if(extrasMenu) extrasMenu.SetActive(false);
 			playMenu.SetActive(true);
 		}
-		
-		public void PlayCampaignMobile(){
-			exitMenu.SetActive(false);
-			if(extrasMenu) extrasMenu.SetActive(false);
-			playMenu.SetActive(true);
-			mainMenu.SetActive(false);
-		}
 
 		public void ReturnMenu(){
 			playMenu.SetActive(false);
@@ -237,13 +230,6 @@ namespace SlimUI.ModernMenu{
 		public void AreYouSure(){
 			exitMenu.SetActive(true);
 			if(extrasMenu) extrasMenu.SetActive(false);
-			DisablePlayCampaign();
-		}
-
-		public void AreYouSureMobile(){
-			exitMenu.SetActive(true);
-			if(extrasMenu) extrasMenu.SetActive(false);
-			mainMenu.SetActive(false);
 			DisablePlayCampaign();
 		}
 
