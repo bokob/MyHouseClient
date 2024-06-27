@@ -3,11 +3,15 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
+<<<<<<< HEAD
+  tags: []
+=======
   tags:
   - Hand
   - Melee
   - Gun
   - CinemachineTarget
+>>>>>>> ec2700a37c30a88b9e094ea5f747145fe841f0f5
   layers:
   - Default
   - TransparentFX
@@ -17,6 +21,19 @@ TagManager:
   - UI
   - 
   - 
+<<<<<<< HEAD
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+=======
   - Player
   - Monster
   - 
@@ -25,6 +42,7 @@ TagManager:
   - Cutable
   - Breakable
   - Destructible
+>>>>>>> ec2700a37c30a88b9e094ea5f747145fe841f0f5
   - 
   - Item
   - 
