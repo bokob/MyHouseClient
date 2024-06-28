@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 public class LobbyJoinedUI : MonoBehaviour
 {
     public GameObject readyButton;
-   // public GameObject[] arrows;
 
     public GameObject unreadyButton;
 
@@ -18,9 +17,6 @@ public class LobbyJoinedUI : MonoBehaviour
     private void Awake()
     {
         readyButton.SetActive(true);
-
-        //arrows[0].SetActive(true);
-        //arrows[1].SetActive(true);
     }
 
     private void Start()
@@ -39,25 +35,13 @@ public class LobbyJoinedUI : MonoBehaviour
         leaveLobbyButton.SetActive(false);
     }
 
-    public void UnReadyPressed()
+    public void UnReadyPressed() 
     {
         unreadyButton.SetActive(false);
         readyButton.SetActive(true);
 
         leaveLobbyButton.SetActive(true);
 
-    }
-
-    public void arrowPressed(int amount)
-    {
-        int id = NetworkGameManager.instance.GetPlayerDataIndexFromClientID(NetworkManager.Singleton.LocalClientId);
-        int index = NetworkGameManager.instance.GetPlayerSkinFromIndex(id);
-        index += amount;
-        if (index > 111)
-            index = 0;
-        if (index < 0)
-            index = 111;
-        NetworkGameManager.instance.ChangePlayerSkin(index);
     }
 
     public void LeaveLobbyPressed()
