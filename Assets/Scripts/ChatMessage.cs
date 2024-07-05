@@ -1,4 +1,4 @@
-using System.Collections;
+/*using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,4 +24,4 @@ public class ChatMessage : MonoBehaviour
     void Fit(RectTransform rect) => LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
 
     void ScrollDelay() => _chatScrollRect.verticalScrollbar.value = 0;
-}
+}*/
