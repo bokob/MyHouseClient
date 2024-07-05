@@ -18,7 +18,7 @@ public class StatusItem : Item
         base.Floating();
     }
 
-    // »óÅÂ ¾ÆÀÌÅÛ ¼·Ãë
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     void TakeStatusItem(Collider other)
     {
         Status status = other.GetComponent<Status>();
@@ -39,13 +39,13 @@ public class StatusItem : Item
 
     void PickUp(Collider other)
     {
-        Debug.Log("¾ÆÀÌÅÛ È¹µæ");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¹ï¿½ï¿½");
         TakeStatusItem(other);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("¹üÀ§¿¡ µé¾î¿È");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
         PickUp(other);
     }
 
