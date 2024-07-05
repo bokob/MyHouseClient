@@ -11,15 +11,19 @@ namespace SlimUI.ModernMenu{
 		// campaign button sub menu
         [Header("MENUS")]
         [Tooltip("The Menu for when the MAIN menu buttons")]
-        public GameObject mainMenu;
+        public GameObject mainMenu;		// 모든 메뉴를 갖고 있는 상위 메뉴
         [Tooltip("THe first list of buttons")]
-        public GameObject firstMenu;
+        public GameObject firstMenu;	// 게임 실행 시 처음 보이는 메뉴
         [Tooltip("The Menu for when the PLAY button is clicked")]
-        public GameObject playMenu;
+        public GameObject playMenu;		// 싱글, 멀티 플레이 버튼
+		[Tooltip("멀티 플레이 버튼 클릭 시 메뉴")]
+		public GameObject lobbyMenu;	// 로비 메뉴
+        [Tooltip("설정 메뉴")]
+        public GameObject settingsMenu; // 설정 메뉴
         [Tooltip("The Menu for when the EXIT button is clicked")]
         public GameObject exitMenu;
-        [Tooltip("Optional 4th Menu")]
-        public GameObject extrasMenu;
+        [Tooltip("개발자 표시되어 있는 메뉴")]
+        public GameObject developersMenu;
 
         public enum Theme {custom1, custom2, custom3};
         [Header("THEME SETTINGS")]
@@ -85,7 +89,7 @@ namespace SlimUI.ModernMenu{
 
 			playMenu.SetActive(false);
 			exitMenu.SetActive(false);
-			if(extrasMenu) extrasMenu.SetActive(false);
+			if(developersMenu) developersMenu.SetActive(false);
 			firstMenu.SetActive(true);
 			mainMenu.SetActive(true);
 
@@ -119,20 +123,33 @@ namespace SlimUI.ModernMenu{
 
 		public void PlayCampaign(){
 			exitMenu.SetActive(false);
-			if(extrasMenu) extrasMenu.SetActive(false);
+			if(developersMenu) developersMenu.SetActive(false);
 			playMenu.SetActive(true);
-		}
-		
-		public void PlayCampaignMobile(){
-			exitMenu.SetActive(false);
-			if(extrasMenu) extrasMenu.SetActive(false);
-			playMenu.SetActive(true);
-			mainMenu.SetActive(false);
 		}
 
-		public void ReturnMenu(){
+		public void LobbyMenu() // 로비 메뉴로 전환
+		{
+            if (settingsMenu.activeSelf)
+                settingsMenu.SetActive(false);
+
+            exitMenu.SetActive(false);
+			if (developersMenu) developersMenu.SetActive(false);
+            lobbyMenu.SetActive(true);
+        }
+
+        public void SettingsMenu() // 설정 메뉴로 전환
+        {
+            if (lobbyMenu.activeSelf)
+                lobbyMenu.SetActive(false);
+
+            exitMenu.SetActive(false);
+            if (developersMenu) developersMenu.SetActive(false);
+            settingsMenu.SetActive(true);
+        }
+
+        public void ReturnMenu(){
 			playMenu.SetActive(false);
-			if(extrasMenu) extrasMenu.SetActive(false);
+			if(developersMenu) developersMenu.SetActive(false);
 			exitMenu.SetActive(false);
 			mainMenu.SetActive(true);
 		}
@@ -147,13 +164,17 @@ namespace SlimUI.ModernMenu{
 			playMenu.SetActive(false);
 		}
 
+		public void DisableLobbyMenu(){
+			lobbyMenu.SetActive(false);
+		}
+
 		public void Position2(){
 			DisablePlayCampaign();
 			CameraObject.SetFloat("Animate",1);
 		}
 
 		public void Position1(){
-			CameraObject.SetFloat("Animate",0);
+            CameraObject.SetFloat("Animate",0);
 		}
 
 		void DisablePanels(){
@@ -236,20 +257,13 @@ namespace SlimUI.ModernMenu{
 		// Are You Sure - Quit Panel Pop Up
 		public void AreYouSure(){
 			exitMenu.SetActive(true);
-			if(extrasMenu) extrasMenu.SetActive(false);
-			DisablePlayCampaign();
-		}
-
-		public void AreYouSureMobile(){
-			exitMenu.SetActive(true);
-			if(extrasMenu) extrasMenu.SetActive(false);
-			mainMenu.SetActive(false);
+			if(developersMenu) developersMenu.SetActive(false);
 			DisablePlayCampaign();
 		}
 
 		public void ExtrasMenu(){
 			playMenu.SetActive(false);
-			if(extrasMenu) extrasMenu.SetActive(true);
+			if(developersMenu) developersMenu.SetActive(true);
 			exitMenu.SetActive(false);
 		}
 

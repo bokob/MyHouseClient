@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,6 +17,7 @@ public class Monster : MonoBehaviour
 
     // 상태 관련
     public float Hp { get; private set; } = 300f;                   // 체력
+    public int _attack { get; private set; } = 30;                   // 공격력
     public Define.MonsterState _state = Define.MonsterState.Patrol; // 현재 상태
     public bool _isDead = false;
 
@@ -32,13 +34,21 @@ public class Monster : MonoBehaviour
     public float _lostDistance; // 놓치는 거리
 
     // 공격 관련
-    public float _attackRange = 2f; // 공격 범위
+    public float _attackRange = 0.1f; // 공격 범위
     public float _attackDelay = 2f; // 공격 간격
     float nextAttackTime = 0f;
 
     public Transform _target = null; // 목표
 
-    void Start()
+    List<Renderer> _renderers; // 피해 입었을 때 렌더러 색 변환에 사용할 리스트
+    List<Color> _originColors;
+
+    void Awake()
+    {
+        MonsterInit(); // 몬스터 세팅
+    }
+
+    void MonsterInit()
     {
         Debug.Log("시작");
         _anim = GetComponent<Animator>();
@@ -46,6 +56,19 @@ public class Monster : MonoBehaviour
         _centerPoint = transform;
         _status = GetComponent<Status>();
         _status.Hp = Hp;
+
+        // 하위의 모든 매터리얼 구하기
+        _renderers = new List<Renderer>();
+        Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < underTransforms.Length; i++)
+        {
+            Renderer renderer = underTransforms[i].GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                _renderers.Add(renderer);
+                if (renderer.material.color == null) Debug.Log("왜 색이 널?");
+            }
+        }
     }
 
     bool RandomPoint(Vector3 center, float range, out Vector3 result)
@@ -237,8 +260,14 @@ public class Monster : MonoBehaviour
         if (!currentAnimStateInfo.IsName("Attack"))
         {
             _anim.Play("Attack", 0, 0);
+            AnimatorStateInfo attackStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
             // SetDestination 을 위해 한 frame을 넘기기위한 코드
-            yield return null;
+            // yield return null;
+
+            //if (_target != null)
+            //{
+            //    _target.GetComponent<Status>().TakedDamage(_attack);
+            //}
         }
 
         // 시야 범위에서 사라지면
@@ -267,13 +296,11 @@ public class Monster : MonoBehaviour
                 _anim.Play("Surprised", 0, 0);
                 currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
                 // SetDestination 을 위해 한 frame을 넘기기위한 코드
+                HitChangeMaterials(other); // 매터리얼 변환
                 yield return new WaitForSeconds(currentAnimStateInfo.length);
             }
 
-            // 데미지 적용
-            _status.TakedDamage(other.GetComponent<Weapon>().Attack);
-            Debug.Log($"{gameObject.name}이(가) {other.transform.root.name}에게 공격 받음!");
-            Debug.Log("공격받은 사람의 체력:" + _status.Hp);
+            Debug.Log("공격받은 측의 체력:" + _status.Hp);
 
             if (_status.Hp <= 0)
                 Dead();
@@ -281,6 +308,31 @@ public class Monster : MonoBehaviour
                 ChangeState(Define.MonsterState.Attack);
         }
     }
+
+    public void HitChangeMaterials(Collider other)
+    {
+        // 태그가 무기 또는 몬스터
+        if (other.tag == "Melee" || other.tag == "Gun")
+        {
+            for (int i = 0; i < _renderers.Count; i++)
+            {
+                _renderers[i].material.color = Color.red;
+                Debug.Log("색변한다.");
+                Debug.Log(_renderers[i].material.name);
+            }
+
+            StartCoroutine(ResetMaterialAfterDelay(0.5f));
+        }
+    }
+    IEnumerator ResetMaterialAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        Color originColor = new Color(0xF6 / 255f, 0xC6 / 255f, 0xFE / 255f);
+        for (int i = 0; i < _renderers.Count; i++)
+            _renderers[i].material.color = originColor;
+    }
+
 
     void ChangeState(Define.MonsterState newState)
     {
@@ -329,5 +381,22 @@ public class Monster : MonoBehaviour
             yield return null;
         }
         Destroy(gameObject);
+    }
+
+    void OnTakeDamage(AnimationEvent animationEvent)
+    {
+        if (_target != null)
+        {
+            _target.GetComponent<Status>().TakedDamage(_attack);
+
+            if(_target.GetComponent<PlayerController>()!=null)
+            {
+                _target.GetComponent<PlayerController>().HitChangeMaterials();
+            }
+            if (_target.GetComponent<Person>() != null)
+            {
+                _target.GetComponent<Person>().HitChangeMaterials();
+            }
+        }
     }
 }

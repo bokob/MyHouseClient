@@ -6,15 +6,8 @@ using TMPro;
 namespace SlimUI.ModernMenu{
 	public class UISettingsManager : MonoBehaviour {
 
-		public enum Platform {Desktop, Mobile};
+		public enum Platform {Desktop};
 		public Platform platform;
-		// toggle buttons
-		[Header("MOBILE SETTINGS")]
-		public GameObject mobileSFXtext;
-		public GameObject mobileMusictext;
-		public GameObject mobileShadowofftextLINE;
-		public GameObject mobileShadowlowtextLINE;
-		public GameObject mobileShadowhightextLINE;
 
 		[Header("VIDEO SETTINGS")]
 		public GameObject fullscreentext;
@@ -121,30 +114,7 @@ namespace SlimUI.ModernMenu{
 					shadowlowtextLINE.gameObject.SetActive(false);
 					shadowhightextLINE.gameObject.SetActive(true);
 				}
-			}else if(platform == Platform.Mobile){
-				if(PlayerPrefs.GetInt("MobileShadows") == 0){
-					QualitySettings.shadowCascades = 0;
-					QualitySettings.shadowDistance = 0;
-					mobileShadowofftextLINE.gameObject.SetActive(true);
-					mobileShadowlowtextLINE.gameObject.SetActive(false);
-					mobileShadowhightextLINE.gameObject.SetActive(false);
-				}
-				else if(PlayerPrefs.GetInt("MobileShadows") == 1){
-					QualitySettings.shadowCascades = 2;
-					QualitySettings.shadowDistance = 75;
-					mobileShadowofftextLINE.gameObject.SetActive(false);
-					mobileShadowlowtextLINE.gameObject.SetActive(true);
-					mobileShadowhightextLINE.gameObject.SetActive(false);
-				}
-				else if(PlayerPrefs.GetInt("MobileShadows") == 2){
-					QualitySettings.shadowCascades = 4;
-					QualitySettings.shadowDistance = 100;
-					mobileShadowofftextLINE.gameObject.SetActive(false);
-					mobileShadowlowtextLINE.gameObject.SetActive(false);
-					mobileShadowhightextLINE.gameObject.SetActive(true);
-				}
 			}
-
 
 			// check vsync
 			if(QualitySettings.vSyncCount == 0){
@@ -247,29 +217,6 @@ namespace SlimUI.ModernMenu{
 			}
 		}
 
-		// the playerprefs variable that is checked to enable mobile sfx while in game
-		public void MobileSFXMute (){
-			if(PlayerPrefs.GetInt("Mobile_MuteSfx")==0){
-				PlayerPrefs.SetInt("Mobile_MuteSfx",1);
-				mobileSFXtext.GetComponent<TMP_Text>().text = "on";
-			}
-			else if(PlayerPrefs.GetInt("Mobile_MuteSfx")==1){
-				PlayerPrefs.SetInt("Mobile_MuteSfx",0);
-				mobileSFXtext.GetComponent<TMP_Text>().text = "off";
-			}
-		}
-
-		public void MobileMusicMute (){
-			if(PlayerPrefs.GetInt("Mobile_MuteMusic")==0){
-				PlayerPrefs.SetInt("Mobile_MuteMusic",1);
-				mobileMusictext.GetComponent<TMP_Text>().text = "on";
-			}
-			else if(PlayerPrefs.GetInt("Mobile_MuteMusic")==1){
-				PlayerPrefs.SetInt("Mobile_MuteMusic",0);
-				mobileMusictext.GetComponent<TMP_Text>().text = "off";
-			}
-		}
-
 		// show tool tips like: 'How to Play' control pop ups
 		public void ToolTips (){
 			if(PlayerPrefs.GetInt("ToolTips")==0){
@@ -321,33 +268,6 @@ namespace SlimUI.ModernMenu{
 			shadowofftextLINE.gameObject.SetActive(false);
 			shadowlowtextLINE.gameObject.SetActive(false);
 			shadowhightextLINE.gameObject.SetActive(true);
-		}
-
-		public void MobileShadowsOff (){
-			PlayerPrefs.SetInt("MobileShadows",0);
-			QualitySettings.shadowCascades = 0;
-			QualitySettings.shadowDistance = 0;
-			mobileShadowofftextLINE.gameObject.SetActive(true);
-			mobileShadowlowtextLINE.gameObject.SetActive(false);
-			mobileShadowhightextLINE.gameObject.SetActive(false);
-		}
-
-		public void MobileShadowsLow (){
-			PlayerPrefs.SetInt("MobileShadows",1);
-			QualitySettings.shadowCascades = 2;
-			QualitySettings.shadowDistance = 75;
-			mobileShadowofftextLINE.gameObject.SetActive(false);
-			mobileShadowlowtextLINE.gameObject.SetActive(true);
-			mobileShadowhightextLINE.gameObject.SetActive(false);
-		}
-
-		public void MobileShadowsHigh (){
-			PlayerPrefs.SetInt("MobileShadows",2);
-			QualitySettings.shadowCascades = 4;
-			QualitySettings.shadowDistance = 500;
-			mobileShadowofftextLINE.gameObject.SetActive(false);
-			mobileShadowlowtextLINE.gameObject.SetActive(false);
-			mobileShadowhightextLINE.gameObject.SetActive(true);
 		}
 
 		public void vsync (){

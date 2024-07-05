@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5742057022177193974}
   m_Layer: 0
   m_Name: vfxgreen
-  m_TagString: Untagged
+  m_TagString: Gun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

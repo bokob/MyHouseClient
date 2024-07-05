@@ -20,6 +20,7 @@ public class Status : MonoBehaviour
         Hp -= damage;
 
         Debug.Log(gameObject.name + "(이)가 " + damage + " 만큼 피해를 입었음!");
+        Debug.Log("남은 체력: " + Hp);
     }
 
     // 최대 체력의 0.2만큼 회복

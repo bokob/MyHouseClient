@@ -6,16 +6,16 @@ using UnityEngine.SceneManagement;
 public class NetworkGameManager : NetworkBehaviour
 {
     public static NetworkGameManager instance;
-    public const int MAX_PLAYERS = 12;
-    public GameObject playerPrefab;
+    public const int MAX_PLAYERS = 4;
+    public GameObject playerPrefab;     // 게임 시작 시 스폰될 플레이어
 
-    public NetworkList<PlayerData> playerDataNetworkList;
-    public delegate void OnPlayerDataListChanged();
+    public NetworkList<PlayerData> playerDataNetworkList;           // 네트워크 상에서 동기화되는 플레이어 데이터 목록
+    public delegate void OnPlayerDataListChanged();                 // 플레이어 데이터 목록이 변경될 때 호출되는 델리게이트
     public static OnPlayerDataListChanged onPlayerDataListChanged;
 
     public GameObject myPlayer; // only set when ingame;
 
-    string username;
+    string username;            // 플레이어 이름
     public enum GameState // only allow players to join while waiting to start
     {
         WaitingToStart,
@@ -26,6 +26,7 @@ public class NetworkGameManager : NetworkBehaviour
     public NetworkVariable<GameState> gameState = new NetworkVariable<GameState>(GameState.WaitingToStart);
     private void Awake()
     {
+        // 싱글톤 만들기
         if (NetworkGameManager.instance == null)
         {
             instance = this;
@@ -42,14 +43,14 @@ public class NetworkGameManager : NetworkBehaviour
 
     private void Start()
     {
-        playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged;
+        playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged; // 플레이어 데이터 목록의 변경 이벤트 핸들러 설정
     }
 
-    public string GetUsername()
+    public string GetUsername() // 플레이어 이름 가져오기
     {
         return username;
     }
-    public void SetUsername(string _username)
+    public void SetUsername(string _username) // 플레이어 이름 설정하기
     {
         if (string.IsNullOrWhiteSpace(_username))
         {
@@ -63,7 +64,7 @@ public class NetworkGameManager : NetworkBehaviour
         PlayerPrefs.SetString("USERNAME", username);
     }
 
-    public string GetUsernameFromClientId(ulong _clientId)
+    public string GetUsernameFromClientId(ulong _clientId) // 클라이언트 ID를 통해 사용자명 가져오기
     {
         foreach (PlayerData playerData in playerDataNetworkList)
         {
@@ -72,7 +73,7 @@ public class NetworkGameManager : NetworkBehaviour
         }
         return default;
     }
-    private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent)
+    private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent) // 플레이어 데이터 목록이 변경될 때 호출
     {
         //Debug.Log("Invoke");
         //Debug.Log(playerDataNetworkList.Count);
@@ -108,26 +109,8 @@ public class NetworkGameManager : NetworkBehaviour
         }
         return -1;
     }
-    public int GetPlayerSkinFromIndex(int _playerIndex)
-    {
-        return playerDataNetworkList[_playerIndex].skinIndex;
-    }
 
-    public void ChangePlayerSkin(int skinIndex)
-    {
-        ChangePlayerSkinServerRpc(skinIndex);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    void ChangePlayerSkinServerRpc(int skinIndex, ServerRpcParams rpcParams = default)
-    {
-        int playerIndex = GetPlayerDataIndexFromClientID(rpcParams.Receive.SenderClientId);
-        PlayerData data = playerDataNetworkList[playerIndex];
-        data.skinIndex = skinIndex;
-        playerDataNetworkList[playerIndex] = data;
-    }
-
-    public void StartHost()
+    public void StartHost() // 호스트를 시작하고, 연결 승인 콜백, 클라이언트 연결 및 해제 콜백을 설정, 로비 씬 로드
     {
         NetworkManager.Singleton.ConnectionApprovalCallback += Network_ConnectionApprovalCallback;
         NetworkManager.Singleton.OnClientConnectedCallback += Network_Server_OnClientConnectedCallback;
@@ -137,7 +120,7 @@ public class NetworkGameManager : NetworkBehaviour
         LoadLobbyJoinedScene();
     }
 
-    private void Network_Server_OnClientDisconnectCallback(ulong _clientId)
+    private void Network_Server_OnClientDisconnectCallback(ulong _clientId) // 서버에서 클라이언트가 연결 해제될 때 호출
     {
         for (int i = 0; i < playerDataNetworkList.Count; i++)
         {
@@ -148,21 +131,20 @@ public class NetworkGameManager : NetworkBehaviour
             }
         }
 
-        if (SceneManager.GetActiveScene().name == "MapScene")
+        if (SceneManager.GetActiveScene().name == "IntegrateScene")
         {
             //Scoreboard.Instance.ResetScoreboard();
         }
     }
-    private void Network_Server_OnClientConnectedCallback(ulong _clientId)
+    private void Network_Server_OnClientConnectedCallback(ulong _clientId) // 서버에서 클라이언트가 연결될 때 호출
     {
         playerDataNetworkList.Add(new PlayerData
         {
             clientId = _clientId,
-            skinIndex = 0
         });
         SetUsernameServerRpc(GetUsername());
     }
-    public void StartClient()
+    public void StartClient() // 클라이언트 시작, 클라이언트 연결 및 해제 콜백 설정
     {
         NetworkManager.Singleton.OnClientDisconnectCallback += Network_OnClientDisconnectCallback;
         NetworkManager.Singleton.OnClientConnectedCallback += Network_Client_OnClientConnectedCallback;
@@ -170,15 +152,15 @@ public class NetworkGameManager : NetworkBehaviour
         NetworkManager.Singleton.StartClient();
     }
 
-    private void Network_Client_OnClientConnectedCallback(ulong obj)
+    private void Network_Client_OnClientConnectedCallback(ulong obj) // 클라이언트가 연결되었을 때 호출
     {
         SetUsernameServerRpc(GetUsername());
-        if (SceneManager.GetActiveScene().name == "MapScene")
+        if (SceneManager.GetActiveScene().name == "IntegrateScene")
         {
             //Scoreboard.Instance.ResetScoreboard();
         }
     }
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc(RequireOwnership = false)] // 클라이언트가 소유하지 않은 네트워크 오브젝트에서도 이 서버 RPC를 호출할 수 있음을 나타낸다.
     void SetUsernameServerRpc(string _username, ServerRpcParams rpcParams = default)
     {
         int playerIndex = GetPlayerDataIndexFromClientID(rpcParams.Receive.SenderClientId);
@@ -187,7 +169,7 @@ public class NetworkGameManager : NetworkBehaviour
         playerDataNetworkList[playerIndex] = data;
     }
 
-    private void Network_OnClientDisconnectCallback(ulong clientId)
+    private void Network_OnClientDisconnectCallback(ulong clientId) // 클라이언트 연결이 해제되었을 때 호출
     {
         //Debug.Log("2");
         if (SceneManager.GetSceneByName("LoadingScene") == SceneManager.GetActiveScene())
@@ -198,8 +180,7 @@ public class NetworkGameManager : NetworkBehaviour
         else if (SceneManager.GetSceneByName("RoomScene") == SceneManager.GetActiveScene())
         {
             // inside a lobby;
-            LobbyManager.instance.LeaveLobby();
-            NetworkManager.Singleton.Shutdown();
+            FindObjectOfType<LobbyJoinedUI>().LeaveLobbyPressed(); // 로비 떠나기
         }
         else
         {
@@ -210,6 +191,11 @@ public class NetworkGameManager : NetworkBehaviour
         //throw new System.NotImplementedException();
     }
 
+    /// <summary>
+    /// 새로운 클라이언트가 서버에 연결을 시도할 때 해당 연결 요청을 승인할지 여부를 결정하는 콜백 함수
+    /// </summary>
+    /// <param name="connectionApprovalRequest"></param>
+    /// <param name="connectionApprovalResponse"></param>
     void Network_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
     {
         //Debug.Log("1");
@@ -234,21 +220,23 @@ public class NetworkGameManager : NetworkBehaviour
         NetworkManager.Singleton.SceneManager.LoadScene("RoomScene", LoadSceneMode.Single);
     }
 
-    public void LoadGameScene()
+    public void LoadGameScene() // 게임 씬 호출
     {
-        LobbyManager.instance.DeleteLobby();
+        LobbyManager.instance.DeleteLobby(); // 게임 중인 방은 로비 목록에 안뜨게 하니까 그냥 지워버린다. (나중에 삭제 안시키고, 다른 유저가 접속할 수 있게 해야 함)
 
         //string map = PlayerPrefs.GetString("ZOMBIES_MAP", "LAB");
-        NetworkManager.Singleton.SceneManager.LoadScene("MapScene", LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("IntegrateScene", LoadSceneMode.Single);
     }
 
     public void SpawnPlayers() // server
     {
-        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds) // 연결된 클라이언트 ID 순회
         {
-            GameObject player = Instantiate(playerPrefab);
+            GameObject player = Instantiate(playerPrefab); // 플레이어 오브젝트 생성
+
+            // clientId는 플레이어 오브젝트를 '소유'할 클라이언트 ID
+            // true는 플레이어 오브젝트를 전역적으로 스폰하겠다는 뜻, 이를 통해 모든 클라이언트가 이 오브젝트를 인식하게 된다.
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
         }
     }
-
 }

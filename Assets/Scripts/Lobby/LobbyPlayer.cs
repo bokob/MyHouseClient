@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class LobbyPlayer : NetworkBehaviour
 {
-    //SkinSelector skinSelector;
     public int index;
 
     public TMP_Text usernameText;
@@ -14,7 +13,6 @@ public class LobbyPlayer : NetworkBehaviour
     private void Start()
     {
         NetworkGameManager.onPlayerDataListChanged += UpdatePlayer;
-        //skinSelector = GetComponent<SkinSelector>();
         UpdatePlayer();
     }
 
@@ -26,7 +24,6 @@ public class LobbyPlayer : NetworkBehaviour
             Show();
 
             PlayerData data = NetworkGameManager.instance.GetPlayerDataFromIndex(index);
-            //skinSelector.UpdateSkin(NetworkGameManager.instance.GetPlayerSkinFromIndex(index));
             usernameText.text = data.username.ToString();
         }
         else
@@ -37,9 +34,7 @@ public class LobbyPlayer : NetworkBehaviour
 
     void Show()
     {
-        //FindObjectOfType<CharacterSelectUI>().skinSelector = skinSelector;
         gameObject.SetActive(true);
-        //skinSelector.ChangeSkinIndex(GameManager.instance.GetPlayerSkin(index));
 
     }
     void Hide()

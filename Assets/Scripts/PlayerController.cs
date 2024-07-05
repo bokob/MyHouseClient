@@ -124,6 +124,7 @@ public class PlayerController : MonoBehaviour
         GroundedCheck();    // 지면체크
         Move();             // 이동
         MeleeAttack();      // 근접 공격
+        Dead();
     }
 
     void LateUpdate()
@@ -278,6 +279,7 @@ public class PlayerController : MonoBehaviour
             // update animator if using character
             if (_hasAnimator)
             {
+                
                 _animator.SetBool(_animIDJump, false);
                 _animator.SetBool(_animIDFreeFall, false);
             }
@@ -297,7 +299,10 @@ public class PlayerController : MonoBehaviour
 
                 // update animator if using character
                 if (_hasAnimator)
+                {
+                    _animator.Play("JumpStart");
                     _animator.SetBool(_animIDJump, true);
+                }
 
                 _status.JumpSpDown();
             }
@@ -469,32 +474,27 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        // 자기 자신에게 닿은 경우 무시
-        if (other.transform.root.name == gameObject.name) return;
-        OnHit(other);
+        //// 자기 자신에게 닿은 경우 무시
+        //if (other.transform.root.name == gameObject.name) return;
+        if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
+            HitChangeMaterials();
     }
 
-    public void OnHit(Collider other)
+    public void HitChangeMaterials()
     {
         // 태그가 무기 또는 몬스터
-        if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
+        
+        for (int i = 0; i < _renderers.Count; i++)
         {
-            // 데미지 적용
-            _status.TakedDamage(other.GetComponent<Weapon>().Attack);
-
-            for (int i = 0; i < _renderers.Count; i++)
-            {
-                _renderers[i].material.color = Color.red;
-                Debug.Log("색변한다.");
-                Debug.Log(_renderers[i].material.name);
-            }
-
-            StartCoroutine(ResetMaterialAfterDelay(1.7f));
-
-            Dead();
-
-            Debug.Log($"플레이어가 {other.transform.root.name}에게 공격 받음!");
+            _renderers[i].material.color = Color.red;
+            Debug.Log("색변한다.");
+            //Debug.Log(_renderers[i].material.name);
         }
+
+        StartCoroutine(ResetMaterialAfterDelay(1.7f));
+
+        //Debug.Log($"플레이어가 {other.transform.root.name}에게 공격 받음!");
+        Debug.Log("공격받은 측의 체력:" + _status.Hp);
     }
 
     IEnumerator ResetMaterialAfterDelay(float delay)

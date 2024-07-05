@@ -5,18 +5,19 @@ using UnityEngine;
 public class SoundManager : MonoBehaviour
 {
     // 0 == MainMenu bgm / 1 == Game Scene bgm
-    public static SoundManager Soundinstance = null;
+    public static SoundManager instance = null;
     public AudioSource bgmSource;
     public AudioSource sfxSource;
     public AudioClip[] bgmClips;
     public AudioClip[] sfxClips;
 
-    private void Awake() {
-        if(Soundinstance == null)
+    void Awake() 
+    {
+        if(instance == null)
         {
-            Soundinstance = this;
+            instance = this;
         }
-        else if (Soundinstance != this)
+        else if (instance != this)
         {
             Destroy(gameObject);
         }

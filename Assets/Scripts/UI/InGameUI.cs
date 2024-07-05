@@ -31,7 +31,7 @@ public class InGameUI : MonoBehaviour
 
     void Start()
     {
-        _player = GameObject.FindWithTag("Player");
+        _player = GameObject.Find("Player");
         _status = _player.GetComponent<Status>();
         _weaponManager = _player.GetComponent<WeaponManager>();
 

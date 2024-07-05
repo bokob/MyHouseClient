@@ -55,6 +55,8 @@ public class Gun : Weapon
         _playerInputs = base.Master.gameObject.GetComponent<PlayerInputs>();
         _animator = base.Master.gameObject.GetComponent<Animator>();
         //rigBuilder = transform.root.GetChild(0).GetComponent<RigBuilder>();
+
+        Attack = 50;
     }
 
     void HitRayCheck()
@@ -155,15 +157,6 @@ public class Gun : Weapon
         }
     }
 
-    //// 맞았을 때 효과
-    //void HitEffect()
-    //{
-    //    if (blood != null)
-    //    {
-    //        blood.GetHit();
-    //    }
-    //}
-
     // 사격
     void Shoot()
     {
@@ -174,16 +167,32 @@ public class Gun : Weapon
             if (_hitTransform.GetComponent<BulletTarget>() != null)
             {
                 GameObject GreenEffect = Instantiate(_vfxHitGreen, _mouseWorldPosition, Quaternion.identity);
+                // 피격 당한 입장에서 상대의 스텟에 접근하기 위함, false로 월드 좌표계 유지
+                //GreenEffect.transform.SetParent(transform);
                 Destroy(GreenEffect, 0.1f);
-
-
                 //hitTransform.GetComponent<PlayerController>().OnHit(GreenEffect.GetComponent<Collider>());
             }
             else
             {
-                Instantiate(_vfxHitRed, _mouseWorldPosition, Quaternion.identity);
+                GameObject RedEffect = Instantiate(_vfxHitRed, _mouseWorldPosition, Quaternion.identity);
+                //RedEffect.transform.SetParent(transform);
+                Destroy(RedEffect, 0.5f);
             }
 
+            // 몬스터나 플레이어가 맞은 경우
+            if (_hitTransform.GetComponent<Status>() != null)
+            {
+                _hitTransform.GetComponent<Status>().TakedDamage(Attack);
+
+                if (_hitTransform.GetComponent<PlayerController>() != null)
+                {
+                    _hitTransform.GetComponent<PlayerController>().HitChangeMaterials();
+                }
+                if (_hitTransform.GetComponent<Person>() != null)
+                {
+                    _hitTransform.GetComponent<Person>().HitChangeMaterials();
+                }
+            }
 
             Rigidbody hitRigidbody = _hitTransform.GetComponent<Rigidbody>();
             if (hitRigidbody != null)
