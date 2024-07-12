@@ -8,7 +8,8 @@ using static UnityEngine.UIElements.UxmlAttributeDescription;
 public class HouseownerController : MonoBehaviour
 {
     PlayerController _playerController;
-    WeaponManager _weaponManager;
+    PlayerStatus _playerStatus;
+    [SerializeField] NewWeaponManager _weaponManager;
 
     [Tooltip("카메라")]
     GameObject _cameras;
@@ -19,7 +20,7 @@ public class HouseownerController : MonoBehaviour
     void Awake()
     {
         _playerController = transform.parent.GetComponent<PlayerController>();
-        _weaponManager = transform.parent.GetComponent<WeaponManager>();
+        _playerStatus = transform.root.GetComponent<PlayerStatus>();
     }
 
     void Start()
@@ -29,20 +30,11 @@ public class HouseownerController : MonoBehaviour
     void Update()
     {
         // 시체면 가만히 있게 하기
-        if (_playerController.PlayerRole == Define.Role.None) return;
+        if (_playerStatus.Role == Define.Role.None) return;
 
-        // 총 관련해서 행동 안하고 있을 때만 무기 바꾸기
-        if (!_playerController._input.aim && !_playerController._input.reload)
-            _weaponManager.HandleWeaponSwitching();
+        if (_weaponManager._selectedWeapon.tag == "Gun")
+            _weaponManager.UseSelectedWeapon();
 
-        if (_weaponManager._melee.activeSelf) // 근접 무기가 있는 경우에만 공격
-            _playerController.MeleeAttack();
-        else if (_weaponManager._gun.activeSelf)
-            _weaponManager._gunWeapon.Use();
-
-        // 총 관련해서 행동 안하고 있을 때만 무기 바꾸기
-        if (!_playerController._input.aim && !_playerController._input.reload)
-            _weaponManager.HandleWeaponSwitching();
     }
 
     void HouseownerInit()

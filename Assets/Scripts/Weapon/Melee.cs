@@ -72,9 +72,9 @@ public class Melee : Weapon
         // 자기 자신에게 닿은 경우 무시
         if (other.transform.root.name == gameObject.name) return;
 
-        if (other.GetComponent<Status>() != null)
+        if (other.GetComponent<PlayerStatus>() != null)
         {
-            other.GetComponent<Status>().TakedDamage(Attack);
+            other.GetComponent<PlayerStatus>().TakedDamage(Attack);
 
             if (other.GetComponent<PlayerController>() != null)
             {

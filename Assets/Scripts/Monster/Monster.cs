@@ -8,7 +8,7 @@ public class Monster : MonoBehaviour
 {
     NavMeshAgent _nmAgent;
     Animator _anim;
-    Status _status;
+    PlayerStatus _status;
 
     // 순찰 관련
     public Transform _centerPoint;  // 순찰 위치 정할 기준점
@@ -54,7 +54,7 @@ public class Monster : MonoBehaviour
         _anim = GetComponent<Animator>();
         _nmAgent = GetComponent<NavMeshAgent>();
         _centerPoint = transform;
-        _status = GetComponent<Status>();
+        _status = GetComponent<PlayerStatus>();
         _status.Hp = Hp;
 
         // 하위의 모든 매터리얼 구하기
@@ -387,7 +387,7 @@ public class Monster : MonoBehaviour
     {
         if (_target != null)
         {
-            _target.GetComponent<Status>().TakedDamage(_attack);
+            _target.GetComponent<PlayerStatus>().TakedDamage(_attack);
 
             if(_target.GetComponent<PlayerController>()!=null)
             {
