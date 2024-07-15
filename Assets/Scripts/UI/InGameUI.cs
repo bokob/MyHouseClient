@@ -8,7 +8,7 @@ public class InGameUI : MonoBehaviour
 {
     GameObject _player;
     PlayerStatus _status;
-    WeaponManager _weaponManager;
+    //WeaponManager _weaponManager;
 
     //UI 변수들
 
@@ -33,7 +33,7 @@ public class InGameUI : MonoBehaviour
     {
         _player = GameObject.Find("Player");
         _status = _player.GetComponent<PlayerStatus>();
-        _weaponManager = _player.GetComponent<WeaponManager>();
+        //_weaponManager = _player.GetComponent<WeaponManager>();
 
         // 시간 표시할 곳
         _timeSecond = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
@@ -101,12 +101,12 @@ public class InGameUI : MonoBehaviour
 
     public void DisplayCurrentBullet()
     {
-        _currentBullet.text =  _weaponManager._weaponList[1].GetComponent<Gun>().GetCurrentBullet().ToString();
+        //_currentBullet.text =  _weaponManager._weaponList[1].GetComponent<Gun>().GetCurrentBullet().ToString();
     }
 
     public void DisplayTotalBullet()
     {
-        _totalBullet.text = _weaponManager._weaponList[1].GetComponent<Gun>().GetTotalBullet().ToString();
+        //_totalBullet.text = _weaponManager._weaponList[1].GetComponent<Gun>().GetTotalBullet().ToString();
     }
 
     public void DisplayWeaponIcon(int iconIndex)

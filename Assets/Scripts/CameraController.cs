@@ -33,7 +33,7 @@ public class CameraController : MonoBehaviour
     public float _sensitivity = 1f;    
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         CameraInit();
     }
