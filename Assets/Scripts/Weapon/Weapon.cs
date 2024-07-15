@@ -54,16 +54,8 @@ public class Weapon : MonoBehaviour
     /// </summary>
     public void RecordMaster()
     {
-        Transform current = transform;
-
-        // 최상위 부모까지 탐색
-        while (current.parent != null)
-        {
-            current = current.parent;
-        }
-
         // 최상위 부모를 Master로 설정
-        Master = current;
+        Master = transform.root.GetChild(2);
         Debug.Log("무기 주인: " + Master.name);
     }
 }

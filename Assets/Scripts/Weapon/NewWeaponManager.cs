@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class NewWeaponManager : MonoBehaviour
 {
-    PlayerController _playerController;
+    PlayerInputs _playerInputs;
     PlayerStatus _playerStatus;
 
     [Tooltip("무기 전환 시 지연 시간을 설정")]
@@ -25,13 +26,14 @@ public class NewWeaponManager : MonoBehaviour
 
     void Start()
     {
-        _playerController = transform.root.GetComponent<PlayerController>();
+        _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
+        _playerStatus = transform.root.GetChild(2).GetComponent<PlayerStatus>();
         InitRoleWeapon(); // 역할에 따른 무기 초기화
     }
      
     void Update()
     {
-        if(!_playerController._input.aim && !_playerController._input.reload) // 조준하지 않곡, 장전하지 않을 때 무기 교체 가능
+        if(!_playerInputs.aim && !_playerInputs.reload) // 조준하지 않곡, 장전하지 않을 때 무기 교체 가능
             WeaponSwitching(); // 무기 교체
     }
 
@@ -40,16 +42,19 @@ public class NewWeaponManager : MonoBehaviour
     /// </summary>
     public void InitRoleWeapon()
     {
-        _playerStatus = transform.root.GetComponent<PlayerStatus>();
-        // 역할에 따른 첫 무기 설정
-        if (_playerStatus.Role == Define.Role.Robber) // 강도
-        {
-            _selectedWeaponIdx = 0;
-        }
-        else if (_playerStatus.Role == Define.Role.Houseowner) // 집주인
-        {
-            _selectedWeaponIdx = 1;
-        }
+        //// 역할에 따른 첫 무기 설정
+        //if (_playerStatus.Role == Define.Role.Robber) // 강도
+        //{
+        //    _selectedWeaponIdx = 0;
+
+        //}
+        //else if (_playerStatus.Role == Define.Role.Houseowner) // 집주인
+        //{
+        //    _selectedWeaponIdx = 1;
+        //}
+
+        _selectedWeapon = transform.GetChild(_selectedWeaponIdx).gameObject;
+
         Debug.Log("역할에 따른 무기 초기화 완료");
     }
 
