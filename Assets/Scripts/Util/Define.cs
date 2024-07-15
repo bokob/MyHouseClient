@@ -32,4 +32,10 @@ public class Define
         Patrol,
         Hit,
     }
+    public enum View
+    {
+        None,
+        Quater,
+        Third,
+    }
 }
