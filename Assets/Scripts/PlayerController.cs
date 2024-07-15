@@ -414,15 +414,6 @@ public class PlayerController : MonoBehaviour
             AudioSource.PlayClipAtPoint(_landingAudioClip, transform.TransformPoint(_controller.center), _footstepAudioVolume);
     }
 
-
-    // 카메라 각도 제한
-    static float ClampAngle(float lfAngle, float lfMin, float lfMax)
-    {
-        if (lfAngle < -360f) lfAngle += 360f;
-        if (lfAngle > 360f) lfAngle -= 360f;
-        return Mathf.Clamp(lfAngle, lfMin, lfMax);
-    }
-
     // 카메라 회전
     void CameraRotation()
     {
@@ -440,31 +431,16 @@ public class PlayerController : MonoBehaviour
         }
 
         // clamp our rotations so our values are limited 360 degrees
-        _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
-        _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, _bottomClamp, _topClamp);
+        _cinemachineTargetYaw = CameraController.ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
+        _cinemachineTargetPitch = CameraController.ClampAngle(_cinemachineTargetPitch, _bottomClamp, _topClamp);
 
         // 시네마신 카메라가 목표를 따라감
         _cinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + _cameraAngleOverride, _cinemachineTargetYaw, 0.0f);
     }
 
-    public void SetSensitivity(float newSensitivity)
-    {
-        _sensitivity = newSensitivity;
-    }
-
     public void SetRotateOnMove(bool newRotateOnMove)
     {
         _rotateOnMove = newRotateOnMove;
-    }
-
-    public void SetRoleAnimator(RuntimeAnimatorController animController, Avatar avatar)
-    {
-        _animator.runtimeAnimatorController = animController;
-        _animator.avatar = avatar;
-
-        // 애니메이터 속성 교체하고 껐다가 켜야 동작함
-        _animator.enabled = false;
-        _animator.enabled = true;
     }
 
     public void ChangeIsHoldGun(bool newIsHoldGun)

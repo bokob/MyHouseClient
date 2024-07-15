@@ -4,28 +4,25 @@ using UnityEngine.InputSystem;
 using static UnityEngine.UIElements.UxmlAttributeDescription;
 #endif
 
-// 진짜 집주인 컨트롤러
+/// <summary>
+/// 집주인 고유의 기능만 존재
+/// </summary>
 public class HouseownerController : MonoBehaviour
 {
     PlayerController _playerController;
     PlayerStatus _playerStatus;
     [SerializeField] NewWeaponManager _weaponManager;
 
-    [Tooltip("카메라")]
-    GameObject _cameras;
-    GameObject _quaterFollowCamera;
-    GameObject _thirdFollowCamera;
-    GameObject _aimCamera;
-
     void Awake()
     {
         _playerController = transform.parent.GetComponent<PlayerController>();
-        _playerStatus = transform.root.GetComponent<PlayerStatus>();
+        _playerStatus = transform.parent.GetComponent<PlayerStatus>();
     }
 
     void Start()
     {
         HouseownerInit();
+        _weaponManager.InitRoleWeapon();
     }
     void Update()
     {
@@ -39,7 +36,7 @@ public class HouseownerController : MonoBehaviour
 
     void HouseownerInit()
     {
-        _playerController.PlayerRole = Define.Role.Houseowner;
+        _playerStatus.Role = Define.Role.Houseowner;
 
         Animator houseownerAnimator = gameObject.GetComponent<Animator>();
         RuntimeAnimatorController houseAnimController = houseownerAnimator.runtimeAnimatorController;
@@ -49,22 +46,6 @@ public class HouseownerController : MonoBehaviour
         houseownerAnimator.runtimeAnimatorController = null;
         houseownerAnimator.avatar = null;
 
-        _playerController.SetRoleAnimator(houseAnimController, houseAvatar);
-
-        CameraInit();
-    }
-
-    void CameraInit() // 카메라 세팅
-    {
-        // 카메라 오브젝트 세팅
-        _cameras = Camera.main.gameObject.transform.parent.gameObject;
-        _quaterFollowCamera = _cameras.transform.GetChild(1).gameObject;
-        _thirdFollowCamera = _cameras.transform.GetChild(2).gameObject;
-        _aimCamera = _cameras.transform.GetChild(3).gameObject;
-
-        // 집주인에 맞는 카메라 설정
-        _quaterFollowCamera.SetActive(false);
-        _thirdFollowCamera.SetActive(true);
-        _aimCamera.SetActive(true);
+        _playerStatus.SetRoleAnimator(houseAnimController, houseAvatar);
     }
 }
