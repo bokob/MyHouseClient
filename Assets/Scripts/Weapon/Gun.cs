@@ -187,9 +187,9 @@ public class Gun : Weapon
             {
                 _hitTransform.GetComponent<PlayerStatus>().TakedDamage(Attack);
 
-                if (_hitTransform.GetComponent<PlayerController>() != null)
+                if (_hitTransform.GetComponent<PlayerStatus>() != null)
                 {
-                    _hitTransform.GetComponent<PlayerController>().HitChangeMaterials();
+                    _hitTransform.GetComponent<PlayerStatus>().HitChangeMaterials();
                 }
                 if (_hitTransform.GetComponent<Person>() != null)
                 {
