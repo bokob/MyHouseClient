@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Person : MonoBehaviour
 {
-    Status _status;
+    PlayerStatus _status;
     Animator _animator;
     public Melee _melee;
     [SerializeField] public Define.Role PlayerRole { get; set; } = Define.Role.None;
@@ -14,7 +14,7 @@ public class Person : MonoBehaviour
     void Start()
     {
         PlayerRole = Define.Role.Robber;
-        _status = gameObject.GetComponent<Status>();
+        _status = gameObject.GetComponent<PlayerStatus>();
         _animator = GetComponentInChildren<Animator>();
 
         // 플레이어 하위의 모든 매터리얼 구하기

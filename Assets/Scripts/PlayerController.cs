@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
 
     CharacterController _controller;
     public PlayerInputs _input;
-    public Status _status;
+    public PlayerStatus _status;
 
     // player
 #if ENABLE_INPUT_SYSTEM
@@ -90,7 +90,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         PlayerInit();
-        _weaponManager.PlayerWeaponInit(); // 플레이어 무기 세팅
+        //_weaponManager.PlayerWeaponInit(); // 플레이어 무기 세팅
     }
 
     void PlayerInit()
@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour
         // PlayerCameraRoot 설정
         _cinemachineCameraTarget = transform.GetChild(2).gameObject;
         
-        _status = gameObject.GetComponent<Status>();
+        _status = gameObject.GetComponent<PlayerStatus>();
         _weaponManager = GetComponent<WeaponManager>();
 
         // 플레이어 하위의 모든 매터리얼 구하기
@@ -376,32 +376,32 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void MeleeAttack()
     {
-        // 무기 오브젝트가 없거나, 무기가 비활성화 되어 있거나, 무기가 없으면 공격 취소
-        if (_weaponManager._melee == null || _weaponManager._melee.activeSelf == false || _weaponManager._meleeWeapon == null)
-            return;
+        //// 무기 오브젝트가 없거나, 무기가 비활성화 되어 있거나, 무기가 없으면 공격 취소
+        //if (_weaponManager._melee == null || _weaponManager._melee.activeSelf == false || _weaponManager._meleeWeapon == null)
+        //    return;
 
-        _swingDelay += Time.deltaTime;
-        _stabDelay += Time.deltaTime;
-        _isSwingReady = _weaponManager._meleeWeapon.Rate < _swingDelay; // 공격속도가 공격 딜레이보다 작으면 공격준비 완료
-        _isStabReady = _weaponManager._meleeWeapon.Rate < _stabDelay;
+        //_swingDelay += Time.deltaTime;
+        //_stabDelay += Time.deltaTime;
+        //_isSwingReady = _weaponManager._meleeWeapon.Rate < _swingDelay; // 공격속도가 공격 딜레이보다 작으면 공격준비 완료
+        //_isStabReady = _weaponManager._meleeWeapon.Rate < _stabDelay;
 
-        if (_input.swing && _isSwingReady && _grounded) // 휘두르기
-        {
-            Debug.Log("휘두르기");
-            _weaponManager._meleeWeapon.Use();
-            _animator.SetTrigger("setSwing");
-            _swingDelay = 0;
-        }
-        else if (_input.stap && _isStabReady && _grounded) // 찌르기
-        {
-            Debug.Log("찌르기");
-            _weaponManager._meleeWeapon.Use();
-            _animator.SetTrigger("setStab");
-            _stabDelay = 0;
+        //if (_input.swing && _isSwingReady && _grounded) // 휘두르기
+        //{
+        //    Debug.Log("휘두르기");
+        //    _weaponManager._meleeWeapon.Use();
+        //    _animator.SetTrigger("setSwing");
+        //    _swingDelay = 0;
+        //}
+        //else if (_input.stap && _isStabReady && _grounded) // 찌르기
+        //{
+        //    Debug.Log("찌르기");
+        //    _weaponManager._meleeWeapon.Use();
+        //    _animator.SetTrigger("setStab");
+        //    _stabDelay = 0;
             
-        }
-        _input.swing = false;
-        _input.stap = false;
+        //}
+        //_input.swing = false;
+        //_input.stap = false;
     }
 
     // 땅에 닿을 때 착지 소리 나게 하는 애니메이션 이벤트
@@ -412,15 +412,6 @@ public class PlayerController : MonoBehaviour
 
         if (animationEvent.animatorClipInfo.weight > 0.5f)
             AudioSource.PlayClipAtPoint(_landingAudioClip, transform.TransformPoint(_controller.center), _footstepAudioVolume);
-    }
-
-
-    // 카메라 각도 제한
-    static float ClampAngle(float lfAngle, float lfMin, float lfMax)
-    {
-        if (lfAngle < -360f) lfAngle += 360f;
-        if (lfAngle > 360f) lfAngle -= 360f;
-        return Mathf.Clamp(lfAngle, lfMin, lfMax);
     }
 
     // 카메라 회전
@@ -440,31 +431,16 @@ public class PlayerController : MonoBehaviour
         }
 
         // clamp our rotations so our values are limited 360 degrees
-        _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
-        _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, _bottomClamp, _topClamp);
+        _cinemachineTargetYaw = CameraController.ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
+        _cinemachineTargetPitch = CameraController.ClampAngle(_cinemachineTargetPitch, _bottomClamp, _topClamp);
 
         // 시네마신 카메라가 목표를 따라감
         _cinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + _cameraAngleOverride, _cinemachineTargetYaw, 0.0f);
     }
 
-    public void SetSensitivity(float newSensitivity)
-    {
-        _sensitivity = newSensitivity;
-    }
-
     public void SetRotateOnMove(bool newRotateOnMove)
     {
         _rotateOnMove = newRotateOnMove;
-    }
-
-    public void SetRoleAnimator(RuntimeAnimatorController animController, Avatar avatar)
-    {
-        _animator.runtimeAnimatorController = animController;
-        _animator.avatar = avatar;
-
-        // 애니메이터 속성 교체하고 껐다가 켜야 동작함
-        _animator.enabled = false;
-        _animator.enabled = true;
     }
 
     public void ChangeIsHoldGun(bool newIsHoldGun)

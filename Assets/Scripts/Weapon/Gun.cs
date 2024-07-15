@@ -39,10 +39,11 @@ public class Gun : Weapon
     [Tooltip("조준 중인지 여부")] [SerializeField] bool _isAim = false;
     [Tooltip("마우스 조준 좌표")][SerializeField] Vector3 _mouseWorldPosition;
 
-    PlayerController _playerController;
+    PlayerMove _playerMove;
     PlayerInputs _playerInputs;
     Animator _animator;
     public RigBuilder _rigBuilder; // IK 활성/비활성화를 조절하기 위해 접근
+    CameraController _cameraController;
     #endregion
 
     Vector3 _originalRotation; // 총의 원래 회전값
@@ -51,10 +52,12 @@ public class Gun : Weapon
     {
         _originalRotation = transform.localEulerAngles;
 
-        _playerController = base.Master.gameObject.GetComponent<PlayerController>();
+        _playerMove = base.Master.gameObject.GetComponent<PlayerMove>();
         _playerInputs = base.Master.gameObject.GetComponent<PlayerInputs>();
+
         _animator = base.Master.gameObject.GetComponent<Animator>();
         //rigBuilder = transform.root.GetChild(0).GetComponent<RigBuilder>();
+        _cameraController = Camera.main.GetComponent<CameraController>();
 
         Attack = 50;
     }
@@ -105,8 +108,8 @@ public class Gun : Weapon
 
             // 조준 시점으로 카메라 변경
             _aimVirtualCamera.gameObject.SetActive(true);
-            _playerController.SetSensitivity(_aimSensitivity);
-            _playerController.SetRotateOnMove(false);
+            _cameraController.SetSensitivity(_aimSensitivity);
+            _playerMove.SetRotateOnMove(false);
             _animator.SetLayerWeight(1, Mathf.Lerp(_animator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
             _animator.SetBool("isAim", true);
 
@@ -128,8 +131,8 @@ public class Gun : Weapon
 
             // 원래 시점으로 카메라 변경
             _aimVirtualCamera.gameObject.SetActive(false);
-            _playerController.SetSensitivity(_normalSensitivity);
-            _playerController.SetRotateOnMove(true);
+            _cameraController.SetSensitivity(_normalSensitivity);
+            _playerMove.SetRotateOnMove(true);
             _animator.SetLayerWeight(1, Mathf.Lerp(_animator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
         }
     }
@@ -180,9 +183,9 @@ public class Gun : Weapon
             }
 
             // 몬스터나 플레이어가 맞은 경우
-            if (_hitTransform.GetComponent<Status>() != null)
+            if (_hitTransform.GetComponent<PlayerStatus>() != null)
             {
-                _hitTransform.GetComponent<Status>().TakedDamage(Attack);
+                _hitTransform.GetComponent<PlayerStatus>().TakedDamage(Attack);
 
                 if (_hitTransform.GetComponent<PlayerController>() != null)
                 {

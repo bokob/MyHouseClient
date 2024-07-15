@@ -12,6 +12,7 @@ using UnityEngine.InputSystem;
 public class RobberController : MonoBehaviour
 {
     PlayerController _playerController;
+    PlayerStatus _playerStatus;
     WeaponManager _weaponManager;
 
     [Tooltip("카메라")]
@@ -29,12 +30,13 @@ public class RobberController : MonoBehaviour
     private void Update()
     {
         if(Input.GetKeyUp(KeyCode.T)) // 'T' 누르면 집주인으로 변신
-            TransformationHouseowner();
+            _playerStatus.TransformIntoHouseowner();
     }
 
     void RobberInit()
     {
         _playerController = transform.parent.GetComponent<PlayerController>();
+        _playerStatus = transform.parent.GetComponent<PlayerStatus>();
         _weaponManager = transform.parent.GetComponent<WeaponManager>();
 
         _playerController.PlayerRole = Define.Role.Robber;
@@ -59,18 +61,6 @@ public class RobberController : MonoBehaviour
 
     void RobberWeaponInit() // 강도 무기 세팅
     {
-        _weaponManager.InitializeWeapon();
-    }
-
-    void TransformationHouseowner()
-    {
-        transform.parent.GetChild(0).gameObject.SetActive(false); // 강도 비활성화
-        transform.parent.GetChild(1).gameObject.SetActive(true);  // 집주인 활성화
-        _playerController.PlayerRole = Define.Role.Houseowner;
-
-        Debug.Log(_playerController.PlayerRole);
-
-        _weaponManager.InitializeWeapon();                         // 집주인 무기 세팅
-        Debug.Log("집주인으로 변신 완료");
+        //_weaponManager.InitializeWeapon();
     }
 }

@@ -9,14 +9,18 @@ public class PlayerMove : MonoBehaviour
     public float _moveSpeed = 2.0f;      // 움직임 속도
     public float _sprintSpeed = 5.335f;  // 달리기 속도
     float _speed;
+
+    [Range(0.0f, 0.3f)]
     public float _rotationSmoothTime = 0.12f;   // 움직임 방향 전환
     public float _speedChangeRate = 10.0f;      // 속도 가속
-    public float _sensitivity = 1f;
+    public float _sensitivity = 1f;             // 민감도
+    
     float _targetRotation = 0.0f;
     float _rotationVelocity;
     float _verticalVelocity;
     float _terminalVelocity = 53.0f;
     bool _rotateOnMove = true;
+    
     float _jumpTimeoutDelta;
     float _fallTimeoutDelta;
 
@@ -27,20 +31,20 @@ public class PlayerMove : MonoBehaviour
     public float _jumpTimeout = 0.50f;      // 점프 쿨타임
     public float _fallTimeout = 0.15f;      // 떨어지는 상태로 진입하는데 걸리는 시간
     public bool _grounded = true;           // 지면에 닿았는지 여부
-    public float _groundedOffset = -0.14f;  // 지면 거칠기
+    public float _groundedOffset = 0.14f;  // 땅에 닿을 때 체크하는 원 y축 위치
     public float _groundedRadius = 0.28f;   // 캐릭터 컨트롤러에서 구체 형성해서 지면체크할 때, 구체 반지름
-    public LayerMask _groundLayers; 
+    public LayerMask _groundLayers;         // 땅에 해당하는 레이어 마스크
 
     CharacterController _controller;
     public PlayerInputs _input;
-    public Status _status;
+    PlayerStatus _status;
 
     // player
 #if ENABLE_INPUT_SYSTEM
     PlayerInput _playerInput;
 #endif
 
-    GameObject _mainCamera; 
+    [SerializeField] CameraController _mainCamera;
 
     // 애니메이션 관련
     Animator _animator;
@@ -53,12 +57,16 @@ public class PlayerMove : MonoBehaviour
     float _animationBlend;
     bool _hasAnimator;
 
+    public AudioClip _landingAudioClip;                     // 발소리
+    [Range(0, 1)] public float _footstepAudioVolume = 0.5f; // 발소리 크기
+
     // Start is called before the first frame update
     void Start()
     {
         _hasAnimator = TryGetComponent(out _animator);
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<PlayerInputs>();
+        _status = GetComponent<PlayerStatus>();
 #if ENABLE_INPUT_SYSTEM 
         _playerInput = GetComponent<PlayerInput>();
 #else
@@ -76,8 +84,8 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        JumpAndGravity();   // 점프
         GroundedCheck();    // 지면체크
+        JumpAndGravity();   // 점프
         Move();             // 이동
     }
 
@@ -90,7 +98,8 @@ public class PlayerMove : MonoBehaviour
         _animIDFreeFall = Animator.StringToHash("FreeFall");
         _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
     }
-    
+
+    // 이동
     void Move()
     {
         // set target speed based on move speed, sprint speed and if sprint is pressed
@@ -166,7 +175,7 @@ public class PlayerMove : MonoBehaviour
             _animator.SetFloat(_animIDSpeed, _animationBlend);
             _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
         }
-    }// 이동
+    }
 
     // 지면 체크
     void GroundedCheck()
@@ -186,7 +195,7 @@ public class PlayerMove : MonoBehaviour
     void JumpAndGravity()
     {
         // 땅에 닿고 스테미나가 0보다 커야 점프
-        if (_grounded)
+        if (_grounded && _status.Sp > 0)
         {
             // reset the fall timeout timer
             _fallTimeoutDelta = _fallTimeout;
@@ -202,9 +211,6 @@ public class PlayerMove : MonoBehaviour
             // stop our velocity dropping infinitely when grounded
             if (_verticalVelocity < 0.0f)
                 _verticalVelocity = -2f;
-
-            // 스테미나 없으면 점프 못하게 막음
-            if (_status.Sp <= 0) return;
 
             // Jump
             if (_input.jump && _jumpTimeoutDelta <= 0.0f)
@@ -266,5 +272,15 @@ public class PlayerMove : MonoBehaviour
     public void SetRotateOnMove(bool newRotateOnMove)
     {
         _rotateOnMove = newRotateOnMove;
+    }
+
+    // 땅에 닿을 때 착지 소리 나게 하는 애니메이션 이벤트
+    void OnLand(AnimationEvent animationEvent)
+    {
+        if (_controller == null || _landingAudioClip == null)
+            return;
+
+        if (animationEvent.animatorClipInfo.weight > 0.5f)
+            AudioSource.PlayClipAtPoint(_landingAudioClip, transform.TransformPoint(_controller.center), _footstepAudioVolume);
     }
 }

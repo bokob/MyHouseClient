@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class InGameUI : MonoBehaviour
 {
     GameObject _player;
-    Status _status;
+    PlayerStatus _status;
     WeaponManager _weaponManager;
 
     //UI 변수들
@@ -32,7 +32,7 @@ public class InGameUI : MonoBehaviour
     void Start()
     {
         _player = GameObject.Find("Player");
-        _status = _player.GetComponent<Status>();
+        _status = _player.GetComponent<PlayerStatus>();
         _weaponManager = _player.GetComponent<WeaponManager>();
 
         // 시간 표시할 곳
@@ -78,25 +78,25 @@ public class InGameUI : MonoBehaviour
 
     public void DisplayWeaponInfo()
     {
-        string weaponTag = _weaponManager.GetCurrentWeaponTag();
-        Debug.Log("현재무기: " + weaponTag);
-        if (weaponTag == "Gun") // 원거리 무기일 경우
-        {
-            if(!_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(true);
-            if(!_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(true);
-            if(!_crossHair.activeSelf) _crossHair.SetActive(true);
+        //string weaponTag = _weaponManager.GetCurrentWeaponTag();
+        //Debug.Log("현재무기: " + weaponTag);
+        //if (weaponTag == "Gun") // 원거리 무기일 경우
+        //{
+        //    if(!_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(true);
+        //    if(!_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(true);
+        //    if(!_crossHair.activeSelf) _crossHair.SetActive(true);
 
-            DisplayWeaponIcon(1);
-            DisplayCurrentBullet();
-            DisplayTotalBullet();
-        }
-        else // 근접 무기일 경우
-        {
-            DisplayWeaponIcon(0);
-            if (_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(false);
-            if (_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(false);
-            if (_crossHair.activeSelf) _crossHair.SetActive(false);
-        }
+        //    DisplayWeaponIcon(1);
+        //    DisplayCurrentBullet();
+        //    DisplayTotalBullet();
+        //}
+        //else // 근접 무기일 경우
+        //{
+        //    DisplayWeaponIcon(0);
+        //    if (_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(false);
+        //    if (_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(false);
+        //    if (_crossHair.activeSelf) _crossHair.SetActive(false);
+        //}
     }
 
     public void DisplayCurrentBullet()
