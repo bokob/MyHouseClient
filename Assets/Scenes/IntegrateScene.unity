@@ -644,7 +644,6 @@ MonoBehaviour:
   <MaxHp>k__BackingField: 100
   <MaxSp>k__BackingField: 100
   <Defence>k__BackingField: 1
-  _houseOwnerWeaponManager: {fileID: 0}
 --- !u!54 &28806560
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -4257,7 +4256,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!136 &471484139
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -9113,7 +9112,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &951686550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16312,7 +16311,6 @@ MonoBehaviour:
   <MaxHp>k__BackingField: 100
   <MaxSp>k__BackingField: 100
   <Defence>k__BackingField: 1
-  _houseOwnerWeaponManager: {fileID: 0}
 --- !u!54 &1633967773
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17096,7 +17094,6 @@ MonoBehaviour:
   <MaxHp>k__BackingField: 100
   <MaxSp>k__BackingField: 100
   <Defence>k__BackingField: 1
-  _houseOwnerWeaponManager: {fileID: 0}
 --- !u!54 &1668663001
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -20276,6 +20273,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2002228458}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2006360087 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3807563812614108485, guid: 06ae9215121e7664aa589981daed690d,
+    type: 3}
+  m_PrefabInstance: {fileID: 2542555991073345221}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2cfeb0871774094f83485e96c1c8e9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2008268631
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22106,6 +22115,16 @@ PrefabInstance:
       propertyPath: _landingAudioClip
       value: 
       objectReference: {fileID: 8300000, guid: ff697d3070687ce4583faa0561a145a2, type: 3}
+    - target: {fileID: 9002483722234610334, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9002483722234610334, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: _weaponManager
+      value: 
+      objectReference: {fileID: 2006360087}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
