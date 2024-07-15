@@ -17,18 +17,12 @@ public class PlayerStatus : MonoBehaviour
     Animator _animator;
     List<Renderer> _renderers;
     #endregion
-
-    [Header("무기 관련")]
-    [SerializeField] NewWeaponManager _houseOwnerWeaponManager;
-
-
-    // 시점 변환
     
 
-    void Start()
+    void Awake()
     {
-        InitRole();
         _animator = GetComponent<Animator>();
+        InitRole();
     }
 
     void Update()
@@ -166,8 +160,6 @@ public class PlayerStatus : MonoBehaviour
 
         Debug.Log("집주인 시점을 변환");
 
-        // 집주인 무기 세팅
-        _houseOwnerWeaponManager.InitRoleWeapon();
         Debug.Log("집주인으로 변신 완료");
     }
 
@@ -251,49 +243,9 @@ public class PlayerStatus : MonoBehaviour
         _animator.enabled = true;
     }
 
-    //public PlayerMove _playerMove;
-    //public PlayerInputs _input;
-    //[Header("공격 관련")]
-    //bool _isSwingReady;  // 공격 준비
-    //float _swingDelay;   // 공격 딜레이
-    //bool _isStabReady;  // 공격 준비
-    //float _stabDelay;   // 공격 딜레이
-
-    //public void ChangeIsHoldGun(bool newIsHoldGun)
-    //{
-    //    _animator.SetBool("isHoldGun", newIsHoldGun);
-    //}
-
-    ///// <summary>
-    ///// 근접 공격: 좌클릭(휘두르기), 우클릭(찌르기)
-    ///// </summary>
-    //public void MeleeAttack()
-    //{
-    //    // 무기 오브젝트가 없거나, 무기가 비활성화 되어 있거나, 무기가 없으면 공격 취소
-    //    if (_weaponManager._melee == null || _weaponManager._melee.activeSelf == false || _weaponManager._meleeWeapon == null)
-    //        return;
-
-    //    _swingDelay += Time.deltaTime;
-    //    _stabDelay += Time.deltaTime;
-    //    _isSwingReady = _weaponManager._meleeWeapon.Rate < _swingDelay; // 공격속도가 공격 딜레이보다 작으면 공격준비 완료
-    //    _isStabReady = _weaponManager._meleeWeapon.Rate < _stabDelay;
-
-    //    if (_input.swing && _isSwingReady && _playerMove._grounded) // 휘두르기
-    //    {
-    //        Debug.Log("휘두르기");
-    //        _weaponManager._meleeWeapon.Use();
-    //        _animator.SetTrigger("setSwing");
-    //        _swingDelay = 0;
-    //    }
-    //    else if (_input.stap && _isStabReady && _playerMove._grounded) // 찌르기
-    //    {
-    //        Debug.Log("찌르기");
-    //        _weaponManager._meleeWeapon.Use();
-    //        _animator.SetTrigger("setStab");
-    //        _stabDelay = 0;
-
-    //    }
-    //    _input.swing = false;
-    //    _input.stap = false;
-    //}
+    public void ChangeIsHoldGun(bool isHoldGun)
+    {
+        if (Role != Define.Role.Houseowner) return;
+        _animator.SetBool("isHoldGun", isHoldGun);
+    }
 }

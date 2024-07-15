@@ -389,9 +389,9 @@ public class Monster : MonoBehaviour
         {
             _target.GetComponent<PlayerStatus>().TakedDamage(_attack);
 
-            if(_target.GetComponent<PlayerController>()!=null)
+            if(_target.GetComponent<PlayerStatus>()!=null)
             {
-                _target.GetComponent<PlayerController>().HitChangeMaterials();
+                _target.GetComponent<PlayerStatus>().HitChangeMaterials();
             }
             if (_target.GetComponent<Person>() != null)
             {

@@ -9,13 +9,11 @@ using static UnityEngine.UIElements.UxmlAttributeDescription;
 /// </summary>
 public class HouseownerController : MonoBehaviour
 {
-    PlayerController _playerController;
     PlayerStatus _playerStatus;
     [SerializeField] NewWeaponManager _weaponManager;
 
     void Awake()
     {
-        _playerController = transform.parent.GetComponent<PlayerController>();
         _playerStatus = transform.parent.GetComponent<PlayerStatus>();
     }
 

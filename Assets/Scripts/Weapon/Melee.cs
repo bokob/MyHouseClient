@@ -1,14 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows;
+using static UnityEditor.Recorder.OutputPath;
 
 /// <summary>
 /// 한 손 근접 무기
 /// </summary>
 public class Melee : Weapon
 {
+    PlayerMove _playerMove;
+    PlayerInputs _playerInputs;
+    NewWeaponManager _weaponManager;
+
     BoxCollider _meleeArea;       // 근접 공격 범위
     TrailRenderer _trailEffet;    // 휘두를 때 효과
+    Animator _animator;
+
+    [Header("공격 관련")]
+    bool _isSwingReady;  // 공격 준비
+    float _swingDelay;   // 공격 딜레이
+    bool _isStabReady;  // 공격 준비
+    float _stabDelay;   // 공격 딜레이
 
     #region 절단 효과
     public LayerMask _sliceMask; // 자를 대상인 레이어 마스크
@@ -19,9 +32,14 @@ public class Melee : Weapon
     bool _hasExited = false; // 오브젝트를 뚫고 나갔는지 여부를 저장하는 변수
     #endregion
 
-    void Awake()
+    void Start()
     {
         base.Type = Define.Type.Melee;
+
+        _playerMove = transform.root.GetChild(2).GetComponent<PlayerMove>();
+        _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
+        _animator = base.Master.gameObject.GetComponent<Animator>();
+
         _meleeArea = gameObject.GetComponent<BoxCollider>();
         _trailEffet = gameObject.GetComponentInChildren<TrailRenderer>();
 
@@ -36,19 +54,65 @@ public class Melee : Weapon
 
     }
 
+    void Update()
+    {
+        _swingDelay += Time.deltaTime;
+        _stabDelay += Time.deltaTime;
+    }
+
     /// <summary>
-    /// Use() 실행하면서 MeleeAttackOn() 코루틴 같이 실행된다.
+    /// 근접 공격: 좌클릭(휘두르기), 우클릭(찌르기)
+    /// 공격 효과 코루틴 같이 실행된다.
     /// </summary>
     public override void Use()
     {
-        StopCoroutine("MeleeAttackOn");
-        StartCoroutine("MeleeAttackOn");
+        _swingDelay += Time.deltaTime;
+        _stabDelay += Time.deltaTime;
+        _isSwingReady = base.Rate < _swingDelay; // 공격속도가 공격 딜레이보다 작으면 공격준비 완료
+        _isStabReady = base.Rate < _stabDelay;
+        if (_playerInputs.swing && _isSwingReady && _playerMove._grounded || _playerInputs.stap && _isStabReady && _playerMove._grounded)
+        {
+            StopCoroutine("MeleeAttackEffect");
+
+            //// 근접 무기가 아니거나 무기가 활성화 되어 있지 않으면 종료
+            //if (_weaponManager._selectedWeapon.tag != "Melee" || !_weaponManager._selectedWeapon.activeSelf) return;
+
+            // 공격속도가 공격 딜레이보다 작으면 공격준비 완료
+            //_isSwingReady = _weaponManager._selectedWeapon.GetComponent<Melee>().Rate < _swingDelay;
+            //_isStabReady = _weaponManager._selectedWeapon.GetComponent<Melee>().Rate < _stabDelay;
+
+            if (_playerInputs.swing && _playerMove._grounded) // 휘두르기
+            {
+                Debug.Log("휘두르기");
+                // _weaponManager._selectedWeapon.GetComponent<Melee>().Use();
+                _animator.SetTrigger("setSwing");
+                _swingDelay = 0;
+            }
+            else if (_playerInputs.stap && _playerMove._grounded) // 찌르기
+            {
+                Debug.Log("찌르기");
+                // _weaponManager._selectedWeapon.GetComponent<Melee>().Use();
+                _animator.SetTrigger("setStab");
+                _stabDelay = 0;
+
+            }
+            _playerInputs.swing = false;
+            _playerInputs.stap = false;
+
+            StartCoroutine("MeleeAttackEffect");
+        }
+        else
+        {
+            // 시작하자마자 휘두르는 문제 방지(유니티 Play 누를 때 클릭 때문에 그런 듯 하다)
+            _playerInputs.swing = false;
+            _playerInputs.stap = false;
+        }
     }
 
     /// <summary>
     /// 코루틴으로 Collider, TrailRenderer 특정 시간 동안만 활성화
     /// </summary>
-    IEnumerator MeleeAttackOn()
+    IEnumerator MeleeAttackEffect()
     {
         yield return new WaitForSeconds(0.5f);
         _meleeArea.enabled = true;
@@ -76,9 +140,9 @@ public class Melee : Weapon
         {
             other.GetComponent<PlayerStatus>().TakedDamage(Attack);
 
-            if (other.GetComponent<PlayerController>() != null)
+            if (other.GetComponent<PlayerStatus>() != null)
             {
-                other.GetComponent<PlayerController>().HitChangeMaterials();
+                other.GetComponent<PlayerStatus>().HitChangeMaterials();
             }
             if (other.GetComponent<Person>() != null)
             {
@@ -91,7 +155,9 @@ public class Melee : Weapon
     {
         Debug.Log("관통");
     }
-    void OnTriggerExit(Collider other) // 관통 다 되면 레이어에 따라 절단
+
+    // 관통 다 되면 레이어에 따라 절단
+    void OnTriggerExit(Collider other)
     {
         // 충돌 지점의 방향을 자르는 방향으로 설정
         _exitPoint = other.ClosestPoint(transform.position);

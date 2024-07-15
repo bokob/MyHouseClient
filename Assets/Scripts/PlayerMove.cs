@@ -78,7 +78,6 @@ public class PlayerMove : MonoBehaviour
         // reset our timeouts on start
         _jumpTimeoutDelta = _jumpTimeout;
         _fallTimeoutDelta = _fallTimeout;
-        
     }
 
     // Update is called once per frame

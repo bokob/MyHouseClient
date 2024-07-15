@@ -82,12 +82,9 @@ MonoBehaviour:
   _switchDelay: 1
   _leftItemHand: {fileID: 0}
   _rightItemHand: {fileID: 0}
-  _melee: {fileID: 0}
-  _gun: {fileID: 0}
-  _meleeWeapon: {fileID: 0}
-  _gunWeapon: {fileID: 0}
   _selectedWeaponIdx: 0
   _selectedWeapon: {fileID: 0}
+  _isHoldGun: 0
 --- !u!1 &3663872514510027535
 GameObject:
   m_ObjectHideFlags: 0
@@ -345,6 +342,8 @@ MonoBehaviour:
     m_Bits: 1
   _input: {fileID: 0}
   _mainCamera: {fileID: 3439450309009642615}
+  _landingAudioClip: {fileID: 0}
+  _footstepAudioVolume: 0.5
 --- !u!114 &5549235745164027755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -363,7 +362,6 @@ MonoBehaviour:
   <MaxHp>k__BackingField: 100
   <MaxSp>k__BackingField: 100
   <Defence>k__BackingField: 1
-  _houseOwnerWeaponManager: {fileID: 3305869340648136288}
 --- !u!1 &4016613905278022662
 GameObject:
   m_ObjectHideFlags: 0
@@ -1321,12 +1319,9 @@ MonoBehaviour:
   _switchDelay: 1
   _leftItemHand: {fileID: 0}
   _rightItemHand: {fileID: 0}
-  _melee: {fileID: 0}
-  _gun: {fileID: 0}
-  _meleeWeapon: {fileID: 0}
-  _gunWeapon: {fileID: 0}
   _selectedWeaponIdx: 0
   _selectedWeapon: {fileID: 0}
+  _isHoldGun: 0
 --- !u!114 &5581704992897636564 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8745945223331361071, guid: 8917d7d0db3f5084eaa49f9f8904b80d,
@@ -1909,11 +1904,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7069601818433305018}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c59d15291eada8d44b34eb6dfedb8929, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _weaponManager: {fileID: 0}
 --- !u!4 &7590700388980646656 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6184d9d3c0383d64da2237781045d714,
