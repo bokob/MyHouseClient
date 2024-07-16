@@ -125,7 +125,8 @@ public class Melee : Weapon
         _trailEffet.enabled = false;
     }
 
-    // 칼이 트리거 안에 있을 때 hasExited를 false로 설정
+    // 칼이 트리거 안에 있을 때
+    // 를 false로 설정
     void OnTriggerEnter(Collider other)
     {
         _hasExited = false;

@@ -22105,6 +22105,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 157962897707766478, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: _sliceMask.m_Bits
+      value: 65536
+      objectReference: {fileID: 0}
     - target: {fileID: 1677154571532804150, guid: 06ae9215121e7664aa589981daed690d,
         type: 3}
       propertyPath: m_Name

@@ -26,9 +26,8 @@ public class HouseownerController : MonoBehaviour
     {
         // 시체면 가만히 있게 하기
         if (_playerStatus.Role == Define.Role.None) return;
-
-        if (_weaponManager._selectedWeapon.tag == "Gun")
-            _weaponManager.UseSelectedWeapon();
+        
+        _weaponManager.UseSelectedWeapon();
 
     }
 

@@ -31,8 +31,7 @@ public class RobberController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.T)) // 'T' 누르면 집주인으로 변신
             _playerStatus.TransformIntoHouseowner();
 
-        if (_weaponManager._selectedWeapon.tag == "Melee")
-            _weaponManager.UseSelectedWeapon();
+        _weaponManager.UseSelectedWeapon();
     }
 
     void RobberInit()
