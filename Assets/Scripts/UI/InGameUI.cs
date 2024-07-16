@@ -29,34 +29,34 @@ public class InGameUI : MonoBehaviour
     // 조준선
     GameObject _crossHair;
 
-    void Start()
-    {
-        _player = GameObject.Find("Player");
-        _status = _player.GetComponent<PlayerStatus>();
-        //_weaponManager = _player.GetComponent<WeaponManager>();
+    //void Start()
+    //{
+    //    _player = GameObject.Find("Player");
+    //    _status = _player.GetComponent<PlayerStatus>();
+    //    //_weaponManager = _player.GetComponent<WeaponManager>();
 
-        // 시간 표시할 곳
-        _timeSecond = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
-        // Hp, Sp 표시할 곳
-        _hpBar = transform.GetChild(1).GetComponent<Slider>();
-        _spBar = transform.GetChild(2).GetComponent<Slider>();
+    //    // 시간 표시할 곳
+    //    _timeSecond = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
+    //    // Hp, Sp 표시할 곳
+    //    _hpBar = transform.GetChild(1).GetComponent<Slider>();
+    //    _spBar = transform.GetChild(2).GetComponent<Slider>();
 
-        // 무기 정보 표시할 곳
-        _weaponIcon = transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
-        _currentBullet = transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
-        _totalBullet = transform.GetChild(3).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
+    //    // 무기 정보 표시할 곳
+    //    _weaponIcon = transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
+    //    _currentBullet = transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
+    //    _totalBullet = transform.GetChild(3).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
 
-        // 조준선 UI
-        _crossHair = transform.GetChild(5).gameObject;
-    }
+    //    // 조준선 UI
+    //    _crossHair = transform.GetChild(5).gameObject;
+    //}
 
-    void Update()
-    {
-        DisplayLivingTime();
-        DisplayHp();
-        DisplaySp();
-        DisplayWeaponInfo();
-    }
+    //void Update()
+    //{
+    //    DisplayLivingTime();
+    //    DisplayHp();
+    //    DisplaySp();
+    //    DisplayWeaponInfo();
+    //}
 
     public void DisplayLivingTime()
     {

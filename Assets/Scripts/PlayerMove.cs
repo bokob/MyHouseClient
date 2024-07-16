@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.InputSystem;
+using Cinemachine;
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : NetworkBehaviour
 {
     public float _moveSpeed = 2.0f;      // 움직임 속도
     public float _sprintSpeed = 5.335f;  // 달리기 속도
@@ -60,8 +61,7 @@ public class PlayerMove : MonoBehaviour
     public AudioClip _landingAudioClip;                     // 발소리
     [Range(0, 1)] public float _footstepAudioVolume = 0.5f; // 발소리 크기
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         _hasAnimator = TryGetComponent(out _animator);
         _controller = GetComponent<CharacterController>();
@@ -72,6 +72,39 @@ public class PlayerMove : MonoBehaviour
 #else
 		Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        enabled = IsLocalPlayer;
+        if (!IsLocalPlayer)
+        {
+            enabled = false;
+            _controller.enabled = false;
+            return;
+        }
+
+        // player input is only enabled on owning players
+        _playerInput.enabled = true;
+
+        _controller.enabled = true;
+    }
+
+
+    // Start is called before the first frame update
+    void Start()
+    {
+//        _hasAnimator = TryGetComponent(out _animator);
+//        _controller = GetComponent<CharacterController>();
+//        _input = GetComponent<PlayerInputs>();
+//        _status = GetComponent<PlayerStatus>();
+//#if ENABLE_INPUT_SYSTEM 
+//        _playerInput = GetComponent<PlayerInput>();
+//#else
+//		Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
+//#endif
 
         AssignAnimationIDs();
 
@@ -83,6 +116,8 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!IsLocalPlayer) return;
+
         GroundedCheck();    // 지면체크
         JumpAndGravity();   // 점프
         Move();             // 이동
@@ -162,6 +197,10 @@ public class PlayerMove : MonoBehaviour
                 _status.DischargeSp();
 
         }
+        else
+        {
+            Debug.Log(OwnerClientId + "가 움직이고 있어요");
+        }
 
         Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
@@ -193,16 +232,19 @@ public class PlayerMove : MonoBehaviour
     // 점프
     void JumpAndGravity()
     {
+        Debug.Log("점프 함수 내용 시작 전");
+
         // 땅에 닿고 스테미나가 0보다 커야 점프
         if (_grounded && _status.Sp > 0)
         {
+            Debug.Log("땅에 닿았고, 스테미나가 0 초과");
+
             // reset the fall timeout timer
             _fallTimeoutDelta = _fallTimeout;
 
             // update animator if using character
             if (_hasAnimator)
             {
-                
                 _animator.SetBool(_animIDJump, false);
                 _animator.SetBool(_animIDFreeFall, false);
             }
@@ -211,9 +253,12 @@ public class PlayerMove : MonoBehaviour
             if (_verticalVelocity < 0.0f)
                 _verticalVelocity = -2f;
 
+            Debug.Log("점프 키 누르기 직전");
             // Jump
             if (_input.jump && _jumpTimeoutDelta <= 0.0f)
             {
+                Debug.Log("점프 키 누르고 난 후");
+
                 // the square root of H * -2 * G = how much velocity needed to reach desired height
                 _verticalVelocity = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
 
@@ -222,6 +267,7 @@ public class PlayerMove : MonoBehaviour
                 {
                     _animator.Play("JumpStart");
                     _animator.SetBool(_animIDJump, true);
+                    Debug.Log("점프 시작 애니메이션");
                 }
 
                 _status.JumpSpDown();

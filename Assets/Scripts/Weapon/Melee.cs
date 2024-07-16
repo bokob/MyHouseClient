@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Windows;
-using static UnityEditor.Recorder.OutputPath;
 
 /// <summary>
 /// 한 손 근접 무기

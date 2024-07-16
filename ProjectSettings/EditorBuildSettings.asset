@@ -12,6 +12,12 @@ EditorBuildSettings:
     path: Assets/Scenes/RoomScene.unity
     guid: 61049539328efec4db877db01fc6a259
   - enabled: 1
+    path: Assets/Scenes/SinglePlayScene.unity
+    guid: 0043f25e47f3e5e41b4d8c00e1b20793
+  - enabled: 1
+    path: Assets/Scenes/MultiPlayScene.unity
+    guid: 062d6f9916178f84f929b4e8561dfbc5
+  - enabled: 1
     path: Assets/Scenes/IntegrateScene.unity
     guid: 9505fe1d151bf934c9700ae095c89678
   - enabled: 1

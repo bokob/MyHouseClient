@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Recorder.Input;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CameraController : MonoBehaviour
+public class CameraController : NetworkBehaviour
 {
     [Header("Cinemachine")]
     GameObject _mainCamera;                     // 메인 카메라
@@ -30,7 +30,7 @@ public class CameraController : MonoBehaviour
 
     const float _threshold = 0.01f;
 
-    public float _sensitivity = 1f;    
+    public float _sensitivity = 1f;
 
     // Start is called before the first frame update
     void Awake()
@@ -38,9 +38,19 @@ public class CameraController : MonoBehaviour
         CameraInit();
     }
 
+    void Start()
+    {
+        if (!IsLocalPlayer)
+        {
+            transform.parent.gameObject.SetActive(false); // 카메라 전체 비활성화
+        }
+
+        CameraInit();
+    }
+
     void LateUpdate()
     {
-        if(View != Define.View.Third)
+        if (View != Define.View.Third)
             CameraRotation();
     }
 
