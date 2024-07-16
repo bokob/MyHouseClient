@@ -13,8 +13,6 @@ public class NetworkGameManager : NetworkBehaviour
     public delegate void OnPlayerDataListChanged();                 // 플레이어 데이터 목록이 변경될 때 호출되는 델리게이트
     public static OnPlayerDataListChanged onPlayerDataListChanged;
 
-    public GameObject myPlayer; // only set when ingame;
-
     string username;            // 플레이어 이름
     public enum GameState // only allow players to join while waiting to start
     {
@@ -131,7 +129,7 @@ public class NetworkGameManager : NetworkBehaviour
             }
         }
 
-        if (SceneManager.GetActiveScene().name == "IntegrateScene")
+        if (SceneManager.GetActiveScene().name == "MultiPlayScene")
         {
             //Scoreboard.Instance.ResetScoreboard();
         }
@@ -155,7 +153,7 @@ public class NetworkGameManager : NetworkBehaviour
     private void Network_Client_OnClientConnectedCallback(ulong obj) // 클라이언트가 연결되었을 때 호출
     {
         SetUsernameServerRpc(GetUsername());
-        if (SceneManager.GetActiveScene().name == "IntegrateScene")
+        if (SceneManager.GetActiveScene().name == "MultiPlayScene")
         {
             //Scoreboard.Instance.ResetScoreboard();
         }
@@ -225,7 +223,7 @@ public class NetworkGameManager : NetworkBehaviour
         LobbyManager.instance.DeleteLobby(); // 게임 중인 방은 로비 목록에 안뜨게 하니까 그냥 지워버린다. (나중에 삭제 안시키고, 다른 유저가 접속할 수 있게 해야 함)
 
         //string map = PlayerPrefs.GetString("ZOMBIES_MAP", "LAB");
-        NetworkManager.Singleton.SceneManager.LoadScene("IntegrateScene", LoadSceneMode.Single);
+        NetworkManager.Singleton.SceneManager.LoadScene("MultiPlayScene", LoadSceneMode.Single);
     }
 
     public void SpawnPlayers() // server

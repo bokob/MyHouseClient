@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerStatus : MonoBehaviour
+public class PlayerStatus : NetworkBehaviour
 {
     #region 상태 및 능력치
     [field: SerializeField] public Define.Role Role = Define.Role.None;
@@ -27,6 +28,8 @@ public class PlayerStatus : MonoBehaviour
 
     void Update()
     {
+        if (!IsLocalPlayer) return;
+
         Dead();
         TransformIntoHouseowner();
     }
