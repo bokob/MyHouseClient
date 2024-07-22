@@ -18,12 +18,24 @@ public class PlayerStatus : NetworkBehaviour
     Animator _animator;
     List<Renderer> _renderers;
     #endregion
-    
 
     void Awake()
     {
         _animator = GetComponent<Animator>();
         InitRole();
+
+        // 렌더 가져오기
+        _renderers = new List<Renderer>();
+        Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < underTransforms.Length; i++)
+        {
+            Renderer renderer = underTransforms[i].GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                _renderers.Add(renderer);
+                // if (renderer.material.color == null) Debug.Log("왜 색이 널?");
+            }
+        }
     }
 
     void Update()
@@ -206,7 +218,7 @@ public class PlayerStatus : NetworkBehaviour
         {
             _renderers[i].material.color = Color.red;
             Debug.Log("색변한다.");
-            //Debug.Log(_renderers[i].material.name);
+            Debug.Log(_renderers[i].material.name);
         }
 
         StartCoroutine(ResetMaterialAfterDelay(1.7f));
@@ -228,13 +240,54 @@ public class PlayerStatus : NetworkBehaviour
             _renderers[i].material.color = Color.white;
     }
 
+    //void OnTriggerEnter(Collider other)
+    //{
+    //    //// 자기 자신에게 닿은 경우 무시
+    //    //if (other.transform.root.name == gameObject.name) return;
+    //    if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
+    //        HitChangeMaterials();
+    //}
+
+
+
     void OnTriggerEnter(Collider other)
     {
-        //// 자기 자신에게 닿은 경우 무시
-        //if (other.transform.root.name == gameObject.name) return;
-        if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
-            HitChangeMaterials();
+        if (!IsServer) return;
+
+        //if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
+        //    HitChangeMaterials();
+
+
+        Debug.Log(NetworkGameManager.instance.GetUsernameFromClientId(OwnerClientId) + "가 맞음");
+
+        Debug.Log(transform.root.GetComponent<NetworkObject>().OwnerClientId + "가 " + other.transform.root.GetComponent<NetworkObject>().OwnerClientId + "에를 건드림!");
+        // 클라이언트 ID가 달라야 함
+        if (other.gameObject.CompareTag("Melee") && transform.root.GetComponent<NetworkObject>().OwnerClientId != other.transform.root.GetComponent<NetworkObject>().OwnerClientId)
+        {
+            // GetComponent<PlayerStatus>().hp.Value -= 50;
+
+            Debug.Log(transform.root.GetComponent<NetworkObject>().OwnerClientId + "가 " + other.transform.root.GetComponent<NetworkObject>().OwnerClientId + "에게 맞음!");
+
+            PlayAttackedMaterialsClientRpc();   // 애니메이션 재생하라고 명령
+        }
     }
+
+    [ServerRpc]
+    void PlayAttackedMaterialsServerRpc()
+    {
+        PlayAttackedMaterialsClientRpc();
+    }
+
+    [ClientRpc]
+    void PlayAttackedMaterialsClientRpc()
+    {
+        HitChangeMaterials();
+    }
+
+
+
+
+
 
     public void SetRoleAnimator(RuntimeAnimatorController animController, Avatar avatar)
     {
