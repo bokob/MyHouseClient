@@ -13,6 +13,7 @@ public class GameManager : NetworkBehaviour
         if (IsHost)
         {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
+            NetworkManager.Singleton.OnClientConnectedCallback += OnNewClientConnected;
         }
     }
     private void SceneManager_OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
@@ -23,6 +24,17 @@ public class GameManager : NetworkBehaviour
         if (IsServer)
         {
             // 
+        }
+    }
+
+    private void OnNewClientConnected(ulong clientId)
+    {
+        Debug.Log(clientId + "(이)가 입장했습니다.");
+
+        NetworkGameManager.instance.SpawnPlayer(clientId);
+        if (IsServer)
+        {
+            
         }
     }
 }
