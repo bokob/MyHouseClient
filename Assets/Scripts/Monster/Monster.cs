@@ -194,13 +194,13 @@ public class Monster : MonoBehaviour
                 yield return null;
             }
         }
-        else if(_canSeePlayer && _nmAgent.remainingDistance <= _nmAgent.stoppingDistance) // 공격 범위 안에 있을 때
+        else if (_canSeePlayer && _nmAgent.remainingDistance <= _nmAgent.stoppingDistance) // 공격 범위 안에 있을 때
         {
             StopAllCoroutines(); // 모든 코루틴 종료
             _nmAgent.ResetPath();
             ChangeState(Define.MonsterState.Attack);  // 공격
         }
-        else if(_canSeePlayer && _nmAgent.remainingDistance > _nmAgent.stoppingDistance) // 공격범위 밖이면 추격
+        else if (_canSeePlayer && _nmAgent.remainingDistance > _nmAgent.stoppingDistance) // 공격범위 밖이면 추격
         {
             StopAllCoroutines(); // 모든 코루틴 종료
             _nmAgent.SetDestination(_target.position); // 목표 지정
@@ -226,7 +226,7 @@ public class Monster : MonoBehaviour
             _nmAgent.ResetPath();
             ChangeState(Define.MonsterState.Attack);
         }
-        else if(_canSeePlayer) // 목표가 시야에 있는데 계속 움직이면 경로 다시 계산해서 추격
+        else if (_canSeePlayer) // 목표가 시야에 있는데 계속 움직이면 경로 다시 계산해서 추격
         {
             _nmAgent.SetDestination(_target.position);
         }
@@ -249,7 +249,7 @@ public class Monster : MonoBehaviour
         AnimatorStateInfo currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
         _nmAgent.isStopped = true;
 
-        if (_target==null) // 목표물이 사라지면
+        if (_target == null) // 목표물이 사라지면
         {
             StopAllCoroutines();
             _nmAgent.isStopped = false;
@@ -277,7 +277,7 @@ public class Monster : MonoBehaviour
             _nmAgent.isStopped = false;
             ChangeState(Define.MonsterState.Patrol); // 순찰
         }
-        else if(_canSeePlayer && _nmAgent.remainingDistance > _nmAgent.stoppingDistance)
+        else if (_canSeePlayer && _nmAgent.remainingDistance > _nmAgent.stoppingDistance)
         {
             _nmAgent.isStopped = false;
             ChangeState(Define.MonsterState.Chase);
@@ -286,7 +286,8 @@ public class Monster : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator OnHit(Collider other) {
+    IEnumerator OnHit(Collider other)
+    {
         if (_state != Define.MonsterState.None)
         {
             AnimatorStateInfo currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
@@ -353,7 +354,7 @@ public class Monster : MonoBehaviour
                 StartCoroutine(OnHit(other));
             }
         }
-        else 
+        else
             Debug.Log("왜 안닿지?");
     }
 
@@ -389,7 +390,7 @@ public class Monster : MonoBehaviour
         {
             _target.GetComponent<PlayerStatus>().TakedDamage(_attack);
 
-            if(_target.GetComponent<PlayerStatus>()!=null)
+            if (_target.GetComponent<PlayerStatus>() != null)
             {
                 _target.GetComponent<PlayerStatus>().HitChangeMaterials();
             }

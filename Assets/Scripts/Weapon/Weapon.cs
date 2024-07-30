@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 /// <summary>
 /// 근거리, 원거리 무기들이 상속받는 일반화된 무기 클래스
 /// </summary>
-public class Weapon : MonoBehaviour
+public class Weapon : NetworkBehaviour
 {
     public Define.Type Type { get; protected set; } // 무기 타입
 

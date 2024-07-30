@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport.Relay;
+using System.Linq;
 
 public class LobbyManager : MonoBehaviour
 {
@@ -264,8 +265,54 @@ public class LobbyManager : MonoBehaviour
         {
             try
             {
-                // 플레이어 목록에서 제거, 자기 자신 ID 뿐만 아니라 다른 플레이어의 ID도 지정 가능(강퇴 기능 만들 수 있음)
-                // 플레이어가 남아 있으면 남아 있는 플레이어 중 한 명이 호스트 플레이어가 됨
+                Debug.Log("원래 호스트: " + AuthenticationService.Instance.PlayerId + " 가 나가려고 합니다.");
+
+                // 만약 클라이언트들이 접속하고 나서는 갱신 안되었을거니까 해줘야 자기 자신을 제외한 최신의 플레이어 정보를 가진 로비 정보를 가져올 수 있음
+                joinedLobby = await LobbyService.Instance.GetLobbyAsync(joinedLobby.Id);
+
+                // 호스트가 나갈 경우
+                if (joinedLobby.HostId == AuthenticationService.Instance.PlayerId)
+                {
+                    List<Player> remainPlayers = joinedLobby.Players;
+
+                    int cnt = 0;
+                    foreach (Player player in remainPlayers)
+                    {
+                        Debug.Log("남아있는 " + cnt++ + " 번째 클라이언트: " + player.Id);
+                    }
+
+                    if(remainPlayers.Count > 0) // 호스트를 제외한 플레이어가 한 명 이상 있다면
+                    {
+                        Debug.Log("넘겨줄 클라이언트 존재!");
+
+                        Player newHost = remainPlayers.FirstOrDefault(player => player.Id != AuthenticationService.Instance.PlayerId);
+
+                        if(newHost != null)
+                        {
+                            Debug.Log(newHost.Id + " 에게 호스트를 넘겨줍니다.");
+
+                            await LobbyService.Instance.UpdateLobbyAsync(joinedLobby.Id, new UpdateLobbyOptions
+                            {
+                                HostId = newHost.Id
+                            });
+                            Debug.Log("호스트 변경 완료");
+                            Debug.Log("원래 호스트: " + AuthenticationService.Instance.PlayerId + " -> " + "새로운 호스트: " + joinedLobby.HostId);
+
+                            // 일정 시간 대기하여 클라이언트들이 새로운 호스트에게 연결될 시간을 줌
+                            await Task.Delay(2000);
+                        }
+                        else
+                        {
+                            Debug.Log("새로운 호스트를 찾을 수 없음");
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("로비에 남아있는 플레이어가 없음");
+                    }
+                }
+
+                // 새로운 호스트 임명을 시도 후, 플레이어 목록에서 자기 자신 제거 (자기 자신 ID 뿐만 아니라 다른 플레이어의 ID도 지정 가능하므로 강퇴 기능 만들 수 있음)
                 await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId);
                 joinedLobby = null;
             }

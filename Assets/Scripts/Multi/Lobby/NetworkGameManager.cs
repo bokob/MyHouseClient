@@ -1,4 +1,5 @@
 using Unity.Netcode;
+using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -150,12 +151,13 @@ public class NetworkGameManager : NetworkBehaviour
         NetworkManager.Singleton.StartClient();
     }
 
-    private void Network_Client_OnClientConnectedCallback(ulong obj) // 클라이언트가 연결되었을 때 호출
+    private void Network_Client_OnClientConnectedCallback(ulong obj) // 클라이언트가 연결되었을 때 호출 (게임 도중에 입장했을 때도 기능)
     {
         SetUsernameServerRpc(GetUsername());
         if (SceneManager.GetActiveScene().name == "MultiPlayScene")
         {
             //Scoreboard.Instance.ResetScoreboard();
+            Debug.Log("새로운 클라이언트 입장");
         }
     }
     [ServerRpc(RequireOwnership = false)] // 클라이언트가 소유하지 않은 네트워크 오브젝트에서도 이 서버 RPC를 호출할 수 있음을 나타낸다.
@@ -220,7 +222,7 @@ public class NetworkGameManager : NetworkBehaviour
 
     public void LoadGameScene() // 게임 씬 호출
     {
-        LobbyManager.instance.DeleteLobby(); // 게임 중인 방은 로비 목록에 안뜨게 하니까 그냥 지워버린다. (나중에 삭제 안시키고, 다른 유저가 접속할 수 있게 해야 함)
+        // LobbyManager.instance.DeleteLobby(); // 게임 중인 방은 로비 목록에 안뜨게 하니까 그냥 지워버린다. (나중에 삭제 안시키고, 다른 유저가 접속할 수 있게 해야 함), 주석처리 해야 진행 중인 게임 접속 가능
 
         //string map = PlayerPrefs.GetString("ZOMBIES_MAP", "LAB");
         NetworkManager.Singleton.SceneManager.LoadScene("MultiPlayScene", LoadSceneMode.Single);
@@ -236,5 +238,11 @@ public class NetworkGameManager : NetworkBehaviour
             // true는 플레이어 오브젝트를 전역적으로 스폰하겠다는 뜻, 이를 통해 모든 클라이언트가 이 오브젝트를 인식하게 된다.
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
         }
+    }
+
+    public void SpawnPlayer(ulong clientId) // 새로운 플레이어 접속했을 때 호출
+    {
+        GameObject player = Instantiate(playerPrefab);
+        player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
     }
 }

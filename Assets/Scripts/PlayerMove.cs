@@ -82,7 +82,7 @@ public class PlayerMove : NetworkBehaviour
         if (!IsLocalPlayer)
         {
             enabled = false;
-            _controller.enabled = false;
+            // _controller.enabled = false;
             return;
         }
 
