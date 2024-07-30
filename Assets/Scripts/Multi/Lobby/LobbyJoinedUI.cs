@@ -49,7 +49,7 @@ public class LobbyJoinedUI : MonoBehaviour
     public void LeaveLobbyPressed() // 로비 떠나기 버튼 눌렀을 때 호출되는 메서드
     {
         LobbyManager.instance.LeaveLobby();     // 로비 떠나기
-        //NetworkManager.Singleton.ConnectionApprovalCallback = null; // 호스트가 방 만들고 나간 다음, 다시 방을 만들었을 때 오류 안나게 Approval 을 다시 null로 해줌 (혹시 모르니 지우지 말기)
+        // NetworkManager.Singleton.ConnectionApprovalCallback = null; // 호스트가 방 만들고 나간 다음, 다시 방을 만들었을 때 오류 안나게 Approval 을 다시 null로 해줌 (혹시 모르니 지우지 말기)
         NetworkManager.Singleton.Shutdown();    // 네트워크 세션 종료
         DestroyMultiManagers();
         SceneManager.LoadScene("LoadingScene");

@@ -151,7 +151,7 @@ public class NetworkGameManager : NetworkBehaviour
         NetworkManager.Singleton.StartClient();
     }
 
-    private void Network_Client_OnClientConnectedCallback(ulong obj) // 클라이언트가 연결되었을 때 호출 (게임 도중에 입장했을 때 기능)
+    private void Network_Client_OnClientConnectedCallback(ulong obj) // 클라이언트가 연결되었을 때 호출 (게임 도중에 입장했을 때도 기능)
     {
         SetUsernameServerRpc(GetUsername());
         if (SceneManager.GetActiveScene().name == "MultiPlayScene")
