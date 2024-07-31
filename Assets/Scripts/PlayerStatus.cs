@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerStatus : NetworkBehaviour
+public class PlayerStatus : MonoBehaviour
 {
     #region 상태 및 능력치
     [field: SerializeField] public Define.Role Role = Define.Role.None;
@@ -40,7 +39,7 @@ public class PlayerStatus : NetworkBehaviour
 
     void Update()
     {
-        if (!IsLocalPlayer) return;
+        //if (!IsLocalPlayer) return;
 
         Dead();
         TransformIntoHouseowner();
@@ -250,39 +249,39 @@ public class PlayerStatus : NetworkBehaviour
 
 
 
-    void OnTriggerEnter(Collider other)
-    {
-        if (!IsServer) return;
+    //void OnTriggerEnter(Collider other)
+    //{
+    //    if (!IsServer) return;
 
-        //if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
-        //    HitChangeMaterials();
+    //    //if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
+    //    //    HitChangeMaterials();
 
 
-        Debug.Log(NetworkGameManager.instance.GetUsernameFromClientId(OwnerClientId) + "가 맞음");
+    //    Debug.Log(NetworkGameManager.instance.GetUsernameFromClientId(OwnerClientId) + "가 맞음");
 
-        Debug.Log(transform.root.GetComponent<NetworkObject>().OwnerClientId + "가 " + other.transform.root.GetComponent<NetworkObject>().OwnerClientId + "에를 건드림!");
-        // 클라이언트 ID가 달라야 함
-        if (other.gameObject.CompareTag("Melee") && transform.root.GetComponent<NetworkObject>().OwnerClientId != other.transform.root.GetComponent<NetworkObject>().OwnerClientId)
-        {
-            // GetComponent<PlayerStatus>().hp.Value -= 50;
+    //    Debug.Log(transform.root.GetComponent<NetworkObject>().OwnerClientId + "가 " + other.transform.root.GetComponent<NetworkObject>().OwnerClientId + "에를 건드림!");
+    //    // 클라이언트 ID가 달라야 함
+    //    if (other.gameObject.CompareTag("Melee") && transform.root.GetComponent<NetworkObject>().OwnerClientId != other.transform.root.GetComponent<NetworkObject>().OwnerClientId)
+    //    {
+    //        // GetComponent<PlayerStatus>().hp.Value -= 50;
 
-            Debug.Log(transform.root.GetComponent<NetworkObject>().OwnerClientId + "가 " + other.transform.root.GetComponent<NetworkObject>().OwnerClientId + "에게 맞음!");
+    //        Debug.Log(transform.root.GetComponent<NetworkObject>().OwnerClientId + "가 " + other.transform.root.GetComponent<NetworkObject>().OwnerClientId + "에게 맞음!");
 
-            PlayAttackedMaterialsClientRpc();   // 애니메이션 재생하라고 명령
-        }
-    }
+    //        PlayAttackedMaterialsClientRpc();   // 애니메이션 재생하라고 명령
+    //    }
+    //}
 
-    [ServerRpc]
-    void PlayAttackedMaterialsServerRpc()
-    {
-        PlayAttackedMaterialsClientRpc();
-    }
+    //[ServerRpc]
+    //void PlayAttackedMaterialsServerRpc()
+    //{
+    //    PlayAttackedMaterialsClientRpc();
+    //}
 
-    [ClientRpc]
-    void PlayAttackedMaterialsClientRpc()
-    {
-        HitChangeMaterials();
-    }
+    //[ClientRpc]
+    //void PlayAttackedMaterialsClientRpc()
+    //{
+    //    HitChangeMaterials();
+    //}
 
 
 

@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CameraController : NetworkBehaviour
+public class CameraController : MonoBehaviour
 {
     [Header("Cinemachine")]
     GameObject _mainCamera;                     // 메인 카메라
@@ -40,10 +39,10 @@ public class CameraController : NetworkBehaviour
 
     void Start()
     {
-        if (!IsLocalPlayer)
-        {
-            transform.parent.gameObject.SetActive(false); // 카메라 전체 비활성화
-        }
+        //if (!IsLocalPlayer)
+        //{
+        //    transform.parent.gameObject.SetActive(false); // 카메라 전체 비활성화
+        //}
 
         CameraInit();
     }
