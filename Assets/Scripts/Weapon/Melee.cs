@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 
 /// <summary>
@@ -108,47 +107,47 @@ public class Melee : Weapon
         }
     }
 
-    /// <summary>
-    /// 코루틴으로 Collider, TrailRenderer 특정 시간 동안만 활성화
-    /// </summary>
-    IEnumerator MeleeAttackEffect()
-    {
-        yield return new WaitForSeconds(0.5f);
-        SetMeleeAreaServerRpc(true);
-        SetTrailEffectServerRpc(true);
+    ///// <summary>
+    ///// 코루틴으로 Collider, TrailRenderer 특정 시간 동안만 활성화
+    ///// </summary>
+    //IEnumerator MeleeAttackEffect()
+    //{
+    //    yield return new WaitForSeconds(0.5f);
+    //    SetMeleeAreaServerRpc(true);
+    //    SetTrailEffectServerRpc(true);
 
-        yield return new WaitForSeconds(0.5f);
-        SetMeleeAreaServerRpc(false);
+    //    yield return new WaitForSeconds(0.5f);
+    //    SetMeleeAreaServerRpc(false);
 
-        yield return new WaitForSeconds(0.5f);
-        SetTrailEffectServerRpc(false);
-    }
+    //    yield return new WaitForSeconds(0.5f);
+    //    SetTrailEffectServerRpc(false);
+    //}
 
-    [ServerRpc]
-    void SetMeleeAreaServerRpc(bool state)
-    {
-        SetMeleeAreaClientRpc(state); // 서버에서 다른 클라이언트들에게 바꾸라고 명령
-    }
+    //[ServerRpc]
+    //void SetMeleeAreaServerRpc(bool state)
+    //{
+    //    SetMeleeAreaClientRpc(state); // 서버에서 다른 클라이언트들에게 바꾸라고 명령
+    //}
 
-    // punchCollider 상태를 모든 클라이언트에서 설정하는 ClientRpc 메서드
-    [ClientRpc]
-    void SetMeleeAreaClientRpc(bool state)
-    {
-        _meleeArea.enabled = state;
-    }
+    //// punchCollider 상태를 모든 클라이언트에서 설정하는 ClientRpc 메서드
+    //[ClientRpc]
+    //void SetMeleeAreaClientRpc(bool state)
+    //{
+    //    _meleeArea.enabled = state;
+    //}
 
-    [ServerRpc]
-    void SetTrailEffectServerRpc(bool state)
-    {
-        SetTrailEffectClientRpc(state); // 서버에서 다른 클라이언트들에게 바꾸라고 명령
-    }
+    //[ServerRpc]
+    //void SetTrailEffectServerRpc(bool state)
+    //{
+    //    SetTrailEffectClientRpc(state); // 서버에서 다른 클라이언트들에게 바꾸라고 명령
+    //}
 
-    // _trailEffect 상태를 모든 클라이언트에서 설정하는 ClientRpc 메서드
-    [ClientRpc]
-    void SetTrailEffectClientRpc(bool state)
-    {
-        _trailEffet.enabled = state;
-    }
+    //// _trailEffect 상태를 모든 클라이언트에서 설정하는 ClientRpc 메서드
+    //[ClientRpc]
+    //void SetTrailEffectClientRpc(bool state)
+    //{
+    //    _trailEffet.enabled = state;
+    //}
 
 
 

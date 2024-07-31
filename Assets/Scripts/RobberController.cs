@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
 /// 강도 컨트롤러
 /// </summary>
-public class RobberController : NetworkBehaviour
+public class RobberController : MonoBehaviour
 {
     PlayerStatus _playerStatus;
     [SerializeField] NewWeaponManager _weaponManager;
@@ -23,7 +22,7 @@ public class RobberController : NetworkBehaviour
 
     void Update()
     {
-        if (!IsLocalPlayer) return;
+        //if (!IsLocalPlayer) return;
 
         // 시체면 가만히 있게 하기
         if (_playerStatus.Role == Define.Role.None) return;
