@@ -5,6 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
@@ -18,18 +19,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     [Header("LobbyPanel")]
     public GameObject _lobbyPanel;
-    public TextMeshPro _welcomeText;
-    public TextMeshPro _lobbyInfoText;
-    public GameObject _roomListUI;
-    public GameObject _roomListItemUI;    // 방 (방 목록에 표시되는 게임 방)
-    List<RoomInfo> cacheRoomList = new List<RoomInfo>(); // 방 정보 모아둘 리스트
+    public TextMeshPro _lobbyInfoText;    // 로비 상태 보여줄 UI(몇 명이 로비에 있는지, 몇 명이 MyHouse에 접속했는지)
+    public GameObject _roomListUI;        // 방 목록(방들 표시되는 곳을 가리킴)
+    public GameObject _roomListItemUI;    // 방 (방 목록에 표시되는 게임 방을 가리킴)
+    List<RoomInfo> _cacheRoomList = new List<RoomInfo>(); // 방 정보 모아둘 리스트
 
 
     [Header("RoomPanel")]
     public GameObject _roomPanel;
-    public TextMeshPro _roomName; // 방 제목
-    public TextMeshPro ListText;
-    public TextMeshPro _roomInfoText;
+    public TextMeshPro _roomName;       // 방 제목
+    public TextMeshPro _roomInfoText;   // 방 정보 보여줄 UI
+    public GameObject[] _roomPlayers;     // 방에 접속한 플레이어 나타내는 UI
+    List<Player> _cachePlayerList = new List<Player>(); // 방 정보 모아둘 리스트
 
     // 채팅 관련
     public GameObject _chatListUI;
@@ -83,9 +84,15 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         //_lobbyPanel.SetActive(true);
         //_roomPanel.SetActive(false);
+
+        if(string.IsNullOrWhiteSpace(_nickNameInput.text))  // 아무것도 입력되어 있지 않은 경우
+        {
+            _nickNameInput.text = UnityEngine.Random.Range(100, 1000).ToString(); // 숫자를 랜덤으로 부여
+        }
+
         PhotonNetwork.LocalPlayer.NickName = _nickNameInput.text;
-        Debug.Log(PhotonNetwork.LocalPlayer.NickName + " 님 로비에 접속했습니다.");
-        cacheRoomList.Clear();
+        Debug.Log(PhotonNetwork.LocalPlayer.NickName + " 님이 로비에 접속했습니다.");
+        _cacheRoomList.Clear();
     }
 
     // 포톤 서버 연결 끊기
@@ -109,7 +116,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public void CreateRoom()
     {
         // 방 생성
-        PhotonNetwork.CreateRoom(_roomName.text = "Room" + UnityEngine.Random.Range(100, 1000).ToString(), new RoomOptions { // 방 옵션
+        PhotonNetwork.CreateRoom(_roomName.text = "Room " + UnityEngine.Random.Range(100, 1000).ToString(), new RoomOptions { // 방 옵션
             MaxPlayers = 4,     // 최대 인원 수
             EmptyRoomTtl = 0    // 방이 비어 있을 때 즉시 삭제  
         });
@@ -135,9 +142,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         Debug.Log( PhotonNetwork.CurrentRoom.Name + " 에 참가합니다.");
         //RoomPanel.SetActive(true);
-        //RoomRenewal();
-        //ChatInput.text = "";
-        //for (int i = 0; i < ChatText.Length; i++) ChatText[i].text = "";
+        _cachePlayerList.Clear();
+        UpdateUserInRoomUI();
     }
 
     //// 로컬 플레이어가 방을 나갔을 때, 호출
@@ -165,27 +171,67 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     // 방에 입장했을 때, 안에 있던 모두에게 전달
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        RoomRenewal();
         ChatRPC("<color=yellow>" + newPlayer.NickName + "님이 참가하셨습니다</color>");
+
+
+        UpdateUserInRoomUI();
     }
 
     // 방을 떠날 때, 안에 있던 모두에게 전달
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        Debug.Log("여러분 " + PhotonNetwork.CurrentRoom.Name + "님이 퇴장한다고 합니다.");
-        RoomRenewal();
         ChatRPC("<color=yellow>" + otherPlayer.NickName + "님이 퇴장하셨습니다</color>");
+        UpdateUserInRoomUI();
     }
 
-    void RoomRenewal()
-    {        
-        for(int i=0; i<PhotonNetwork.PlayerList.Length;i++)
+    void UpdateUserInRoomUI() // 방 인원에 맞게 UI 업데이트
+    {
+        Player[] playerList = PhotonNetwork.PlayerList; // 현재 방에 있는 모든 플레이어 목록 가져오기
+        int playerCount = playerList.Length;
+
+        for (int i = 0; i < playerCount; i++)
         {
-            Debug.Log(PhotonNetwork.PlayerList[i].NickName);
-        }
-        Debug.Log("이상");
-    }
+            Player player = playerList[i];
 
+            if (!_cachePlayerList.Contains(player))
+            {
+                _cachePlayerList.Add(player);
+                Debug.Log("Player added: " + player.NickName);
+            }
+            else
+            {
+                // 필요한 경우 기존 플레이어 정보 업데이트
+                int index = _cachePlayerList.IndexOf(player);
+                _cachePlayerList[index] = player;
+                Debug.Log("Player updated: " + player.NickName);
+            }
+        }
+
+        // 리스트에 있는 플레이어 중 방에 없는 플레이어 제거
+        for (int i = _cachePlayerList.Count - 1; i >= 0; i--)
+        {
+            if (System.Array.IndexOf(playerList, _cachePlayerList[i]) == -1)
+            {
+                Debug.Log("Player removed: " + _cachePlayerList[i].NickName);
+                _cachePlayerList.RemoveAt(i);
+            }
+        }
+        
+        // 플레이어 정보 UI에 업데이트
+        for (int i=0; i< 4; i++)
+        {
+            if (i < _cachePlayerList.Count)
+            {
+                _roomPlayers[i].SetActive(true);
+                _roomPlayers[i].transform.GetChild(0).GetComponent<TextMeshPro>().text = PhotonNetwork.PlayerList[i].NickName;
+                Debug.Log(_cachePlayerList[i].NickName + "의 UI 활성화");
+            }
+            else
+            {
+                _roomPlayers[i].SetActive(false);
+            }
+        }
+    }
 
     /// <summary>
     /// 방 버튼 눌러서 입장
@@ -210,7 +256,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     #endregion
 
     #region 방리스트 갱신
-
     public override void OnRoomListUpdate(List<RoomInfo> roomList) // 방 목록이 바귀면 호출되는 콜백
     {
         int roomCount = roomList.Count;
@@ -219,14 +264,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         {
             if (!roomList[i].RemovedFromList)
             {
-                if (!cacheRoomList.Contains(roomList[i])) cacheRoomList.Add(roomList[i]);
-                else cacheRoomList[cacheRoomList.IndexOf(roomList[i])] = roomList[i];
+                if (!_cacheRoomList.Contains(roomList[i])) _cacheRoomList.Add(roomList[i]);
+                else _cacheRoomList[_cacheRoomList.IndexOf(roomList[i])] = roomList[i];
             }
-            else if (cacheRoomList.IndexOf(roomList[i]) != -1) cacheRoomList.RemoveAt(cacheRoomList.IndexOf(roomList[i]));
+            else if (_cacheRoomList.IndexOf(roomList[i]) != -1) _cacheRoomList.RemoveAt(_cacheRoomList.IndexOf(roomList[i]));
         }
         UpdateRoomListUI();
     }
-
 
     void UpdateRoomListUI() // 방 목록 UI 업데이트
     {
@@ -237,15 +281,13 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         }
 
         // 방 UI 생성
-        foreach (RoomInfo room in cacheRoomList)
+        foreach (RoomInfo room in _cacheRoomList)
         {
             GameObject _room = Instantiate(_roomListItemUI, _roomListUI.transform);   // 방 템플릿 복제해서 실제 방 UI 생성
             _room.SetActive(true);
             _room.GetComponent<RoomListItemUI>().SetRoom(room); // 각 로비 UI에 실제 로비 데이터 설정
         }
     }
-
-
     #endregion
 
     #region 채팅
@@ -254,24 +296,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         PV.RPC("ChatRPC", RpcTarget.All, PhotonNetwork.NickName + " : " + _chatInput.text); // 방에 있는 모두에게 명령
         _chatInput.text = "";
     }
-
-    //[PunRPC] // RPC는 플레이어가 속해있는 방 모든 인원에게 전달한다
-    //void ChatRPC(string msg)
-    //{
-    //    bool isInput = false;
-    //    for (int i = 0; i < ChatText.Length; i++)
-    //        if (ChatText[i].text == "")
-    //        {
-    //            isInput = true;
-    //            ChatText[i].text = msg;
-    //            break;
-    //        }
-    //    if (!isInput) // 꽉차면 한칸씩 위로 올림
-    //    {
-    //        for (int i = 1; i < ChatText.Length; i++) ChatText[i - 1].text = ChatText[i].text;
-    //        ChatText[ChatText.Length - 1].text = msg;
-    //    }
-    //}
 
     [PunRPC] // RPC는 플레이어가 속해있는 방 모든 인원에게 전달한다
     void ChatRPC(string msg)
