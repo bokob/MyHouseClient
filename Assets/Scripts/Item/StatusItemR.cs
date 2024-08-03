@@ -10,7 +10,7 @@ public class StatusItemR : Item
     [SerializeField]
     float _pickupRange;
     [SerializeField]
-    float _fadeDuration = 0.2f; // 사라지는 시간
+    float _fadeDuration = 0f; // 사라지는 시간
     [SerializeField]
     float _respawnTime = 30.0f; // 재생성 시간
     Renderer renderer;
