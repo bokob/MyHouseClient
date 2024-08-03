@@ -1,13 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class NewWeaponManager : MonoBehaviour
+public class WeaponManager_S : MonoBehaviour
 {
     PlayerInputs _playerInputs;
-    PlayerStatus _playerStatus;
+    PlayerStatus_S _playerStatus;
 
     [Tooltip("���� ��ȯ �� ���� �ð��� ����")]
     public float _switchDelay = 1f;
@@ -24,7 +22,7 @@ public class NewWeaponManager : MonoBehaviour
     void Awake()
     {
         _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
-        _playerStatus = transform.root.GetChild(2).GetComponent<PlayerStatus>();
+        _playerStatus = transform.root.GetChild(2).GetComponent<PlayerStatus_S>();
     }
 
     void Start()
@@ -119,11 +117,11 @@ public class NewWeaponManager : MonoBehaviour
     {
         if(_selectedWeapon.tag == "Melee")
         {
-            _selectedWeapon.GetComponent<Melee>().Use();
+            _selectedWeapon.GetComponent<Melee_S>().Use();
         }
         else if(_selectedWeapon.tag == "Gun")
         {
-            _selectedWeapon.GetComponent<Gun>().Use();
+            _selectedWeapon.GetComponent<Gun_S>().Use();
         }
         else
         {
