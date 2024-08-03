@@ -6,24 +6,27 @@ using UnityEngine.SceneManagement;
 
 namespace SlimUI.ModernMenu{
 	public class UIMenuManager : MonoBehaviour {
+
+		public static UIMenuManager _instance;
+
 		private Animator CameraObject;
 
 		// campaign button sub menu
         [Header("MENUS")]
         [Tooltip("The Menu for when the MAIN menu buttons")]
-        public GameObject mainMenu;		// 모든 메뉴를 갖고 있는 상위 메뉴
+        public GameObject mainMenu;		// 모든 메뉴를 갖고 있는 상위 메뉴 (Camera, Canv_Main, Canv_Options, Canv_Lobby, Canv_Room)
         [Tooltip("THe first list of buttons")]
-        public GameObject firstMenu;	// 게임 실행 시 처음 보이는 메뉴
+        public GameObject firstMenu;	// 게임 실행 시 처음 보이는 메뉴(Play, Settings, Developers, Exit 버튼들 보이는 것들)
         [Tooltip("The Menu for when the PLAY button is clicked")]
         public GameObject playMenu;		// 싱글, 멀티 플레이 버튼
-		[Tooltip("멀티 플레이 버튼 클릭 시 메뉴")]
-		public GameObject lobbyMenu;	// 로비 메뉴
+		[Tooltip("멀티 플레이 버튼 클릭 시 나오는 로비 메뉴")]
+		public GameObject lobbyMenu;	// 로비 메뉴(Canv_Lobby)
         [Tooltip("설정 메뉴")]
-        public GameObject settingsMenu; // 설정 메뉴
-        [Tooltip("The Menu for when the EXIT button is clicked")]
-        public GameObject exitMenu;
+        public GameObject settingsMenu; // 설정 메뉴(Canv_Options)
         [Tooltip("개발자 표시되어 있는 메뉴")]
         public GameObject developersMenu;
+        [Tooltip("The Menu for when the EXIT button is clicked")]
+        public GameObject exitMenu;	// 종료 버튼 눌렀을 때 나오는 버튼
 
         public enum Theme {custom1, custom2, custom3};
         [Header("THEME SETTINGS")]
@@ -85,7 +88,10 @@ namespace SlimUI.ModernMenu{
         public AudioSource swooshSound;
 
 		void Start(){
-			CameraObject = transform.GetComponent<Animator>();
+
+			_instance = this;
+
+            CameraObject = transform.GetComponent<Animator>();
 
 			playMenu.SetActive(false);
 			exitMenu.SetActive(false);
@@ -121,13 +127,15 @@ namespace SlimUI.ModernMenu{
 			}
 		}
 
-		public void PlayCampaign(){
+        // 첫 화면에서 Play 버튼 눌렀을 때 실행
+        public void PlayCampaign()
+		{
 			exitMenu.SetActive(false);
 			if(developersMenu) developersMenu.SetActive(false);
 			playMenu.SetActive(true);
 		}
 
-		public void LobbyMenu() // 로비 메뉴로 전환
+		public void LobbyMenu() // 로비 메뉴로 전환할 때 다른 UI 비활성화
 		{
             if (settingsMenu.activeSelf)
                 settingsMenu.SetActive(false);
@@ -160,24 +168,72 @@ namespace SlimUI.ModernMenu{
 			}
 		}
 
-		public void  DisablePlayCampaign(){
+		#region 메뉴 비활성화
+		// 플레이 버튼들 비활성화
+		public void DisablePlayCampaign()
+		{
 			playMenu.SetActive(false);
 		}
 
-		public void DisableLobbyMenu(){
+		// 로비 스크린 비활성화
+		public void DisableLobbyMenu()
+		{
 			lobbyMenu.SetActive(false);
 		}
 
-		public void Position2(){
+		//// 방 스크린 비활성화
+		//public void DisableRoomMenu()
+		//{
+		//	lobbyMenu.SetActive(false);
+		//}
+
+		//public void DisableLobbyMenu()
+		//{
+		//	lobbyMenu.SetActive(false);
+		//}
+
+		//public void DisableLobbyMenu()
+		//{
+		//	lobbyMenu.SetActive(false);
+		//}
+		#endregion
+
+		#region 카메라 애니메이션
+		public void MainToLobbyCamPos(){ // 메인에서 로비로 이동
+            CameraObject.SetInteger("Animate", 1);
+		}
+
+		public void LobbyToMainCamPos(){ // 로비에서 메인으로 이동
 			DisablePlayCampaign();
-			CameraObject.SetFloat("Animate",1);
+			CameraObject.SetInteger("Animate",2);
 		}
 
-		public void Position1(){
-            CameraObject.SetFloat("Animate",0);
-		}
+        public void LobbyToRoomCamPos() // 로비에서 방으로 이동
+        {
+            DisablePlayCampaign();
+            CameraObject.SetInteger("Animate", 3);
+        }
 
-		void DisablePanels(){
+        public void RoomToLobbyCamPos() // 방에서 로비로 이동
+        {
+            DisablePlayCampaign();
+            CameraObject.SetInteger("Animate", 4);
+        }
+
+        public void MainToSettingCamPos() // 메인에서 설정으로 이동
+        {
+            DisablePlayCampaign();
+            CameraObject.SetInteger("Animate", 5);
+        }
+        public void SettingToMainCamPos() // 설정에서 메인으로 이동
+        {
+            DisablePlayCampaign();
+            CameraObject.SetInteger("Animate", 6);
+        }
+        #endregion
+
+
+        void DisablePanels(){
 			PanelControls.SetActive(false);
 			PanelVideo.SetActive(false);
 			PanelGame.SetActive(false);

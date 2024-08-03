@@ -1,4 +1,3 @@
-using Unity.Netcode;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
@@ -8,7 +7,7 @@ using static UnityEngine.UIElements.UxmlAttributeDescription;
 /// <summary>
 /// 집주인 고유의 기능만 존재
 /// </summary>
-public class HouseownerController : NetworkBehaviour
+public class HouseownerController : MonoBehaviour
 {
     PlayerStatus _playerStatus;
     [SerializeField] NewWeaponManager _weaponManager;
@@ -25,7 +24,7 @@ public class HouseownerController : NetworkBehaviour
     }
     void Update()
     {
-        if (!IsLocalPlayer) return;
+        // if (!IsLocalPlayer) return;
 
         // 시체면 가만히 있게 하기
         if (_playerStatus.Role == Define.Role.None) return;

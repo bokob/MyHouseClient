@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
 using UnityEngine.InputSystem;
 using Cinemachine;
 
-public class PlayerMove : NetworkBehaviour
+public class PlayerMove : MonoBehaviour
 {
     public float _moveSpeed = 2.0f;      // 움직임 속도
     public float _sprintSpeed = 5.335f;  // 달리기 속도
@@ -74,23 +73,23 @@ public class PlayerMove : NetworkBehaviour
 #endif
     }
 
-    public override void OnNetworkSpawn()
-    {
-        base.OnNetworkSpawn();
+    //public override void OnNetworkSpawn()
+    //{
+    //    base.OnNetworkSpawn();
 
-        enabled = IsLocalPlayer;
-        if (!IsLocalPlayer)
-        {
-            enabled = false;
-            _controller.enabled = false;
-            return;
-        }
+    //    enabled = IsLocalPlayer;
+    //    if (!IsLocalPlayer)
+    //    {
+    //        enabled = false;
+    //        // _controller.enabled = false;
+    //        return;
+    //    }
 
-        // player input is only enabled on owning players
-        _playerInput.enabled = true;
+    //    // player input is only enabled on owning players
+    //    _playerInput.enabled = true;
 
-        _controller.enabled = true;
-    }
+    //    _controller.enabled = true;
+    //}
 
 
     // Start is called before the first frame update
@@ -116,7 +115,7 @@ public class PlayerMove : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!IsLocalPlayer) return;
+        //if (!IsLocalPlayer) return;
 
         GroundedCheck();    // 지면체크
         JumpAndGravity();   // 점프
@@ -199,7 +198,7 @@ public class PlayerMove : NetworkBehaviour
         }
         else
         {
-            Debug.Log(OwnerClientId + "가 움직이고 있어요");
+            //Debug.Log(OwnerClientId + "가 움직이고 있어요");
         }
 
         Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;

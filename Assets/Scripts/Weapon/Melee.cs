@@ -78,7 +78,6 @@ public class Melee : Weapon
             // 공격속도가 공격 딜레이보다 작으면 공격준비 완료
             //_isSwingReady = _weaponManager._selectedWeapon.GetComponent<Melee>().Rate < _swingDelay;
             //_isStabReady = _weaponManager._selectedWeapon.GetComponent<Melee>().Rate < _stabDelay;
-
             if (_playerInputs.swing && _playerMove._grounded) // 휘두르기
             {
                 Debug.Log("휘두르기");
@@ -94,6 +93,7 @@ public class Melee : Weapon
                 _stabDelay = 0;
 
             }
+
             _playerInputs.swing = false;
             _playerInputs.stap = false;
 
@@ -107,24 +107,52 @@ public class Melee : Weapon
         }
     }
 
-    /// <summary>
-    /// 코루틴으로 Collider, TrailRenderer 특정 시간 동안만 활성화
-    /// </summary>
-    IEnumerator MeleeAttackEffect()
-    {
-        yield return new WaitForSeconds(0.5f);
-        _meleeArea.enabled = true;
-        _trailEffet.enabled = true;
+    ///// <summary>
+    ///// 코루틴으로 Collider, TrailRenderer 특정 시간 동안만 활성화
+    ///// </summary>
+    //IEnumerator MeleeAttackEffect()
+    //{
+    //    yield return new WaitForSeconds(0.5f);
+    //    SetMeleeAreaServerRpc(true);
+    //    SetTrailEffectServerRpc(true);
 
-        yield return new WaitForSeconds(0.5f);
-        _meleeArea.enabled = false;
+    //    yield return new WaitForSeconds(0.5f);
+    //    SetMeleeAreaServerRpc(false);
 
-        yield return new WaitForSeconds(0.5f);
-        _trailEffet.enabled = false;
-    }
+    //    yield return new WaitForSeconds(0.5f);
+    //    SetTrailEffectServerRpc(false);
+    //}
+
+    //[ServerRpc]
+    //void SetMeleeAreaServerRpc(bool state)
+    //{
+    //    SetMeleeAreaClientRpc(state); // 서버에서 다른 클라이언트들에게 바꾸라고 명령
+    //}
+
+    //// punchCollider 상태를 모든 클라이언트에서 설정하는 ClientRpc 메서드
+    //[ClientRpc]
+    //void SetMeleeAreaClientRpc(bool state)
+    //{
+    //    _meleeArea.enabled = state;
+    //}
+
+    //[ServerRpc]
+    //void SetTrailEffectServerRpc(bool state)
+    //{
+    //    SetTrailEffectClientRpc(state); // 서버에서 다른 클라이언트들에게 바꾸라고 명령
+    //}
+
+    //// _trailEffect 상태를 모든 클라이언트에서 설정하는 ClientRpc 메서드
+    //[ClientRpc]
+    //void SetTrailEffectClientRpc(bool state)
+    //{
+    //    _trailEffet.enabled = state;
+    //}
+
+
 
     // 칼이 트리거 안에 있을 때
-    // 를 false로 설정
+    // _hasExited를 false로 설정
     void OnTriggerEnter(Collider other)
     {
         _hasExited = false;
