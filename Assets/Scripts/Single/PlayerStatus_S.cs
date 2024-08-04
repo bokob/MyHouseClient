@@ -22,8 +22,13 @@ public class PlayerStatus_S : MonoBehaviour
 
     [Header("EndUI")]
     public int score = 0;
+    public float endTime = 5f;
     public GameObject endUI;
     public TextMeshProUGUI endText;
+    public TextMeshProUGUI quitText;
+    public MonsterController_S mController;
+
+    bool _dead;
     
 
     void Awake()
@@ -54,6 +59,11 @@ public class PlayerStatus_S : MonoBehaviour
     {
         Dead();
         //TransformIntoHouseowner();
+        if(_dead)
+        {
+            endTime -= Time.deltaTime;
+            quitText.text = Mathf.FloorToInt(endTime) + " seconds to quit.";
+        }
     }
 
     /// <summary>
@@ -194,27 +204,28 @@ public class PlayerStatus_S : MonoBehaviour
     {
         if (Role != Define.Role.None && Hp <= 0)
         {
+            score = mController._score;
             endUI.SetActive(true);
-            endText.text = score.ToString();
+            endText.text = "Killed Ghost : " + score.ToString();
             _animator.SetTrigger("setDie");
+            _dead = true;
             Role = Define.Role.None; // 시체
             StartCoroutine(DeadSinkCoroutine());
         }
     }
 
     /// <summary>
-    /// 시체 바닥으로 가라앉기
+    /// 게임 끝내기
     /// </summary>
     /// <returns></returns>
     IEnumerator DeadSinkCoroutine()
     {
-        yield return new WaitForSeconds(3f);
-        while (transform.position.y > -1.5f)
-        {
-            transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
-            yield return null;
-        }
-        Destroy(gameObject);
+        yield return new WaitForSeconds(5f);
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     /// <summary>

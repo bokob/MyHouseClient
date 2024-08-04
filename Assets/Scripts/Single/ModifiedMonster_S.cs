@@ -62,11 +62,11 @@ public class ModifiedMonster_S : MonoBehaviour
         Debug.Log("시작");
         _anim = GetComponent<Animator>();
         _nmAgent = GetComponent<NavMeshAgent>();
-        //_mContoller = transform.parent.GetComponent<MonsterController_S>();
+        _mContoller = transform.parent.parent.GetComponent<MonsterController_S>();
         _centerPoint = transform;
         _status = GetComponent<MonsterStatus_S>();
         _status.Hp = Hp;
-        //_mContoller._monsterCount += 1;
+        _mContoller._monsterCount += 1;
         
 
         // 하위의 모든 매터리얼 구하기
@@ -377,7 +377,8 @@ public class ModifiedMonster_S : MonoBehaviour
         if (_state != Define.MonsterState.None && _status.Hp <= 0)
         {
             _isDead = true;
-            //_monsterCount -= 1;
+            _mContoller._monsterCount -= 1;
+            _mContoller._score += 1;
             _nmAgent.ResetPath();
             _anim.Play("Die", 0, 0);
             _state = Define.MonsterState.None; // 시체

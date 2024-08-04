@@ -265,5 +265,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4deacc5788fb8724e81b2c7f6daeb095, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Hp>k__BackingField: 100
-  <MaxHp>k__BackingField: 100
+  <Hp>k__BackingField: 10
+  <MaxHp>k__BackingField: 10
