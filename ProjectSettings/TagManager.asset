@@ -7,6 +7,8 @@ TagManager:
   - Hand
   - Melee
   - Gun
+  - Bullet
+  - Monster
   layers:
   - Default
   - TransparentFX
