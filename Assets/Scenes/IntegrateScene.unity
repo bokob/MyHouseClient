@@ -8100,10 +8100,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65536
   _cutForce: 250
-  _testCollider:
-    m_InternalValue: {fileID: 0}
-  _testEffect:
-    m_InternalValue: {fileID: 0}
 --- !u!65 &797195638
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -19507,10 +19503,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65536
   _cutForce: 250
-  _testCollider:
-    m_InternalValue: {fileID: 0}
-  _testEffect:
-    m_InternalValue: {fileID: 0}
 --- !u!65 &1913834452
 BoxCollider:
   m_ObjectHideFlags: 0
