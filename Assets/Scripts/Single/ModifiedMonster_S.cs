@@ -10,13 +10,10 @@ public class ModifiedMonster_S : MonoBehaviour
     [SerializeField]
     private IObjectPool<ModifiedMonster_S> _managedPool;
 
-    public delegate void MonsterDiedHandler(ModifiedMonster_S monster);
-    public event MonsterDiedHandler OnMonsterDied;
-
     NavMeshAgent _nmAgent;
     Animator _anim;
     MonsterStatus_S _status;
-    //MonsterController_S _mContoller;
+    MonsterController_S _mContoller;
 
     // 순찰 관련
     public Transform _centerPoint;  // 순찰 위치 정할 기준점
@@ -24,7 +21,7 @@ public class ModifiedMonster_S : MonoBehaviour
     public float _patrolSpeed = 1f; // 순찰 속도
 
     // 상태 관련
-    public float Hp { get; private set; } = 300f;                   // 체력
+    public float Hp { get; private set; } = 100f;                   // 체력
     public int _attack { get; private set; } = 30;                   // 공격력
     public Define.MonsterState _state = Define.MonsterState.Patrol; // 현재 상태
     public bool _isDead = false;
@@ -330,7 +327,6 @@ public class ModifiedMonster_S : MonoBehaviour
 
     public void HitChangeMaterials(Collider other)
     {
-        // 태그가 무기 또는 몬스터
         if (other.tag == "Melee" || other.tag == "Gun")
         {
             for (int i = 0; i < _renderers.Count; i++)
@@ -360,7 +356,7 @@ public class ModifiedMonster_S : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (_state == Define.MonsterState.None) return;
+        //if (_state == Define.MonsterState.None) return;
 
         // 태그가 무기 태그인 경우
         if (other.tag == "Melee" || other.tag == "Gun")
@@ -386,11 +382,6 @@ public class ModifiedMonster_S : MonoBehaviour
             _anim.Play("Die", 0, 0);
             _state = Define.MonsterState.None; // 시체
             StartCoroutine(DeadSinkCoroutine());
-        }
-
-        if (OnMonsterDied != null)
-        {
-            OnMonsterDied(this);
         }
 
         _managedPool.Release(this);

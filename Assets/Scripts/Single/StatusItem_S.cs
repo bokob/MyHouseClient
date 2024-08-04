@@ -52,6 +52,10 @@ public class StatusItem_S : Item_S
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.tag == "Monster")
+        {
+            return;
+        }
         Debug.Log("아이템이 사정거리 안에 존재");
         PickUp(other);
     }
