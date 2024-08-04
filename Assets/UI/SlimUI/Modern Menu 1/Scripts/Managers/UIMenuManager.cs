@@ -11,7 +11,8 @@ namespace SlimUI.ModernMenu{
 
 		private Animator CameraObject;
 
-		// campaign button sub menu
+        #region 메인 화면 관련 변수
+        // campaign button sub menu
         [Header("MENUS")]
         [Tooltip("The Menu for when the MAIN menu buttons")]
         public GameObject mainMenu;		// 모든 메뉴를 갖고 있는 상위 메뉴 (Camera, Canv_Main, Canv_Options, Canv_Lobby, Canv_Room)
@@ -26,23 +27,35 @@ namespace SlimUI.ModernMenu{
         [Tooltip("개발자 표시되어 있는 메뉴")]
         public GameObject developersMenu;
         [Tooltip("The Menu for when the EXIT button is clicked")]
-        public GameObject exitMenu;	// 종료 버튼 눌렀을 때 나오는 버튼
+        public GameObject exitMenu; // 종료 버튼 눌렀을 때 나오는 버튼
+		#endregion
 
+		[Header("RESPONSE")]
+		[Tooltip("메인 화면 응답 문구")]
+		public GameObject responseMain;
+        [Tooltip("로비 화면 응답 문구")]
+        public GameObject responseLobby;
+        [Tooltip("메인 화면 응답 문구")]
+        public GameObject responseRoom;
+
+        #region UI 테마 색
         public enum Theme {custom1, custom2, custom3};
         [Header("THEME SETTINGS")]
         public Theme theme;
         private int themeIndex;
         public ThemedUIData themeController;
+        #endregion
 
+        #region Settings 스크린에서의 패널 변수
         [Header("PANELS")]
         [Tooltip("The UI Panel parenting all sub menus")]
         public GameObject mainCanvas;
+        [Tooltip("The UI Panel that holds the GAME window tab")]
+        public GameObject PanelGame;
         [Tooltip("The UI Panel that holds the CONTROLS window tab")]
         public GameObject PanelControls;
         [Tooltip("The UI Panel that holds the VIDEO window tab")]
         public GameObject PanelVideo;
-        [Tooltip("The UI Panel that holds the GAME window tab")]
-        public GameObject PanelGame;
         [Tooltip("The UI Panel that holds the KEY BINDINGS window tab")]
         public GameObject PanelKeyBindings;
         [Tooltip("The UI Sub-Panel under KEY BINDINGS for MOVEMENT")]
@@ -51,16 +64,16 @@ namespace SlimUI.ModernMenu{
         public GameObject PanelCombat;
         [Tooltip("The UI Sub-Panel under KEY BINDINGS for GENERAL")]
         public GameObject PanelGeneral;
-        
+        #endregion
 
-        // highlights in settings screen
+        #region Settings 스크린에서의 하이라이트 변수
         [Header("SETTINGS SCREEN")]
         [Tooltip("Highlight Image for when GAME Tab is selected in Settings")]
         public GameObject lineGame;
-        [Tooltip("Highlight Image for when VIDEO Tab is selected in Settings")]
-        public GameObject lineVideo;
         [Tooltip("Highlight Image for when CONTROLS Tab is selected in Settings")]
         public GameObject lineControls;
+        [Tooltip("Highlight Image for when VIDEO Tab is selected in Settings")]
+        public GameObject lineVideo;
         [Tooltip("Highlight Image for when KEY BINDINGS Tab is selected in Settings")]
         public GameObject lineKeyBindings;
         [Tooltip("Highlight Image for when MOVEMENT Sub-Tab is selected in KEY BINDINGS")]
@@ -69,7 +82,9 @@ namespace SlimUI.ModernMenu{
         public GameObject lineCombat;
         [Tooltip("Highlight Image for when GENERAL Sub-Tab is selected in KEY BINDINGS")]
         public GameObject lineGeneral;
+        #endregion
 
+        #region Loading 스크린 관련 변수
         [Header("LOADING SCREEN")]
 		[Tooltip("If this is true, the loaded scene won't load until receiving user input")]
 		public bool waitForInput = true;
@@ -78,16 +93,19 @@ namespace SlimUI.ModernMenu{
         public Slider loadingBar;
         public TMP_Text loadPromptText;
 		public KeyCode userPromptKey;
+        #endregion
 
-		[Header("SFX")]
+        #region UI 효과
+        [Header("SFX")]
         [Tooltip("The GameObject holding the Audio Source component for the HOVER SOUND")]
         public AudioSource hoverSound;
         [Tooltip("The GameObject holding the Audio Source component for the AUDIO SLIDER")]
         public AudioSource sliderSound;
         [Tooltip("The GameObject holding the Audio Source component for the SWOOSH SOUND when switching to the Settings Screen")]
         public AudioSource swooshSound;
+        #endregion
 
-		void Start(){
+        void Start(){
 
 			_instance = this;
 
@@ -102,7 +120,10 @@ namespace SlimUI.ModernMenu{
 			SetThemeColors();
 		}
 
-		void SetThemeColors()
+        /// <summary>
+        /// // UI 테마 색 설정
+        /// </summary>
+        void SetThemeColors()
 		{
 			switch (theme)
 			{
@@ -127,7 +148,9 @@ namespace SlimUI.ModernMenu{
 			}
 		}
 
-        // 첫 화면에서 Play 버튼 눌렀을 때 실행
+        /// <summary>
+		/// 첫 화면에서 Play 버튼 눌렀을 때 실행
+		/// </summary>
         public void PlayCampaign()
 		{
 			exitMenu.SetActive(false);
@@ -135,7 +158,10 @@ namespace SlimUI.ModernMenu{
 			playMenu.SetActive(true);
 		}
 
-		public void LobbyMenu() // 로비 메뉴로 전환할 때 다른 UI 비활성화
+        /// <summary>
+		/// 로비 메뉴로 전환할 때 다른 UI 비활성화
+		/// </summary>
+        public void LobbyMenu()
 		{
             if (settingsMenu.activeSelf)
                 settingsMenu.SetActive(false);
@@ -145,7 +171,10 @@ namespace SlimUI.ModernMenu{
             lobbyMenu.SetActive(true);
         }
 
-        public void SettingsMenu() // 설정 메뉴로 전환
+        /// <summary>
+		/// 설정 메뉴로 전환
+		/// </summary>
+        public void SettingsMenu()
         {
             if (lobbyMenu.activeSelf)
                 lobbyMenu.SetActive(false);
@@ -180,22 +209,6 @@ namespace SlimUI.ModernMenu{
 		{
 			lobbyMenu.SetActive(false);
 		}
-
-		//// 방 스크린 비활성화
-		//public void DisableRoomMenu()
-		//{
-		//	lobbyMenu.SetActive(false);
-		//}
-
-		//public void DisableLobbyMenu()
-		//{
-		//	lobbyMenu.SetActive(false);
-		//}
-
-		//public void DisableLobbyMenu()
-		//{
-		//	lobbyMenu.SetActive(false);
-		//}
 		#endregion
 
 		#region 카메라 애니메이션
@@ -233,6 +246,7 @@ namespace SlimUI.ModernMenu{
         #endregion
 
 
+        #region Settings 스크린에서의 UI 활성/비활성화 함수
         void DisablePanels(){
 			PanelControls.SetActive(false);
 			PanelVideo.SetActive(false);
@@ -297,8 +311,10 @@ namespace SlimUI.ModernMenu{
 			PanelGeneral.SetActive(true);
 			lineGeneral.SetActive(true);
 		}
+        #endregion
 
-		public void PlayHover(){
+        #region UI 효과 함수
+        public void PlayHover(){
 			hoverSound.Play();
 		}
 
@@ -309,20 +325,29 @@ namespace SlimUI.ModernMenu{
 		public void PlaySwoosh(){
 			swooshSound.Play();
 		}
+        #endregion
 
-		// Are You Sure - Quit Panel Pop Up
-		public void AreYouSure(){
+        /// <summary>
+		/// Exit 눌렀을 때 종료할건지 물어보는 함수
+		/// </summary>
+        public void AreYouSure(){
 			exitMenu.SetActive(true);
 			if(developersMenu) developersMenu.SetActive(false);
 			DisablePlayCampaign();
 		}
 
-		public void ExtrasMenu(){
+		/// <summary>
+		/// Developers 눌렀을 때 개발자들 나오는 함수
+		/// </summary>
+		public void DevelopersMenu(){
 			playMenu.SetActive(false);
 			if(developersMenu) developersMenu.SetActive(true);
 			exitMenu.SetActive(false);
 		}
 
+		/// <summary>
+		/// 게임 종료
+		/// </summary>
 		public void QuitGame(){
 			#if UNITY_EDITOR
 				UnityEditor.EditorApplication.isPlaying = false;
@@ -356,5 +381,33 @@ namespace SlimUI.ModernMenu{
 				yield return null;
 			}
 		}
+
+        // ---------------------------------- 구분선 ---------------------------------------------------- 
+
+        // MultiPlay 눌렀을 때 게임 서버 접속
+        public void OnPressedMultiPlay() => NetworkManager._instance.Connect();
+
+		// Qick Start 눌렀을 때 방 접속, 없으면 만들게 됨
+		public void OnPressedQuickStart() => NetworkManager._instance.JoinRandomRoom();
+
+		// Create Room 눌렀을 때 방 만들기
+		public void OnPressedCreateRoom() => NetworkManager._instance.CreateRoom();
+
+		// 방 눌렀을 때 방 접속
+		public void OnPressedRoom() => NetworkManager._instance.JoinRoom();
+
+		// 로비 -> 메인 Retrun
+		public void OnPressedLoobyToMainReturn() => NetworkManager._instance.Disconnect();
+
+        // 방 -> 로비 Return
+        public void OnPressedRoomToLobbyReturn() => NetworkManager._instance.LeaveRoom();
+
+		// 응답 창 비활성화
+		public void OnPressedCloseInResponseMain() => responseMain.SetActive(false);
+		public void OnPressedCloseInResponseLobby() => responseLobby.SetActive(false);
+		public void OnPressedCloseInResponseRoom() => responseRoom.SetActive(false);
+
+		// 멀티 플레이 게임 시작
+		public void OnPressedStart() => NetworkManager._instance.StartGame();
 	}
 }

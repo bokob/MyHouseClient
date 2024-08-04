@@ -9,11 +9,12 @@ public class Melee : Weapon
 {
     PlayerMove _playerMove;
     PlayerInputs _playerInputs;
-    NewWeaponManager _weaponManager;
+    WeaponManager _weaponManager;
+    PlayerStatus _playerStatus;
 
     BoxCollider _meleeArea;       // 근접 공격 범위
     TrailRenderer _trailEffet;    // 휘두를 때 효과
-    Animator _animator;
+    public Animator _animator;
 
     [Header("공격 관련")]
     bool _isSwingReady;  // 공격 준비
@@ -30,13 +31,28 @@ public class Melee : Weapon
     bool _hasExited = false; // 오브젝트를 뚫고 나갔는지 여부를 저장하는 변수
     #endregion
 
+    private void Awake()
+    {
+        
+    }
+
+
     void Start()
     {
         base.Type = Define.Type.Melee;
 
         _playerMove = transform.root.GetChild(2).GetComponent<PlayerMove>();
         _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
-        _animator = base.Master.gameObject.GetComponent<Animator>();
+        _playerStatus = transform.root.GetChild(2).GetComponent<PlayerStatus>();
+
+        if (_playerStatus.Role == Define.Role.Robber)
+            _animator = transform.root.GetChild(2).GetChild(0).gameObject.GetComponent<Animator>();
+        else if (_playerStatus.Role == Define.Role.Houseowner)
+            _animator = transform.root.GetChild(2).GetChild(1).gameObject.GetComponent<Animator>();
+        else if (_playerStatus == null)
+            Debug.LogWarning("무기 애니메이터가 왜 널이지");
+        else if (_playerStatus.Role == Define.Role.None)
+            Debug.Log("왜 None이야?");
 
         _meleeArea = gameObject.GetComponent<BoxCollider>();
         _trailEffet = gameObject.GetComponentInChildren<TrailRenderer>();
@@ -54,6 +70,12 @@ public class Melee : Weapon
 
     void Update()
     {
+        AttackDelay();
+        Use();
+    }
+
+    void AttackDelay()
+    {
         _swingDelay += Time.deltaTime;
         _stabDelay += Time.deltaTime;
     }
@@ -64,13 +86,15 @@ public class Melee : Weapon
     /// </summary>
     public override void Use()
     {
-        _swingDelay += Time.deltaTime;
-        _stabDelay += Time.deltaTime;
         _isSwingReady = base.Rate < _swingDelay; // 공격속도가 공격 딜레이보다 작으면 공격준비 완료
         _isStabReady = base.Rate < _stabDelay;
-        if (_playerInputs.swing && _isSwingReady && _playerMove._grounded || _playerInputs.stap && _isStabReady && _playerMove._grounded)
+
+        if (_playerInputs == null) Debug.Log("널");
+        if (_playerMove == null) Debug.Log("널");
+
+        if (_playerInputs.swing && _isSwingReady && _playerMove._grounded || _playerInputs.stab && _isStabReady && _playerMove._grounded)
         {
-            StopCoroutine("MeleeAttackEffect");
+            //StopCoroutine("MeleeAttackEffect");
 
             //// 근접 무기가 아니거나 무기가 활성화 되어 있지 않으면 종료
             //if (_weaponManager._selectedWeapon.tag != "Melee" || !_weaponManager._selectedWeapon.activeSelf) return;
@@ -85,7 +109,7 @@ public class Melee : Weapon
                 _animator.SetTrigger("setSwing");
                 _swingDelay = 0;
             }
-            else if (_playerInputs.stap && _playerMove._grounded) // 찌르기
+            else if (_playerInputs.stab && _playerMove._grounded) // 찌르기
             {
                 Debug.Log("찌르기");
                 // _weaponManager._selectedWeapon.GetComponent<Melee>().Use();
@@ -93,17 +117,15 @@ public class Melee : Weapon
                 _stabDelay = 0;
 
             }
-
             _playerInputs.swing = false;
-            _playerInputs.stap = false;
-
-            StartCoroutine("MeleeAttackEffect");
+            _playerInputs.stab = false;
+            //StartCoroutine("MeleeAttackEffect");
         }
         else
         {
             // 시작하자마자 휘두르는 문제 방지(유니티 Play 누를 때 클릭 때문에 그런 듯 하다)
             _playerInputs.swing = false;
-            _playerInputs.stap = false;
+            _playerInputs.stab = false;
         }
     }
 
@@ -185,6 +207,12 @@ public class Melee : Weapon
 
     // 관통 다 되면 레이어에 따라 절단
     void OnTriggerExit(Collider other)
+    {
+        MeshCutting(other);
+    }
+
+    // 메시 자르기
+    public void MeshCutting(Collider other)
     {
         // 충돌 지점의 방향을 자르는 방향으로 설정
         _exitPoint = other.ClosestPoint(transform.position);
