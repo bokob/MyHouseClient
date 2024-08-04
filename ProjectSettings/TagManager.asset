@@ -7,11 +7,13 @@ TagManager:
   - Hand
   - Melee
   - Gun
+  - Bullet
+  - Monster
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - Ground

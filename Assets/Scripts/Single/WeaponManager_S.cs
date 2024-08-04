@@ -1,14 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using Photon.Pun;
 
-public class WeaponManager : MonoBehaviour
+public class WeaponManager_S : MonoBehaviour
 {
     PlayerInputs _playerInputs;
-    PlayerStatus _playerStatus;
+    PlayerStatus_S _playerStatus;
 
     [Tooltip("���� ��ȯ �� ���� �ð��� ����")]
     public float _switchDelay = 1f;
@@ -25,13 +22,12 @@ public class WeaponManager : MonoBehaviour
     void Awake()
     {
         _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
-        _playerStatus = transform.root.GetChild(2).GetComponent<PlayerStatus>();
-        InitRoleWeapon();
+        _playerStatus = transform.root.GetChild(2).GetComponent<PlayerStatus_S>();
     }
 
     void Start()
     {
-        //InitRoleWeapon();
+        InitRoleWeapon();
     }
 
     void Update()
@@ -49,14 +45,10 @@ public class WeaponManager : MonoBehaviour
         if (_playerStatus.Role == Define.Role.Robber) // ����
         {
             _selectedWeaponIdx = 0;
-            _playerStatus._weaponHolder = _playerStatus._weaponHolders[0];
-            _selectedWeapon = transform.GetChild(0).gameObject;
         }
         else if (_playerStatus.Role == Define.Role.Houseowner) // ������
         {
             _selectedWeaponIdx = 1;
-            _playerStatus._weaponHolder = _playerStatus._weaponHolders[1];
-            _selectedWeapon = transform.GetChild(1).gameObject;
         }
         SelectWeapon();
 
@@ -91,9 +83,6 @@ public class WeaponManager : MonoBehaviour
 
         if (previousSelectedWeapon != _selectedWeaponIdx) // ���콺 �ٷ� ���� �ε��� �ٱ͸� ��ü
         {
-            if (_playerStatus.Role == Define.Role.Robber) 
-                _selectedWeaponIdx = 0;
-            
             SelectWeapon();
         }
     }
@@ -103,9 +92,6 @@ public class WeaponManager : MonoBehaviour
     /// </summary>
     void SelectWeapon()
     {
-        Debug.LogWarning($"_selectedWeaponIdx({transform.root.GetChild(2).GetComponent<PlayerStatus>()._nickName}) :" + _selectedWeaponIdx);
-        _playerStatus.gameObject.GetComponent<PhotonView>().RPC("SetWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx);
-        
         int idx = 0;
         foreach(Transform weapon in transform)
         {
@@ -129,13 +115,13 @@ public class WeaponManager : MonoBehaviour
     /// </summary>
     public void UseSelectedWeapon()
     {
-        if(_selectedWeapon.tag == "Melee" && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
+        if(_selectedWeapon.tag == "Melee")
         {
-            _selectedWeapon.GetComponent<Melee>().Use();
+            _selectedWeapon.GetComponent<Melee_S>().Use();
         }
         else if(_selectedWeapon.tag == "Gun")
         {
-            _selectedWeapon.GetComponent<Gun>().Use();
+            _selectedWeapon.GetComponent<Gun_S>().Use();
         }
         else
         {
