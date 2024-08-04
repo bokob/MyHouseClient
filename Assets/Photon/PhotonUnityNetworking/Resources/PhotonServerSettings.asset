@@ -40,7 +40,15 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - ChatRPC
-  - FadeOutAndRespawn
+  - UpdateUserInRoomUI
+  - LoadMultiPlayScene
+  - SetNickname
+  - SetRole
+  - TransformIntoHouseowner
+  - TransformIntoRobber
+  - SetRoleAnimator
+  - SetWeapon
+  - RequestRoleAssignment
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
