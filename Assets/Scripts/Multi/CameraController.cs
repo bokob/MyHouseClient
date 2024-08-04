@@ -6,10 +6,10 @@ using UnityEngine.InputSystem;
 public class CameraController : MonoBehaviour
 {
     [Header("Cinemachine")]
-    GameObject _mainCamera;                     // 메인 카메라
-    GameObject _quaterFollowCamera;
-    GameObject _thirdFollowCamera;
-    GameObject _aimCamera;
+    [SerializeField] GameObject _mainCamera;                     // 메인 카메라
+    [SerializeField] GameObject _quaterFollowCamera;
+    [SerializeField] GameObject _thirdFollowCamera;
+    [SerializeField] GameObject _aimCamera;
     public GameObject _cinemachineCameraTarget; // 카메라가 바라볼 목표물
     public float _topClamp = 70.0f;             // 카메라 위 제한 각도
     public float _bottomClamp = -30.0f;         // 카메라 아래 제한 각도
@@ -32,35 +32,15 @@ public class CameraController : MonoBehaviour
     public float _sensitivity = 1f;
 
     // Start is called before the first frame update
-    void Awake()
-    {
-        CameraInit();
-    }
 
     void Start()
     {
-        //if (!IsLocalPlayer)
-        //{
-        //    transform.parent.gameObject.SetActive(false); // 카메라 전체 비활성화
-        //}
-
-        CameraInit();
     }
 
     void LateUpdate()
     {
         if (View != Define.View.Third)
             CameraRotation();
-    }
-
-
-    void CameraInit() // 카메라 초기 세팅
-    {
-        // 카메라 오브젝트 세팅
-        _mainCamera = gameObject;
-        _quaterFollowCamera = _mainCamera.transform.parent.GetChild(1).gameObject;
-        _thirdFollowCamera = _mainCamera.transform.parent.GetChild(2).gameObject;
-        _aimCamera = _mainCamera.transform.parent.GetChild(3).gameObject;
     }
 
     public void SetRobberView() // 강도 시점 설정

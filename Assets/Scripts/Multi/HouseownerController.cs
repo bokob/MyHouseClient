@@ -10,7 +10,7 @@ using static UnityEngine.UIElements.UxmlAttributeDescription;
 public class HouseownerController : MonoBehaviour
 {
     PlayerStatus _playerStatus;
-    [SerializeField] NewWeaponManager _weaponManager;
+    [SerializeField] WeaponManager _weaponManager;
 
     void Awake()
     {
@@ -20,7 +20,7 @@ public class HouseownerController : MonoBehaviour
     void Start()
     {
         HouseownerInit();
-        _weaponManager.InitRoleWeapon();
+        //_weaponManager.InitRoleWeapon();
     }
     void Update()
     {
@@ -35,16 +35,14 @@ public class HouseownerController : MonoBehaviour
 
     void HouseownerInit()
     {
-        _playerStatus.Role = Define.Role.Houseowner;
-
         Animator houseownerAnimator = gameObject.GetComponent<Animator>();
         RuntimeAnimatorController houseAnimController = houseownerAnimator.runtimeAnimatorController;
         Avatar houseAvatar = houseownerAnimator.avatar;
         
-        // Player 객체에도 같은 애니메이터가 존재하므로 꼬이게 된다. 따라서 Houseowner의 애니메이터를 비워준다.
-        houseownerAnimator.runtimeAnimatorController = null;
-        houseownerAnimator.avatar = null;
+        //// Player 객체에도 같은 애니메이터가 존재하므로 꼬이게 된다. 따라서 Houseowner의 애니메이터를 비워준다.
+        //houseownerAnimator.runtimeAnimatorController = null;
+        //houseownerAnimator.avatar = null;
 
-        _playerStatus.SetRoleAnimator(houseAnimController, houseAvatar);
+        //_playerStatus.SetRoleAnimator(houseAnimController, houseAvatar);
     }
 }

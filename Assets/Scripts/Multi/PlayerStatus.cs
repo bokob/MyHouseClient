@@ -1,10 +1,16 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerStatus : MonoBehaviour
 {
-    #region 상태 및 능력치
+    public PlayerMove _playerMove;
+    public CameraController _cameraController;
+
+    #region 상태 및 능력치, 이름 등
+    public bool _isLocalPlayer;
+    public string _nickName;
     [field: SerializeField] public Define.Role Role = Define.Role.None;
     [field: SerializeField] public float Hp { get; set; } = 100;    // 체력
     [field: SerializeField] public float Sp { get; set; } = 100;    // 스테미나
@@ -14,15 +20,77 @@ public class PlayerStatus : MonoBehaviour
     #endregion
 
     #region 애니메이션 및 피해
-    Animator _animator;
+    public Animator _animator;
     List<Renderer> _renderers;
     #endregion
 
+    public Transform _weaponHolder;
+    public Transform[] _weaponHolders;
+
+    //public string nickname;
+
+    //public TextMeshPro nicknameText;
+
+    //public Transform TPWeaponHolder;
+
+    public void IsLocalPlayer()
+    {
+        //TPWeaponHolder.gameObject.SetActive(false);
+
+        _isLocalPlayer = true;
+        _playerMove.enabled = true;         // PlayerMove 활성화
+        _cameraController.gameObject.transform.parent.gameObject.SetActive(true);
+    }
+
+    [PunRPC]
+    public void SetNickname(string _name)
+    {
+        _nickName = _name;
+    }
+
+    [PunRPC]
+    public void SetRole(Define.Role role) // 역할 지정
+    {
+        // 역할을 직접 할당
+        Debug.Log($"내 역할({_nickName}): " + Role);
+
+        Role = role;
+
+        if (Role == Define.Role.Robber)
+            _animator = transform.GetChild(0).GetComponent<Animator>();
+        else if (Role == Define.Role.Houseowner)
+            _animator = transform.GetChild(1).GetComponent<Animator>();
+    }
+
+    [PunRPC]
+    public void SetWeapon(int weaponIndex)
+    {
+        foreach (Transform weapon in _weaponHolder)
+        {
+            weapon.gameObject.SetActive(false);
+        }
+
+        Debug.LogWarning($"인덱스 아웃 무기?({_nickName}): " + weaponIndex);
+
+        _weaponHolder.GetChild(weaponIndex).gameObject.SetActive(true);
+    }
+
+
+    /// <summary>
+    /// 사망
+    /// </summary>
+    public void Dead()
+    {
+        if (Role != Define.Role.None && Hp <= 0)
+        {
+            _animator.SetTrigger("setDie");
+            Role = Define.Role.None; // 시체
+            StartCoroutine(DeadSinkCoroutine());
+        }
+    }
+
     void Awake()
     {
-        _animator = GetComponent<Animator>();
-        InitRole();
-
         // 렌더 가져오기
         _renderers = new List<Renderer>();
         Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
@@ -40,26 +108,8 @@ public class PlayerStatus : MonoBehaviour
     void Update()
     {
         //if (!IsLocalPlayer) return;
-
         Dead();
-        TransformIntoHouseowner();
     }
-
-    /// <summary>
-    /// 역할 초기화
-    /// </summary>
-    public void InitRole()
-    {
-        /*
-         TODO
-        호스트면, Houseowner으로 하고, 클라이언트면 Robber
-
-        일단 편의를 위해 강도롤 시작
-         */
-        Role = Define.Role.Robber;
-    }
-
-
 
     /// <summary>
     /// 데미지 입기
@@ -75,6 +125,8 @@ public class PlayerStatus : MonoBehaviour
         Debug.Log("남은 체력: " + Hp);
     }
 
+
+    #region 체력 및 스테미나 관련
     /// <summary>
     /// 최대 체력의 0.2만큼 회복
     /// </summary>
@@ -144,10 +196,7 @@ public class PlayerStatus : MonoBehaviour
     /// <summary>
     /// 점프시, 스테미나 감소
     /// </summary>
-    public void JumpSpDown()
-    {
-        Sp -= 3;
-    }
+    public void JumpSpDown() => Sp -= 3;
 
     /// <summary>
     /// 방어력 증가
@@ -156,39 +205,40 @@ public class PlayerStatus : MonoBehaviour
     {
 
     }
+    #endregion
+
 
     /// <summary>
     /// 집주인으로 변신
     /// </summary>
-    public void TransformIntoHouseowner()
+    [PunRPC]
+    public void TransformIntoRobber()
     {
-        if (!Input.GetKeyDown(KeyCode.T)) return;
-
-        transform.GetChild(0).gameObject.SetActive(false); // 강도 비활성화
-        transform.GetChild(1).gameObject.SetActive(true);  // 집주인 활성화
-        Role = Define.Role.Houseowner;
+        transform.GetChild(0).gameObject.SetActive(true); // 강도 비활성화
+        transform.GetChild(1).gameObject.SetActive(false);  // 집주인 활성화
 
         Debug.Log("현재 상태: " + Role);
 
-        Camera.main.gameObject.GetComponent<CameraController>().SetHouseownerView(); // 집주인 시점으로 설정
+        _cameraController.gameObject.GetComponent<CameraController>().SetRobberView(); // 집주인 시점으로 설정
 
-        Debug.Log("집주인 시점을 변환");
-
-        Debug.Log("집주인으로 변신 완료");
+        Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(이)가 강도로 변신 완료");
     }
 
-    
+
     /// <summary>
-    /// 사망
+    /// 집주인으로 변신
     /// </summary>
-    public void Dead()
+    [PunRPC]
+    public void TransformIntoHouseowner()
     {
-        if (Role != Define.Role.None && Hp <= 0)
-        {
-            _animator.SetTrigger("setDie");
-            Role = Define.Role.None; // 시체
-            StartCoroutine(DeadSinkCoroutine());
-        }
+        transform.GetChild(0).gameObject.SetActive(false); // 강도 비활성화
+        transform.GetChild(1).gameObject.SetActive(true);  // 집주인 활성화
+
+        Debug.Log($"현재 상태({transform.root.GetChild(2).GetComponent<PlayerStatus>()._nickName}): " + Role);
+
+        _cameraController.gameObject.GetComponent<CameraController>().SetHouseownerView(); // 집주인 시점으로 설정
+
+        Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(이)가 집주인으로 변신 완료");
     }
 
     /// <summary>
@@ -283,20 +333,15 @@ public class PlayerStatus : MonoBehaviour
     //    HitChangeMaterials();
     //}
 
+    //public void SetRoleAnimator(RuntimeAnimatorController animController, Avatar avatar)
+    //{
+    //    _animator.runtimeAnimatorController = animController;
+    //    _animator.avatar = avatar;
 
-
-
-
-
-    public void SetRoleAnimator(RuntimeAnimatorController animController, Avatar avatar)
-    {
-        _animator.runtimeAnimatorController = animController;
-        _animator.avatar = avatar;
-
-        // 애니메이터 속성 교체하고 껐다가 켜야 동작함
-        _animator.enabled = false;
-        _animator.enabled = true;
-    }
+    //    // 애니메이터 속성 교체하고 껐다가 켜야 동작함
+    //    _animator.enabled = false;
+    //    _animator.enabled = true;
+    //}
 
     public void ChangeIsHoldGun(bool isHoldGun)
     {

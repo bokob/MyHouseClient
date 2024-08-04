@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Photon.Pun;
 
-public class NewWeaponManager : MonoBehaviour
+public class WeaponManager : MonoBehaviour
 {
     PlayerInputs _playerInputs;
     PlayerStatus _playerStatus;
@@ -25,11 +26,12 @@ public class NewWeaponManager : MonoBehaviour
     {
         _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
         _playerStatus = transform.root.GetChild(2).GetComponent<PlayerStatus>();
+        InitRoleWeapon();
     }
 
     void Start()
     {
-        InitRoleWeapon();
+        //InitRoleWeapon();
     }
 
     void Update()
@@ -47,10 +49,14 @@ public class NewWeaponManager : MonoBehaviour
         if (_playerStatus.Role == Define.Role.Robber) // 강도
         {
             _selectedWeaponIdx = 0;
+            _playerStatus._weaponHolder = _playerStatus._weaponHolders[0];
+            _selectedWeapon = transform.GetChild(0).gameObject;
         }
         else if (_playerStatus.Role == Define.Role.Houseowner) // 집주인
         {
             _selectedWeaponIdx = 1;
+            _playerStatus._weaponHolder = _playerStatus._weaponHolders[1];
+            _selectedWeapon = transform.GetChild(1).gameObject;
         }
         SelectWeapon();
 
@@ -85,6 +91,9 @@ public class NewWeaponManager : MonoBehaviour
 
         if (previousSelectedWeapon != _selectedWeaponIdx) // 마우스 휠로 무기 인덱스 바귀면 교체
         {
+            if (_playerStatus.Role == Define.Role.Robber) 
+                _selectedWeaponIdx = 0;
+            
             SelectWeapon();
         }
     }
@@ -94,6 +103,9 @@ public class NewWeaponManager : MonoBehaviour
     /// </summary>
     void SelectWeapon()
     {
+        Debug.LogWarning($"_selectedWeaponIdx({transform.root.GetChild(2).GetComponent<PlayerStatus>()._nickName}) :" + _selectedWeaponIdx);
+        _playerStatus.gameObject.GetComponent<PhotonView>().RPC("SetWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx);
+        
         int idx = 0;
         foreach(Transform weapon in transform)
         {
@@ -117,7 +129,7 @@ public class NewWeaponManager : MonoBehaviour
     /// </summary>
     public void UseSelectedWeapon()
     {
-        if(_selectedWeapon.tag == "Melee")
+        if(_selectedWeapon.tag == "Melee" && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
         {
             _selectedWeapon.GetComponent<Melee>().Use();
         }

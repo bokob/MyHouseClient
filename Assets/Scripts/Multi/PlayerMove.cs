@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Cinemachine;
+using Photon.Pun;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -62,48 +63,40 @@ public class PlayerMove : MonoBehaviour
 
     void Awake()
     {
-        _hasAnimator = TryGetComponent(out _animator);
+        _status = GetComponent<PlayerStatus>();
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<PlayerInputs>();
-        _status = GetComponent<PlayerStatus>();
 #if ENABLE_INPUT_SYSTEM 
         _playerInput = GetComponent<PlayerInput>();
 #else
 		Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
+
+        if (_status._isLocalPlayer)
+        {
+            _controller.enabled = false;
+            return;
+        }
+
+        // player input is only enabled on owning players
+        _playerInput.enabled = true;
+        _controller.enabled = true;
     }
-
-    //public override void OnNetworkSpawn()
-    //{
-    //    base.OnNetworkSpawn();
-
-    //    enabled = IsLocalPlayer;
-    //    if (!IsLocalPlayer)
-    //    {
-    //        enabled = false;
-    //        // _controller.enabled = false;
-    //        return;
-    //    }
-
-    //    // player input is only enabled on owning players
-    //    _playerInput.enabled = true;
-
-    //    _controller.enabled = true;
-    //}
-
 
     // Start is called before the first frame update
     void Start()
     {
-//        _hasAnimator = TryGetComponent(out _animator);
-//        _controller = GetComponent<CharacterController>();
-//        _input = GetComponent<PlayerInputs>();
-//        _status = GetComponent<PlayerStatus>();
-//#if ENABLE_INPUT_SYSTEM 
-//        _playerInput = GetComponent<PlayerInput>();
-//#else
-//		Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
-//#endif
+
+        SetRoleAnimator();
+
+
+
+
+#if ENABLE_INPUT_SYSTEM
+        _playerInput = GetComponent<PlayerInput>();
+#else
+		Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
+#endif
 
         AssignAnimationIDs();
 
@@ -111,6 +104,22 @@ public class PlayerMove : MonoBehaviour
         _jumpTimeoutDelta = _jumpTimeout;
         _fallTimeoutDelta = _fallTimeout;
     }
+
+    [PunRPC]
+    public void SetRoleAnimator()
+    {
+        if (_status.Role == Define.Role.Robber)
+            _animator = transform.GetChild(0).gameObject.GetComponent<Animator>();
+        else if (_status.Role == Define.Role.Houseowner)
+            _animator = transform.GetChild(1).gameObject.GetComponent<Animator>();
+        else
+            Debug.Log("아직 역할이 안정해졌는데?");
+
+        _hasAnimator = (_animator != null) ? true : false;
+
+        Debug.LogWarning("_hasAnimator: " + _hasAnimator);
+    }
+
 
     // Update is called once per frame
     void Update()
@@ -257,7 +266,6 @@ public class PlayerMove : MonoBehaviour
             if (_input.jump && _jumpTimeoutDelta <= 0.0f)
             {
                 Debug.Log("점프 키 누르고 난 후");
-
                 // the square root of H * -2 * G = how much velocity needed to reach desired height
                 _verticalVelocity = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
 

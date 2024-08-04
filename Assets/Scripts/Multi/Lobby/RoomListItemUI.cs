@@ -38,6 +38,6 @@ public class RoomListItemUI : MonoBehaviour
         NetworkManager._instance._roomNameToJoin = _roomName;   // 참가할 방 이름 설정
         NetworkManager._instance._roomName.text = _roomName;    // 방 이름 설정
         Debug.Log(_roomName + " 방 버튼을 눌러서 방에 참가합니다.");
-        NetworkManager._instance.JoinRoomButtonPressed();
+        NetworkManager._instance.JoinRoom();
     }
 }
