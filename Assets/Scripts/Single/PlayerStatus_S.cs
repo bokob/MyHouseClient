@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerStatus_S : MonoBehaviour
 {
@@ -17,13 +19,31 @@ public class PlayerStatus_S : MonoBehaviour
     Animator _animator;
     List<Renderer> _renderers;
     #endregion
+
+    [Header("EndUI")]
+    public int score = 0;
+    public GameObject endUI;
+    public TextMeshProUGUI endText;
     
 
     void Awake()
     {
         _animator = GetComponent<Animator>();
         InitRole();
+        endUI.SetActive(false);
         
+        // 렌더 가져오기
+        _renderers = new List<Renderer>();
+        Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < underTransforms.Length; i++)
+        {
+            Renderer renderer = underTransforms[i].GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                _renderers.Add(renderer);
+                // if (renderer.material.color == null) Debug.Log("왜 색이 널?");
+            }
+        }
     }
 
     private void Start() {
@@ -174,6 +194,8 @@ public class PlayerStatus_S : MonoBehaviour
     {
         if (Role != Define.Role.None && Hp <= 0)
         {
+            endUI.SetActive(true);
+            endText.text = score.ToString();
             _animator.SetTrigger("setDie");
             Role = Define.Role.None; // 시체
             StartCoroutine(DeadSinkCoroutine());

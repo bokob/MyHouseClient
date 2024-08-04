@@ -36,7 +36,7 @@ public class StatusItemR_S : Item
         {
             _respawn -= Time.deltaTime;
             int _itemTime = Mathf.FloorToInt(_respawn);
-            _itemTimer.text = _itemTime.ToString() + "s";
+            _itemTimer.text = _itemTime.ToString();
         }
     }
 
@@ -46,8 +46,9 @@ public class StatusItemR_S : Item
     /// <param name="other"></param>
     void TakeStatusItem(Collider other)
     {
-        PlayerStatus status = other.GetComponent<PlayerStatus>();
-        if (base.itemType == Define.Item.Heart)
+        if (other.tag == "Monster") return;
+        PlayerStatus_S status = other.GetComponent<PlayerStatus_S>();
+        if (base.itemType == Define.Item.Heart) 
         {
             if ((int)status.Hp == (int)status.MaxHp)
                 return;
