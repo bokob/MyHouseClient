@@ -54,7 +54,7 @@ public class GhostWave : MonoBehaviour
     private ModifiedMonster_S CreateMonster()
     {
         Debug.Log("CreateMonster called");
-        ModifiedMonster_S monster = Instantiate(ghostPrefab, ghostWavePosition.position + Random.insideUnitSphere * 7f, Quaternion.identity).GetComponent<ModifiedMonster_S>();
+        ModifiedMonster_S monster = Instantiate(ghostPrefab, ghostWavePosition.position + Random.insideUnitSphere * 7f, Quaternion.identity, ghostWavePosition).GetComponent<ModifiedMonster_S>();
         if (monster != null)
         {
             monster.SetManagedPool(_pool);

@@ -47,7 +47,7 @@ public class ModifiedMonster_S : MonoBehaviour
 
     //public int _monsterCount = 0;
 
-    public Transform _target = null; // 목표
+    public Transform _target; // 목표
 
     List<Renderer> _renderers; // 피해 입었을 때 렌더러 색 변환에 사용할 리스트
     List<Color> _originColors;
@@ -62,11 +62,11 @@ public class ModifiedMonster_S : MonoBehaviour
         Debug.Log("시작");
         _anim = GetComponent<Animator>();
         _nmAgent = GetComponent<NavMeshAgent>();
-        //_mContoller = transform.parent.GetComponent<MonsterController_S>();
+        _mContoller = transform.parent.parent.GetComponent<MonsterController_S>();
         _centerPoint = transform;
         _status = GetComponent<MonsterStatus_S>();
         _status.Hp = Hp;
-        //_mContoller._monsterCount += 1;
+        _mContoller._monsterCount += 1;
         
 
         // 하위의 모든 매터리얼 구하기
@@ -377,7 +377,8 @@ public class ModifiedMonster_S : MonoBehaviour
         if (_state != Define.MonsterState.None && _status.Hp <= 0)
         {
             _isDead = true;
-            //_monsterCount -= 1;
+            _mContoller._monsterCount -= 1;
+            _mContoller._score += 1;
             _nmAgent.ResetPath();
             _anim.Play("Die", 0, 0);
             _state = Define.MonsterState.None; // 시체
@@ -404,11 +405,11 @@ public class ModifiedMonster_S : MonoBehaviour
     {
         if (_target != null)
         {
-            _target.GetComponent<MonsterStatus_S>().TakedDamage(_attack);
+            _target.GetComponent<PlayerStatus_S>().TakedDamage(_attack);
 
-            if(_target.GetComponent<MonsterStatus_S>()!=null)
+            if(_target.GetComponent<PlayerStatus_S>()!=null)
             {
-                _target.GetComponent<MonsterStatus_S>().HitChangeMaterials();
+                _target.GetComponent<PlayerStatus_S>().HitChangeMaterials();
             }
             if (_target.GetComponent<Person>() != null)
             {

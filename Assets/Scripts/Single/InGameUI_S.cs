@@ -8,7 +8,7 @@ public class InGameUI_S : MonoBehaviour
 {
     GameObject _player;
     PlayerStatus_S _status;
-    WeaponManager_S _weaponManager;
+    public WeaponManager_S _weaponManager;
     public MonsterController_S mController;
 
     //UI 변수들
@@ -30,6 +30,7 @@ public class InGameUI_S : MonoBehaviour
 
     // 조준선
     GameObject _crossHair;
+
 
     void Start()
     {
@@ -84,25 +85,25 @@ public class InGameUI_S : MonoBehaviour
 
     public void DisplayWeaponInfo()
     {
-        // string weaponTag = _weaponManager.GetCurrentWeaponTag();
-        // Debug.Log("현재무기: " + weaponTag);
-        // if (weaponTag == "Gun") // 원거리 무기일 경우
-        // {
-        //    if(!_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(true);
-        //    if(!_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(true);
-        //    if(!_crossHair.activeSelf) _crossHair.SetActive(true);
+        string weaponTag = _weaponManager._selectedWeapon.tag;
+        Debug.Log("현재무기: " + weaponTag);
+        if (weaponTag == "Gun") // 원거리 무기일 경우
+        {
+           if(!_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(true);
+           if(!_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(true);
+           if(!_crossHair.activeSelf) _crossHair.SetActive(true);
 
-        //    DisplayWeaponIcon(1);
-        //    DisplayCurrentBullet();
-        //    DisplayTotalBullet();
-        // }
-        // else // 근접 무기일 경우
-        // {
-        //    DisplayWeaponIcon(0);
-        //    if (_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(false);
-        //    if (_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(false);
-        //    if (_crossHair.activeSelf) _crossHair.SetActive(false);
-        // }
+           DisplayWeaponIcon(1);
+           DisplayCurrentBullet();
+           DisplayTotalBullet();
+        }
+        else // 근접 무기일 경우
+        {
+           DisplayWeaponIcon(0);
+           if (_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(false);
+           if (_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(false);
+           if (_crossHair.activeSelf) _crossHair.SetActive(false);
+        }
     }
 
     public void DisplayCurrentBullet()

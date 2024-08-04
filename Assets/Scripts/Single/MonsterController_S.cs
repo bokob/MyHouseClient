@@ -7,5 +7,5 @@ public class MonsterController_S : MonoBehaviour
 {
     public int _monsterCount = 0;
 
-
+    public int _score = 0;
 }

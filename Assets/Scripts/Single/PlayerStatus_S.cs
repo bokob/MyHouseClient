@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerStatus_S : MonoBehaviour
 {
@@ -17,13 +19,36 @@ public class PlayerStatus_S : MonoBehaviour
     Animator _animator;
     List<Renderer> _renderers;
     #endregion
+
+    [Header("EndUI")]
+    public int score = 0;
+    public float endTime = 5f;
+    public GameObject endUI;
+    public TextMeshProUGUI endText;
+    public TextMeshProUGUI quitText;
+    public MonsterController_S mController;
+
+    bool _dead;
     
 
     void Awake()
     {
         _animator = GetComponent<Animator>();
         InitRole();
+        endUI.SetActive(false);
         
+        // 렌더 가져오기
+        _renderers = new List<Renderer>();
+        Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < underTransforms.Length; i++)
+        {
+            Renderer renderer = underTransforms[i].GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                _renderers.Add(renderer);
+                // if (renderer.material.color == null) Debug.Log("왜 색이 널?");
+            }
+        }
     }
 
     private void Start() {
@@ -34,6 +59,11 @@ public class PlayerStatus_S : MonoBehaviour
     {
         Dead();
         //TransformIntoHouseowner();
+        if(_dead)
+        {
+            endTime -= Time.deltaTime;
+            quitText.text = Mathf.FloorToInt(endTime) + " seconds to quit.";
+        }
     }
 
     /// <summary>
@@ -174,25 +204,28 @@ public class PlayerStatus_S : MonoBehaviour
     {
         if (Role != Define.Role.None && Hp <= 0)
         {
+            score = mController._score;
+            endUI.SetActive(true);
+            endText.text = "Killed Ghost : " + score.ToString();
             _animator.SetTrigger("setDie");
+            _dead = true;
             Role = Define.Role.None; // 시체
             StartCoroutine(DeadSinkCoroutine());
         }
     }
 
     /// <summary>
-    /// 시체 바닥으로 가라앉기
+    /// 게임 끝내기
     /// </summary>
     /// <returns></returns>
     IEnumerator DeadSinkCoroutine()
     {
-        yield return new WaitForSeconds(3f);
-        while (transform.position.y > -1.5f)
-        {
-            transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
-            yield return null;
-        }
-        Destroy(gameObject);
+        yield return new WaitForSeconds(5f);
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     /// <summary>
