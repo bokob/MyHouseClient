@@ -12,21 +12,21 @@ public class GhostWave : MonoBehaviour
     private IObjectPool<ModifiedMonster_S> _pool;
 
     public Transform ghostWavePosition;
-    float spawnGhostInterval = 60f;  // ¸ó½ºÅÍ »ı¼º °£°İ, Ã³À½¿¡ 60ÃÊ ÀÖ´Ù°¡ »ı¼º.
-    int additionalSpawnGhostCount = 0;  // Ãß°¡ »ı¼ºÇÒ ¸ó½ºÅÍ ¼ö
+    float spawnGhostInterval = 60f;  // ëª¬ìŠ¤í„° ìƒì„± ê°„ê²©, ì²˜ìŒì— 60ì´ˆ ìˆë‹¤ê°€ ìƒì„±.
+    int additionalSpawnGhostCount = 0;  // ì¶”ê°€ ìƒì„±í•  ëª¬ìŠ¤í„° ìˆ˜
 
     private void Awake()
     {
         if (_pool == null)
         {
             Debug.Log("Centralized pool initialization in Awake");
-            _pool = new ObjectPool<ModifiedMonster_S>(CreateMonster, OnGetMonster, OnReleaseMonster, OnDestroyMonster, maxSize: 1);
+            _pool = new ObjectPool<ModifiedMonster_S>(CreateMonster, OnGetMonster, OnReleaseMonster, OnDestroyMonster, maxSize: 100);
         }
     }
 
     private void Start()
     {
-        // Ã³À½¿¡ °¢ GhostWave ¿ÀºêÁ§Æ®¿¡¼­ 2¸¶¸®¾¿ »ı¼º
+        // ì²˜ìŒì— ê° GhostWave ì˜¤ë¸Œì íŠ¸ì—ì„œ 2ë§ˆë¦¬ì”© ìƒì„±
         for (int i = 0; i < 2; i++)
         {
             _pool.Get();
@@ -53,8 +53,11 @@ public class GhostWave : MonoBehaviour
 
     private ModifiedMonster_S CreateMonster()
     {
+        Vector3 randomPosition = ghostWavePosition.position + Random.insideUnitSphere * 7f;
+        randomPosition.y = 0; // Ghost ìƒì„± ì‹œ position.y ê°’ì´ 0ì´ë„ë¡ ê³ ì •
+
         Debug.Log("CreateMonster called");
-        ModifiedMonster_S monster = Instantiate(ghostPrefab, ghostWavePosition.position + Random.insideUnitSphere * 7f, Quaternion.identity, ghostWavePosition).GetComponent<ModifiedMonster_S>();
+        ModifiedMonster_S monster = Instantiate(ghostPrefab, randomPosition, Quaternion.identity, ghostWavePosition).GetComponent<ModifiedMonster_S>();
         if (monster != null)
         {
             monster.SetManagedPool(_pool);
@@ -84,11 +87,5 @@ public class GhostWave : MonoBehaviour
     {
         Debug.Log("OnDestroyMonster called");
         Destroy(monster.gameObject);
-    }
-
-    private void HandleMonsterDied(ModifiedMonster_S monster)
-    {
-        Debug.Log("HandleMonsterDied È£ÃâµÊ");
-        _pool.Get();
     }
 }
