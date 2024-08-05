@@ -16,11 +16,26 @@ public class MonsterStatus_S : MonoBehaviour
     List<Renderer> _renderers;
     #endregion
 
+    #region 점수 표시용
+    #endregion
+
 
     void Awake()
     {
         _animator = GetComponent<Animator>();
 
+        // 렌더 가져오기
+        _renderers = new List<Renderer>();
+        Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < underTransforms.Length; i++)
+        {
+            Renderer renderer = underTransforms[i].GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                _renderers.Add(renderer);
+                // if (renderer.material.color == null) Debug.Log("왜 색이 널?");
+            }
+        }
     }
 
     void Update()

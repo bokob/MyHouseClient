@@ -12,8 +12,8 @@ public class GhostWave : MonoBehaviour
     private IObjectPool<ModifiedMonster_S> _pool;
 
     public Transform ghostWavePosition;
-    float spawnGhostInterval = 60f;  // ¸ó½ºÅÍ »ı¼º °£°İ, Ã³À½¿¡ 60ÃÊ ÀÖ´Ù°¡ »ı¼º.
-    int additionalSpawnGhostCount = 0;  // Ãß°¡ »ı¼ºÇÒ ¸ó½ºÅÍ ¼ö
+    float spawnGhostInterval = 60f;  // ëª¬ìŠ¤í„° ìƒì„± ê°„ê²©, ì²˜ìŒì— 60ì´ˆ ìˆë‹¤ê°€ ìƒì„±.
+    int additionalSpawnGhostCount = 0;  // ì¶”ê°€ ìƒì„±í•  ëª¬ìŠ¤í„° ìˆ˜
 
     private void Awake()
     {
@@ -26,7 +26,7 @@ public class GhostWave : MonoBehaviour
 
     private void Start()
     {
-        // Ã³À½¿¡ °¢ GhostWave ¿ÀºêÁ§Æ®¿¡¼­ 2¸¶¸®¾¿ »ı¼º
+        // ì²˜ìŒì— ê° GhostWave ì˜¤ë¸Œì íŠ¸ì—ì„œ 2ë§ˆë¦¬ì”© ìƒì„±
         for (int i = 0; i < 2; i++)
         {
             _pool.Get();
@@ -54,10 +54,10 @@ public class GhostWave : MonoBehaviour
     private ModifiedMonster_S CreateMonster()
     {
         Vector3 randomPosition = ghostWavePosition.position + Random.insideUnitSphere * 7f;
-        randomPosition.y = 0; // Ghost »ı¼º ½Ã position.y °ªÀÌ 0ÀÌµµ·Ï °íÁ¤
+        randomPosition.y = 0; // Ghost ìƒì„± ì‹œ position.y ê°’ì´ 0ì´ë„ë¡ ê³ ì •
 
         Debug.Log("CreateMonster called");
-        ModifiedMonster_S monster = Instantiate(ghostPrefab, randomPosition, Quaternion.identity).GetComponent<ModifiedMonster_S>();
+        ModifiedMonster_S monster = Instantiate(ghostPrefab, randomPosition, Quaternion.identity, ghostWavePosition).GetComponent<ModifiedMonster_S>();
         if (monster != null)
         {
             monster.SetManagedPool(_pool);

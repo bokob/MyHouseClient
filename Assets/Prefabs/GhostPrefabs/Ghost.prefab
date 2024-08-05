@@ -186,14 +186,14 @@ MonoBehaviour:
   _centerPoint: {fileID: 174848733327858528, guid: 8b5b180bb1fdcaf48874b59c494ef4cf,
     type: 3}
   _range: 10
-  _patrolSpeed: 1
+  _patrolSpeed: 2
   _state: 4
   _isDead: 0
-  _radius: 0
-  _angle: 0
+  _radius: 10
+  _angle: 45
   _targetMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 8
   _obstructionMask:
     serializedVersion: 2
     m_Bits: 0
@@ -202,7 +202,7 @@ MonoBehaviour:
   _lostDistance: 0
   _attackRange: 0.1
   _attackDelay: 2
-  _target: {fileID: 92126774998445019, guid: 06ae9215121e7664aa589981daed690d, type: 3}
+  _target: {fileID: 0}
 --- !u!54 &4854686820582876448
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -265,5 +265,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4deacc5788fb8724e81b2c7f6daeb095, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Hp>k__BackingField: 100
-  <MaxHp>k__BackingField: 100
+  <Hp>k__BackingField: 10
+  <MaxHp>k__BackingField: 10

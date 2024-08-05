@@ -15,61 +15,61 @@ public class ModifiedMonster_S : MonoBehaviour
     MonsterStatus_S _status;
     MonsterController_S _mContoller;
 
-    // ¼øÂû °ü·Ã
-    public Transform _centerPoint;  // ¼øÂû À§Ä¡ Á¤ÇÒ ±âÁØÁ¡
-    public float _range = 10f;            // ¼øÂû À§Ä¡ Á¤ÇÒ ¹üÀ§
-    public float _patrolSpeed = 1f; // ¼øÂû ¼Óµµ
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public Transform _centerPoint;  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public float _range = 10f;            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public float _patrolSpeed = 1f; // ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½
 
-    // »óÅÂ °ü·Ã
-    public float Hp { get; private set; } = 100f;                   // Ã¼·Â
-    public int _attack { get; private set; } = 30;                   // °ø°Ý·Â
-    public Define.MonsterState _state = Define.MonsterState.Patrol; // ÇöÀç »óÅÂ
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public float Hp { get; private set; } = 100f;                   // Ã¼ï¿½ï¿½
+    public int _attack { get; private set; } = 30;                   // ï¿½ï¿½ï¿½Ý·ï¿½
+    public Define.MonsterState _state = Define.MonsterState.Patrol; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public bool _isDead = false;
 
-    // Àû ½Ã¾ß °ü·Ã
-    public float _radius;              // ½Ã¾ß ¹üÀ§
+    // ï¿½ï¿½ ï¿½Ã¾ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public float _radius;              // ï¿½Ã¾ï¿½ ï¿½ï¿½ï¿½ï¿½
     [Range(0, 360)]
-    public float _angle;               // ½Ã¾ß°¢
-    public LayerMask _targetMask;      // ¸ñÇ¥
-    public LayerMask _obstructionMask; // Àå¾Ö¹°
+    public float _angle;               // ï¿½Ã¾ß°ï¿½
+    public LayerMask _targetMask;      // ï¿½ï¿½Ç¥
+    public LayerMask _obstructionMask; // ï¿½ï¿½Ö¹ï¿½
     public bool _canSeePlayer;
 
-    // Ãß°Ý °ü·Ã
-    public float _chaseRange = 10f; // Ãß°Ý ¹üÀ§
-    public float _lostDistance; // ³õÄ¡´Â °Å¸®
+    // ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public float _chaseRange = 10f; // ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public float _lostDistance; // ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Å¸ï¿½
 
-    // °ø°Ý °ü·Ã
-    public float _attackRange = 0.1f; // °ø°Ý ¹üÀ§
-    public float _attackDelay = 2f; // °ø°Ý °£°Ý
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public float _attackRange = 0.1f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public float _attackDelay = 2f; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     float nextAttackTime = 0f;
 
-    // À¯·É Ä«¿îÆ® °ü·Ã
+    // ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 
     //public int _monsterCount = 0;
 
-    public Transform _target = null; // ¸ñÇ¥
+    public Transform _target; // ëª©í‘œ
 
-    List<Renderer> _renderers; // ÇÇÇØ ÀÔ¾úÀ» ¶§ ·»´õ·¯ »ö º¯È¯¿¡ »ç¿ëÇÒ ¸®½ºÆ®
+    List<Renderer> _renderers; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¾ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®
     List<Color> _originColors;
 
     void Awake()
     {
-        MonsterInit(); // ¸ó½ºÅÍ ¼¼ÆÃ
+        MonsterInit(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
 
     void MonsterInit()
     {
-        Debug.Log("½ÃÀÛ");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½");
         _anim = GetComponent<Animator>();
         _nmAgent = GetComponent<NavMeshAgent>();
-        //_mContoller = transform.parent.GetComponent<MonsterController_S>();
+        _mContoller = transform.parent.parent.GetComponent<MonsterController_S>();
         _centerPoint = transform;
         _status = GetComponent<MonsterStatus_S>();
         _status.Hp = Hp;
-        //_mContoller._monsterCount += 1;
+        _mContoller._monsterCount += 1;
         
 
-        // ÇÏÀ§ÀÇ ¸ðµç ¸ÅÅÍ¸®¾ó ±¸ÇÏ±â
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï±ï¿½
         _renderers = new List<Renderer>();
         Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
         for (int i = 0; i < underTransforms.Length; i++)
@@ -78,7 +78,7 @@ public class ModifiedMonster_S : MonoBehaviour
             if (renderer != null)
             {
                 _renderers.Add(renderer);
-                if (renderer.material.color == null) Debug.Log("¿Ö »öÀÌ ³Î?");
+                if (renderer.material.color == null) Debug.Log("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½?");
             }
         }
     }
@@ -103,7 +103,7 @@ public class ModifiedMonster_S : MonoBehaviour
     {
         if (_isDead) return;
 
-        FieldOfViewCheck(); // ½Ã¾ß¿¡ ÇÃ·¹ÀÌ¾î ÀÖ´ÂÁö È®ÀÎ
+        FieldOfViewCheck(); // ï¿½Ã¾ß¿ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 
         switch (_state)
         {
@@ -129,7 +129,7 @@ public class ModifiedMonster_S : MonoBehaviour
 
     }
 
-    void FieldOfViewCheck() // ½Ã¾ß
+    void FieldOfViewCheck() // ï¿½Ã¾ï¿½
     {
         Collider[] rangeChecks = Physics.OverlapSphere(transform.position, _radius, _targetMask);
 
@@ -138,16 +138,16 @@ public class ModifiedMonster_S : MonoBehaviour
             Transform findTarget = rangeChecks[0].transform;
             Vector3 directionToTarget = (findTarget.position - transform.position).normalized;
 
-            if (Vector3.Angle(transform.forward, directionToTarget) < _angle / 2) // ÇÃ·¹ÀÌ¾î·ÎºÎÅÍ ºÎÃ¤²ÃÃ³·³ º¼ ¼ö ÀÖ°Ô
+            if (Vector3.Angle(transform.forward, directionToTarget) < _angle / 2) // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½Ã¤ï¿½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö°ï¿½
             {
                 float distanceToTarget = Vector3.Distance(transform.position, findTarget.position);
 
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, _obstructionMask))
                 {
-                    _target = findTarget; // ¸ñÇ¥ ¼³Á¤
-                    _canSeePlayer = true; // ÇÃ·¹ÀÌ¾î °¨Áö
+                    _target = findTarget; // ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½
+                    _canSeePlayer = true; // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
                 }
-                else // º® °¨ÁöÇÑ °æ¿ì
+                else // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
                 {
                     _canSeePlayer = false;
                     _target = null;
@@ -159,16 +159,16 @@ public class ModifiedMonster_S : MonoBehaviour
                 _target = null;
             }
         }
-        else if (_canSeePlayer) // º¸°í ÀÖ´Ù°¡ ½Ã¾ß¿¡¼­ »ç¶óÁø°Å
+        else if (_canSeePlayer) // ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù°ï¿½ ï¿½Ã¾ß¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         {
             _canSeePlayer = false;
             _target = null;
         }
     }
 
-    IEnumerator Idle() // ´ë±â
+    IEnumerator Idle() // ï¿½ï¿½ï¿½
     {
-        // ¾Ö´Ï¸ÞÀÌÅÍ »óÅÂ Á¤º¸ ¾ò±â
+        // ï¿½Ö´Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         AnimatorStateInfo currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
         if (!currentAnimStateInfo.IsName("Idle"))
@@ -176,10 +176,10 @@ public class ModifiedMonster_S : MonoBehaviour
 
         yield return new WaitForSeconds(currentAnimStateInfo.length);
 
-        if (_canSeePlayer) // ÇÃ·¹ÀÌ¾î °üÃø
+        if (_canSeePlayer) // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
         {
             StopAllCoroutines();
-            _nmAgent.SetDestination(_target.position); // ¸ñÇ¥ ÁöÁ¤
+            _nmAgent.SetDestination(_target.position); // ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½
             ChangeState(Define.MonsterState.Chase);
         }
         else
@@ -188,65 +188,65 @@ public class ModifiedMonster_S : MonoBehaviour
             ChangeState(Define.MonsterState.Patrol);
         }
     }
-    IEnumerator Patrol() // ¼øÂû
+    IEnumerator Patrol() // ï¿½ï¿½ï¿½ï¿½
     {
-        Debug.Log("¼øÂû");
-        // ¾Ö´Ï¸ÞÀÌÅÍ »óÅÂ Á¤º¸ ¾ò±â
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½");
+        // ï¿½Ö´Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         AnimatorStateInfo currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
         if (!currentAnimStateInfo.IsName("Move"))
             _anim.Play("Move", 0, 0);
 
-        // ·£´ýÇÏ°Ô ¼øÂû ÁöÁ¡ Á¤ÇÏ±â
-        if (_nmAgent.remainingDistance <= _nmAgent.stoppingDistance) // ÇÃ·¹ÀÌ¾î ¸øºÃÀ» ¶§
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï±ï¿½
+        if (_nmAgent.remainingDistance <= _nmAgent.stoppingDistance) // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         {
             Vector3 point;
             if (RandomPoint(_centerPoint.position, _range, out point))
             {
-                Debug.DrawRay(point, Vector3.up, Color.red, 3.0f); // °¥ ÁöÁ¡ Ç¥½Ã
+                Debug.DrawRay(point, Vector3.up, Color.red, 3.0f); // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
 
                 _nmAgent.SetDestination(point);
 
                 yield return null;
             }
         }
-        else if(_canSeePlayer && _nmAgent.remainingDistance <= _nmAgent.stoppingDistance) // °ø°Ý ¹üÀ§ ¾È¿¡ ÀÖÀ» ¶§
+        else if(_canSeePlayer && _nmAgent.remainingDistance <= _nmAgent.stoppingDistance) // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
         {
-            StopAllCoroutines(); // ¸ðµç ÄÚ·çÆ¾ Á¾·á
+            StopAllCoroutines(); // ï¿½ï¿½ï¿½ ï¿½Ú·ï¿½Æ¾ ï¿½ï¿½ï¿½ï¿½
             _nmAgent.ResetPath();
-            ChangeState(Define.MonsterState.Attack);  // °ø°Ý
+            ChangeState(Define.MonsterState.Attack);  // ï¿½ï¿½ï¿½ï¿½
         }
-        else if(_canSeePlayer && _nmAgent.remainingDistance > _nmAgent.stoppingDistance) // °ø°Ý¹üÀ§ ¹ÛÀÌ¸é Ãß°Ý
+        else if(_canSeePlayer && _nmAgent.remainingDistance > _nmAgent.stoppingDistance) // ï¿½ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ß°ï¿½
         {
-            StopAllCoroutines(); // ¸ðµç ÄÚ·çÆ¾ Á¾·á
-            _nmAgent.SetDestination(_target.position); // ¸ñÇ¥ ÁöÁ¤
-            ChangeState(Define.MonsterState.Chase);  // Ãß°Ý
+            StopAllCoroutines(); // ï¿½ï¿½ï¿½ ï¿½Ú·ï¿½Æ¾ ï¿½ï¿½ï¿½ï¿½
+            _nmAgent.SetDestination(_target.position); // ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½
+            ChangeState(Define.MonsterState.Chase);  // ï¿½ß°ï¿½
         }
     }
 
-    IEnumerator Chase() // Ãß°Ý
+    IEnumerator Chase() // ï¿½ß°ï¿½
     {
         AnimatorStateInfo currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
         if (!currentAnimStateInfo.IsName("Move"))
         {
             _anim.Play("Move", 0, 0);
-            // SetDestination À» À§ÇØ ÇÑ frameÀ» ³Ñ±â±âÀ§ÇÑ ÄÚµå
+            // SetDestination ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ frameï¿½ï¿½ ï¿½Ñ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
             yield return null;
         }
 
-        // ¸ñÇ¥±îÁöÀÇ ³²Àº °Å¸®°¡ ¸ØÃß´Â ÁöÁ¡º¸´Ù ÀÛ°Å³ª °°À¸¸é
+        // ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Å¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ß´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Û°Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (_canSeePlayer && _nmAgent.remainingDistance <= _nmAgent.stoppingDistance)
         {
             StopAllCoroutines();
             _nmAgent.ResetPath();
             ChangeState(Define.MonsterState.Attack);
         }
-        else if(_canSeePlayer) // ¸ñÇ¥°¡ ½Ã¾ß¿¡ ÀÖ´Âµ¥ °è¼Ó ¿òÁ÷ÀÌ¸é °æ·Î ´Ù½Ã °è»êÇØ¼­ Ãß°Ý
+        else if(_canSeePlayer) // ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½Ã¾ß¿ï¿½ ï¿½Ö´Âµï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ß°ï¿½
         {
             _nmAgent.SetDestination(_target.position);
         }
-        else if (!_canSeePlayer) // ½Ã¾ß¿¡¼­ »ç¶óÁ³À¸¸é Idle·Î ÀüÈ¯
+        else if (!_canSeePlayer) // ï¿½Ã¾ß¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Idleï¿½ï¿½ ï¿½ï¿½È¯
         {
             StopAllCoroutines();
             _nmAgent.ResetPath();
@@ -255,7 +255,7 @@ public class ModifiedMonster_S : MonoBehaviour
         }
         else
         {
-            // ¾Ö´Ï¸ÞÀÌ¼ÇÀÇ ÇÑ »çÀÌÅ¬ µ¿¾È ´ë±â
+            // ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¬ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
             yield return new WaitForSeconds(currentAnimStateInfo.length);
         }
     }
@@ -265,11 +265,11 @@ public class ModifiedMonster_S : MonoBehaviour
         AnimatorStateInfo currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
         _nmAgent.isStopped = true;
 
-        if (_target==null) // ¸ñÇ¥¹°ÀÌ »ç¶óÁö¸é
+        if (_target==null) // ï¿½ï¿½Ç¥ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         {
             StopAllCoroutines();
             _nmAgent.isStopped = false;
-            ChangeState(Define.MonsterState.Patrol); // ¼øÂû
+            ChangeState(Define.MonsterState.Patrol); // ï¿½ï¿½ï¿½ï¿½
         }
         else _nmAgent.SetDestination(_target.position);
 
@@ -277,7 +277,7 @@ public class ModifiedMonster_S : MonoBehaviour
         {
             _anim.Play("Attack", 0, 0);
             AnimatorStateInfo attackStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
-            // SetDestination À» À§ÇØ ÇÑ frameÀ» ³Ñ±â±âÀ§ÇÑ ÄÚµå
+            // SetDestination ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ frameï¿½ï¿½ ï¿½Ñ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
             // yield return null;
 
             //if (_target != null)
@@ -286,12 +286,12 @@ public class ModifiedMonster_S : MonoBehaviour
             //}
         }
 
-        // ½Ã¾ß ¹üÀ§¿¡¼­ »ç¶óÁö¸é
+        // ï¿½Ã¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (!_canSeePlayer)
         {
             StopAllCoroutines();
             _nmAgent.isStopped = false;
-            ChangeState(Define.MonsterState.Patrol); // ¼øÂû
+            ChangeState(Define.MonsterState.Patrol); // ï¿½ï¿½ï¿½ï¿½
         }
         else if(_canSeePlayer && _nmAgent.remainingDistance > _nmAgent.stoppingDistance)
         {
@@ -311,12 +311,12 @@ public class ModifiedMonster_S : MonoBehaviour
             {
                 _anim.Play("Surprised", 0, 0);
                 currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
-                // SetDestination À» À§ÇØ ÇÑ frameÀ» ³Ñ±â±âÀ§ÇÑ ÄÚµå
-                HitChangeMaterials(other); // ¸ÅÅÍ¸®¾ó º¯È¯
+                // SetDestination ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ frameï¿½ï¿½ ï¿½Ñ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½
+                HitChangeMaterials(other); // ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
                 yield return new WaitForSeconds(currentAnimStateInfo.length);
             }
 
-            Debug.Log("°ø°Ý¹ÞÀº ÃøÀÇ Ã¼·Â:" + _status.Hp);
+            Debug.Log("ï¿½ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½:" + _status.Hp);
 
             if (_status.Hp <= 0)
                 Dead();
@@ -332,7 +332,7 @@ public class ModifiedMonster_S : MonoBehaviour
             for (int i = 0; i < _renderers.Count; i++)
             {
                 _renderers[i].material.color = Color.red;
-                Debug.Log("»öº¯ÇÑ´Ù.");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.");
                 Debug.Log(_renderers[i].material.name);
             }
 
@@ -358,7 +358,7 @@ public class ModifiedMonster_S : MonoBehaviour
     {
         //if (_state == Define.MonsterState.None) return;
 
-        // ÅÂ±×°¡ ¹«±â ÅÂ±×ÀÎ °æ¿ì
+        // ï¿½Â±×°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         if (other.tag == "Melee" || other.tag == "Gun")
         {
             if (Hp > 0)
@@ -369,7 +369,7 @@ public class ModifiedMonster_S : MonoBehaviour
             }
         }
         else 
-            Debug.Log("¿Ö ¾È´êÁö?");
+            Debug.Log("ï¿½ï¿½ ï¿½È´ï¿½ï¿½ï¿½?");
     }
 
     public void Dead()
@@ -377,10 +377,11 @@ public class ModifiedMonster_S : MonoBehaviour
         if (_state != Define.MonsterState.None && _status.Hp <= 0)
         {
             _isDead = true;
-            //_monsterCount -= 1;
+            _mContoller._monsterCount -= 1;
+            _mContoller._score += 1;
             _nmAgent.ResetPath();
             _anim.Play("Die", 0, 0);
-            _state = Define.MonsterState.None; // ½ÃÃ¼
+            _state = Define.MonsterState.None; // ï¿½ï¿½Ã¼
             StartCoroutine(DeadSinkCoroutine());
         }
 
@@ -389,12 +390,12 @@ public class ModifiedMonster_S : MonoBehaviour
 
     IEnumerator DeadSinkCoroutine()
     {
-        Debug.Log("½ÃÃ¼Ã³¸®");
-        _nmAgent.enabled = false; // ¾ÈÇÏ¸é ¹ØÀ¸·Î ¾È³»·Á°¡Áü
+        Debug.Log("ï¿½ï¿½Ã¼Ã³ï¿½ï¿½");
+        _nmAgent.enabled = false; // ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         yield return new WaitForSeconds(3f);
         while (transform.position.y > -1.5f)
         {
-            Debug.Log("¶¥¼ÓÀ¸·Î µé¾î°¡´ÂÁß");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½î°¡ï¿½ï¿½ï¿½ï¿½");
             transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
             yield return null;
         }
@@ -404,11 +405,11 @@ public class ModifiedMonster_S : MonoBehaviour
     {
         if (_target != null)
         {
-            _target.GetComponent<MonsterStatus_S>().TakedDamage(_attack);
+            _target.GetComponent<PlayerStatus_S>().TakedDamage(_attack);
 
-            if(_target.GetComponent<MonsterStatus_S>()!=null)
+            if(_target.GetComponent<PlayerStatus_S>()!=null)
             {
-                _target.GetComponent<MonsterStatus_S>().HitChangeMaterials();
+                _target.GetComponent<PlayerStatus_S>().HitChangeMaterials();
             }
             if (_target.GetComponent<Person>() != null)
             {
@@ -420,6 +421,6 @@ public class ModifiedMonster_S : MonoBehaviour
     public void SetManagedPool(IObjectPool<ModifiedMonster_S> pool)
     {
         _managedPool = pool;
-        Debug.Log("SetManagedPool È£ÃâµÊ");
+        Debug.Log("SetManagedPool È£ï¿½ï¿½ï¿½");
     }
 }
