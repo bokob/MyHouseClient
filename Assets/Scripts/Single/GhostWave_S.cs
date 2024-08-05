@@ -20,7 +20,7 @@ public class GhostWave : MonoBehaviour
         if (_pool == null)
         {
             Debug.Log("Centralized pool initialization in Awake");
-            _pool = new ObjectPool<ModifiedMonster_S>(CreateMonster, OnGetMonster, OnReleaseMonster, OnDestroyMonster, maxSize: 1);
+            _pool = new ObjectPool<ModifiedMonster_S>(CreateMonster, OnGetMonster, OnReleaseMonster, OnDestroyMonster, maxSize: 100);
         }
     }
 
@@ -53,8 +53,11 @@ public class GhostWave : MonoBehaviour
 
     private ModifiedMonster_S CreateMonster()
     {
+        Vector3 randomPosition = ghostWavePosition.position + Random.insideUnitSphere * 7f;
+        randomPosition.y = 0; // Ghost 생성 시 position.y 값이 0이도록 고정
+
         Debug.Log("CreateMonster called");
-        ModifiedMonster_S monster = Instantiate(ghostPrefab, ghostWavePosition.position + Random.insideUnitSphere * 7f, Quaternion.identity).GetComponent<ModifiedMonster_S>();
+        ModifiedMonster_S monster = Instantiate(ghostPrefab, randomPosition, Quaternion.identity).GetComponent<ModifiedMonster_S>();
         if (monster != null)
         {
             monster.SetManagedPool(_pool);
@@ -84,11 +87,5 @@ public class GhostWave : MonoBehaviour
     {
         Debug.Log("OnDestroyMonster called");
         Destroy(monster.gameObject);
-    }
-
-    private void HandleMonsterDied(ModifiedMonster_S monster)
-    {
-        Debug.Log("HandleMonsterDied 호출됨");
-        _pool.Get();
     }
 }
