@@ -8251,6 +8251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55d80fad8438a724c8abfc367b81ebad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 0}
   _sliceMask:
     serializedVersion: 2
     m_Bits: 65536
@@ -18737,6 +18738,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55d80fad8438a724c8abfc367b81ebad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 0}
   _sliceMask:
     serializedVersion: 2
     m_Bits: 65536
@@ -21445,6 +21447,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6430400050690901876, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6944045431907438263, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7323974387594366461, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9002483722234610334, guid: 06ae9215121e7664aa589981daed690d,
         type: 3}
