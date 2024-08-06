@@ -182,7 +182,7 @@ public class Gun_S : Weapon
             // 몬스터나 플레이어가 맞은 경우
             if (_hitTransform.GetComponent<PlayerStatus>() != null)
             {
-                _hitTransform.GetComponent<PlayerStatus>().TakedDamage(Attack);
+                //_hitTransform.GetComponent<PlayerStatus>().TakedDamage(Attack);
 
                 if (_hitTransform.GetComponent<PlayerStatus>() != null)
                 {
