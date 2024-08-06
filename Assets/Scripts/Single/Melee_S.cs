@@ -31,8 +31,8 @@ public class Melee_S : Weapon
     {
         base.Type = Define.Type.Melee;
 
-        _playerMove = transform.root.GetChild(2).GetComponent<PlayerMove_S>();
-        _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
+        _playerMove = transform.root.GetChild(2).GetChild(2).GetComponent<PlayerMove_S>();
+        _playerInputs = transform.root.GetChild(2).GetChild(2).GetComponent<PlayerInputs>();
         _animator = base.Master.gameObject.GetComponent<Animator>();
 
         _meleeArea = gameObject.GetComponent<BoxCollider>();

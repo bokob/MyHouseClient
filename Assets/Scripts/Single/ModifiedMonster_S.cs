@@ -378,7 +378,7 @@ public class ModifiedMonster_S : MonoBehaviour
         {
             _isDead = true;
             _mContoller._monsterCount -= 1;
-            _mContoller._score += 1;
+            _mContoller.score += 1;
             _nmAgent.ResetPath();
             _anim.Play("Die", 0, 0);
             _state = Define.MonsterState.None; // 시체
