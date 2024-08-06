@@ -53,19 +53,14 @@ public class Gun : Weapon
         _originalRotation = transform.localEulerAngles;
 
         _playerMove = base.Master.gameObject.GetComponent<PlayerMove>();
-        _playerInputs = transform.root.GetChild(2).gameObject.GetComponent<PlayerInputs>();
+        _playerInputs = base.Master.gameObject.GetComponent<PlayerInputs>();
 
-        _animator = base.Master.GetChild(1).gameObject.GetComponent<Animator>();
+        _animator = base.Master.gameObject.GetComponent<Animator>();
         //rigBuilder = transform.root.GetChild(0).GetComponent<RigBuilder>();
-        _cameraController = transform.root.GetChild(0).GetChild(0).GetComponent<CameraController>();
+        _cameraController = Camera.main.GetComponent<CameraController>();
 
         Attack = 50;
     }
-
-    //void Update()
-    //{
-    //    Use();
-    //}
 
     void HitRayCheck()
     {
@@ -127,8 +122,6 @@ public class Gun : Weapon
         }
         else
         {
-            Debug.Log($"{transform.root.GetChild(2).gameObject.GetComponent<PlayerStatus>()._nickName}이 조준이 안됩니다.");
-
             _isAim = false;
             _rigBuilder.enabled = false; // IK 해제
 
