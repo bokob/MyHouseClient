@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MapScene.unity
     guid: 334d44b31daf4ef46a32d567288a32ac
+  - enabled: 1
+    path: Assets/Scenes/ji_SinglePlayScene.unity
+    guid: c43e1536785f13046bcd84fda5afe4f1
   m_configObjects: {}
