@@ -18,6 +18,7 @@ public class MonsterStatus_S : MonoBehaviour
 
     #region 점수 표시용
     #endregion
+    
 
 
     void Awake()
