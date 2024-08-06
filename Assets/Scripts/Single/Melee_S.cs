@@ -65,7 +65,7 @@ public class Melee_S : Weapon
         _stabDelay += Time.deltaTime;
         _isSwingReady = base.Rate < _swingDelay; // 공격속도가 공격 딜레이보다 작으면 공격준비 완료
         _isStabReady = base.Rate < _stabDelay;
-        if (_playerInputs.swing && _isSwingReady && _playerMove._grounded || _playerInputs.stab && _isStabReady && _playerMove._grounded)
+        if (_playerInputs.swing &&  _playerMove._grounded || _playerInputs.stab &&  _playerMove._grounded)
         {
             StopCoroutine("MeleeAttackEffect");
 
