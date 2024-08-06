@@ -6,61 +6,58 @@ using UnityEngine.UI;
 
 public class InGameUI : MonoBehaviour
 {
-    GameObject _player;
-    PlayerStatus _status;
+    [SerializeField] GameObject _player;
+    [SerializeField] PlayerStatus _status;
     //WeaponManager _weaponManager;
 
     //UI 변수들
 
     // 시간
-    TextMeshProUGUI _timeSecond;
+    [SerializeField] TextMeshProUGUI _timeSecond;
     float _timer;
 
     // 스테이터스
-    Slider _hpBar;
-    Slider _spBar;
+    [SerializeField] Slider _hpBar;
+    [SerializeField] Slider _spBar;
 
     // 무기
     RawImage _weaponIcon;
     public Texture2D[] _weaponImages = new Texture2D[2];
-    TextMeshProUGUI _currentBullet;
-    TextMeshProUGUI _totalBullet;
+    [SerializeField] TextMeshProUGUI _currentBullet;
+    [SerializeField] TextMeshProUGUI _totalBullet;
 
     // 조준선
-    GameObject _crossHair;
+    [SerializeField] GameObject _crossHair;
 
-    //void Start()
-    //{
-    //    _player = GameObject.Find("Player");
-    //    _status = _player.GetComponent<PlayerStatus>();
-    //    //_weaponManager = _player.GetComponent<WeaponManager>();
+    void Start()
+    {
+        // 시간 표시할 곳
+        _timeSecond = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
+        // Hp, Sp 표시할 곳
+        _hpBar = transform.GetChild(1).GetComponent<Slider>();
+        _spBar = transform.GetChild(2).GetComponent<Slider>();
 
-    //    // 시간 표시할 곳
-    //    _timeSecond = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
-    //    // Hp, Sp 표시할 곳
-    //    _hpBar = transform.GetChild(1).GetComponent<Slider>();
-    //    _spBar = transform.GetChild(2).GetComponent<Slider>();
+        // 무기 정보 표시할 곳
+        _weaponIcon = transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
+        _currentBullet = transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
+        _totalBullet = transform.GetChild(3).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
 
-    //    // 무기 정보 표시할 곳
-    //    _weaponIcon = transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
-    //    _currentBullet = transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
-    //    _totalBullet = transform.GetChild(3).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
+        // 조준선 UI
+        _crossHair = transform.GetChild(4).gameObject;
+    }
 
-    //    // 조준선 UI
-    //    _crossHair = transform.GetChild(5).gameObject;
-    //}
-
-    //void Update()
-    //{
-    //    DisplayLivingTime();
-    //    DisplayHp();
-    //    DisplaySp();
-    //    DisplayWeaponInfo();
-    //}
+    void Update()
+    {
+        DisplayLivingTime();
+        DisplayHp();
+        DisplaySp();
+        DisplayWeaponInfo();
+    }
 
     public void DisplayLivingTime()
     {
         // 체력이 0이면 멈추기
+        if (_status.Hp <= 0) return;
 
         _timer += Time.deltaTime;
         _timeSecond.text = ((int)_timer).ToString();
