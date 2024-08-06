@@ -59,7 +59,7 @@ public class Gun : Weapon
         _playerMove = base.Master.gameObject.GetComponent<PlayerMove>();
         _playerInputs = base.Master.gameObject.GetComponent<PlayerInputs>();
 
-        _animator = base.Master.gameObject.GetComponent<Animator>();
+        _animator = base.Master.GetChild(1).gameObject.GetComponent<Animator>();
         //rigBuilder = transform.root.GetChild(0).GetComponent<RigBuilder>();
         _cameraController = Camera.main.GetComponent<CameraController>();
 

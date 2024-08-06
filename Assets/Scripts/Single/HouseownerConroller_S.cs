@@ -33,10 +33,10 @@ public class HouseownerConroller_S : MonoBehaviour
         Animator houseownerAnimator = gameObject.GetComponent<Animator>();
         RuntimeAnimatorController houseAnimController = houseownerAnimator.runtimeAnimatorController;
         Avatar houseAvatar = houseownerAnimator.avatar;
-        
+
         // Player 객체에도 같은 애니메이터가 존재하므로 꼬이게 된다. 따라서 Houseowner의 애니메이터를 비워준다.
-        houseownerAnimator.runtimeAnimatorController = null;
-        houseownerAnimator.avatar = null;
+        //houseownerAnimator.runtimeAnimatorController = null;
+        //houseownerAnimator.avatar = null;
 
         _playerStatus.SetRoleAnimator(houseAnimController, houseAvatar);
     }
