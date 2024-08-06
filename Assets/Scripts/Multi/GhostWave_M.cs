@@ -74,7 +74,10 @@ public class GhostWave_M : MonoBehaviourPunCallbacks
     {
         Vector3 randomPosition = ghostWavePosition.position + Random.insideUnitSphere * 7f;
         randomPosition.y = 0; // Ghost 생성 시 position.y 값이 0이도록 고정.
-        ModifiedMonster_S monster = Instantiate(ghostPrefab, randomPosition, Quaternion.identity).GetComponent<ModifiedMonster_S>();
+
+        GameObject ghost = Instantiate(ghostPrefab, randomPosition, Quaternion.identity);
+        ghost.transform.SetParent(transform, false); // 지역 위치로 소환
+        ModifiedMonster_S monster = ghost.GetComponent<ModifiedMonster_S>();
         if (monster != null)
         {
             monster.SetManagedPool(_pool);

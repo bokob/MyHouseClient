@@ -2,6 +2,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static Define;
@@ -15,6 +16,7 @@ public class GameManager : MonoBehaviour
     private GameObject _playerPrefab;
     public Transform[] _spawnPoints;
     public GameObject _localPlayer;
+    public TextMeshProUGUI _playerCount;
     // Start is called before the first frame update
 
     private void Awake()
@@ -35,7 +37,8 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-
+        // 계속 확인하는 것은 부하가 심하니까 NetworkManager에 있는 것을 확인하는 식으로 하자.
+        _playerCount.text = PhotonNetwork.CountOfPlayers.ToString();
     }
 
     private void OnDestroy()
@@ -66,5 +69,25 @@ public class GameManager : MonoBehaviour
             photonView.RPC("TransformIntoRobber", RpcTarget.AllBuffered);
         else if (status.Role == Define.Role.Houseowner) 
             photonView.RPC("TransformIntoHouseowner", RpcTarget.AllBuffered);
+    }
+
+    // 마스터 클라이언트의 죽음을 처리하는 함수
+    public void OnMasterClientKilled(Player killer)
+    {
+        if (PhotonNetwork.IsMasterClient) // 집주인은 자신을 죽인 플레이어를 집주인으로 지정
+        {
+            // 새로운 마스터 클라이언트 설정
+            PhotonNetwork.SetMasterClient(killer);
+            Debug.Log("New Master Client is: " + killer.NickName);
+        }
+    }
+
+    // 플레이어의 죽음을 처리하는 함수
+    public void OnPlayerKilled(Player killedPlayer, Player killer)
+    {
+        if (killedPlayer == PhotonNetwork.MasterClient) // 살해당한 플레이어가 집주인이면
+        {
+            OnMasterClientKilled(killer);
+        }
     }
 }

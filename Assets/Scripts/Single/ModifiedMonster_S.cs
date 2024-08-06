@@ -54,7 +54,12 @@ public class ModifiedMonster_S : MonoBehaviour
 
     void Awake()
     {
-        MonsterInit(); // ���� ����
+        //MonsterInit(); // ���� ����
+    }
+
+    private void Start()
+    {
+        MonsterInit();
     }
 
     void MonsterInit()

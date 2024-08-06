@@ -446,7 +446,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
 
         // 플레이어 소환
-        GameManager._instance.SapwnPlayer();
+
+        if(scene.name == "MultiPlayScene")
+            GameManager._instance.SapwnPlayer();
 }
 
     private void OnDestroy()
@@ -542,6 +544,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             }
         }
     }
-
     #endregion
+
+    public int GetPlayerCount()
+    {
+        return _cachePlayerList.Count;
+    }
 }

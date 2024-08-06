@@ -1,12 +1,15 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
-public class PlayerStatus : MonoBehaviour
+public class PlayerStatus : MonoBehaviourPunCallbacks
 {
     public PlayerMove _playerMove;
     public CameraController _cameraController;
+    public InGameUI _inGameUI;
 
     #region 상태 및 능력치, 이름 등
     public bool _isLocalPlayer;
@@ -40,6 +43,7 @@ public class PlayerStatus : MonoBehaviour
         _isLocalPlayer = true;
         _playerMove.enabled = true;         // PlayerMove 활성화
         _cameraController.gameObject.transform.parent.gameObject.SetActive(true);
+        _inGameUI.gameObject.SetActive(true);
     }
 
     [PunRPC]
@@ -79,6 +83,7 @@ public class PlayerStatus : MonoBehaviour
     /// <summary>
     /// 사망
     /// </summary>
+    [PunRPC]
     public void Dead()
     {
         if (Role != Define.Role.None && Hp <= 0)
@@ -115,14 +120,24 @@ public class PlayerStatus : MonoBehaviour
     /// 데미지 입기
     /// </summary>
     /// <param name="attack"> 가할 공격력 </param>
-    public void TakedDamage(int attack)
+    [PunRPC]
+    public void TakedDamage(int attack, PhotonMessageInfo info)
     {
         // 피해가 음수라면 회복되는 현상이 일어나므로 피해의 값을 0이상으로 되게끔 설정
         float damage = Mathf.Max(0, attack - Defence);
         Hp -= damage;
-
         Debug.Log(gameObject.name + "(이)가 " + damage + " 만큼 피해를 입었음!");
         Debug.Log("남은 체력: " + Hp);
+
+        if(Hp <= 0)
+        {
+            Player killer = info.Sender;
+
+            GameManager._instance.OnPlayerKilled(photonView.Owner, killer);
+
+            GetComponent<PhotonView>().RPC("Dead", RpcTarget.AllBuffered);
+        }
+
     }
 
 
@@ -234,6 +249,8 @@ public class PlayerStatus : MonoBehaviour
         transform.GetChild(0).gameObject.SetActive(false); // 강도 비활성화
         transform.GetChild(1).gameObject.SetActive(true);  // 집주인 활성화
 
+        _inGameUI.gameObject.transform.GetChild(4).gameObject.SetActive(true); // 조준점 활성화
+
         Debug.Log($"현재 상태({transform.root.GetChild(2).GetComponent<PlayerStatus>()._nickName}): " + Role);
 
         _cameraController.gameObject.GetComponent<CameraController>().SetHouseownerView(); // 집주인 시점으로 설정
@@ -247,18 +264,21 @@ public class PlayerStatus : MonoBehaviour
     /// <returns></returns>
     IEnumerator DeadSinkCoroutine()
     {
+        GetComponent<CharacterController>().enabled = false;
         yield return new WaitForSeconds(3f);
         while (transform.position.y > -1.5f)
         {
             transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
             yield return null;
         }
-        Destroy(gameObject);
+        // Destroy(gameObject);
+        Application.Quit(); // 게임 종료
     }
 
     /// <summary>
     /// 피해 받으면 Material 붉게 변화
     /// </summary>
+    [PunRPC]
     public void HitChangeMaterials()
     {
         // 태그가 무기 또는 몬스터
@@ -288,60 +308,6 @@ public class PlayerStatus : MonoBehaviour
         for (int i = 0; i < _renderers.Count; i++)
             _renderers[i].material.color = Color.white;
     }
-
-    //void OnTriggerEnter(Collider other)
-    //{
-    //    //// 자기 자신에게 닿은 경우 무시
-    //    //if (other.transform.root.name == gameObject.name) return;
-    //    if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
-    //        HitChangeMaterials();
-    //}
-
-
-
-    //void OnTriggerEnter(Collider other)
-    //{
-    //    if (!IsServer) return;
-
-    //    //if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
-    //    //    HitChangeMaterials();
-
-
-    //    Debug.Log(NetworkGameManager.instance.GetUsernameFromClientId(OwnerClientId) + "가 맞음");
-
-    //    Debug.Log(transform.root.GetComponent<NetworkObject>().OwnerClientId + "가 " + other.transform.root.GetComponent<NetworkObject>().OwnerClientId + "에를 건드림!");
-    //    // 클라이언트 ID가 달라야 함
-    //    if (other.gameObject.CompareTag("Melee") && transform.root.GetComponent<NetworkObject>().OwnerClientId != other.transform.root.GetComponent<NetworkObject>().OwnerClientId)
-    //    {
-    //        // GetComponent<PlayerStatus>().hp.Value -= 50;
-
-    //        Debug.Log(transform.root.GetComponent<NetworkObject>().OwnerClientId + "가 " + other.transform.root.GetComponent<NetworkObject>().OwnerClientId + "에게 맞음!");
-
-    //        PlayAttackedMaterialsClientRpc();   // 애니메이션 재생하라고 명령
-    //    }
-    //}
-
-    //[ServerRpc]
-    //void PlayAttackedMaterialsServerRpc()
-    //{
-    //    PlayAttackedMaterialsClientRpc();
-    //}
-
-    //[ClientRpc]
-    //void PlayAttackedMaterialsClientRpc()
-    //{
-    //    HitChangeMaterials();
-    //}
-
-    //public void SetRoleAnimator(RuntimeAnimatorController animController, Avatar avatar)
-    //{
-    //    _animator.runtimeAnimatorController = animController;
-    //    _animator.avatar = avatar;
-
-    //    // 애니메이터 속성 교체하고 껐다가 켜야 동작함
-    //    _animator.enabled = false;
-    //    _animator.enabled = true;
-    //}
 
     public void ChangeIsHoldGun(bool isHoldGun)
     {

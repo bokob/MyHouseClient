@@ -27,13 +27,16 @@ public class Melee_S : Weapon
     bool _hasExited = false; // 오브젝트를 뚫고 나갔는지 여부를 저장하는 변수
     #endregion
 
-    void Start()
+    private void Awake()
     {
         base.Type = Define.Type.Melee;
+        _playerMove = transform.root.GetChild(2).GetComponent<PlayerMove_S>();
+        _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
+    }
 
-        _playerMove = transform.root.GetChild(2).GetChild(2).GetComponent<PlayerMove_S>();
-        _playerInputs = transform.root.GetChild(2).GetChild(2).GetComponent<PlayerInputs>();
-        _animator = base.Master.gameObject.GetComponent<Animator>();
+    void Start()
+    {
+        _animator = transform.root.GetChild(2).GetChild(1).GetComponent<Animator>();
 
         _meleeArea = gameObject.GetComponent<BoxCollider>();
         _trailEffet = gameObject.GetComponentInChildren<TrailRenderer>();
@@ -65,6 +68,12 @@ public class Melee_S : Weapon
         _stabDelay += Time.deltaTime;
         _isSwingReady = base.Rate < _swingDelay; // 공격속도가 공격 딜레이보다 작으면 공격준비 완료
         _isStabReady = base.Rate < _stabDelay;
+
+        if (_playerInputs == null)
+            _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
+        if (_playerMove == null)
+            _playerMove = transform.root.GetChild(2).GetComponent<PlayerMove_S>();
+
         if (_playerInputs.swing &&  _playerMove._grounded || _playerInputs.stab &&  _playerMove._grounded)
         {
             StopCoroutine("MeleeAttackEffect");

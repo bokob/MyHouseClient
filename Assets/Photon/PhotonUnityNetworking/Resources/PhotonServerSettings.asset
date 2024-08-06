@@ -50,6 +50,19 @@ MonoBehaviour:
   - SetWeapon
   - RequestRoleAssignment
   - FadeOutAndRespawn
+  - SetRigBuilder
+  - TakedDamage
+  - HitChangeMaterials
+  - PlayAudioSource
+  - PlayMuzzleFalsh
+  - InstantiateVFX
+  - SetMeleeAreaClientRpc
+  - SetMeleeAreaServerRpc
+  - SetTrailEffectClientRpc
+  - SetTrailEffectServerRpc
+  - SetMeleeArea
+  - SetTrailEffect
+  - Dead
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

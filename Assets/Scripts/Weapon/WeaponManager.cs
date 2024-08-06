@@ -36,7 +36,7 @@ public class WeaponManager : MonoBehaviour
 
     void Update()
     {
-        if(!_playerInputs.aim && !_playerInputs.reload) // �������� �ʰ�, �������� ���� �� ���� ��ü ����
+        if(transform.root.GetChild(2).gameObject.GetComponent<PhotonView>().IsMine&& !_playerInputs.aim && !_playerInputs.reload) // �������� �ʰ�, �������� ���� �� ���� ��ü ����
             WeaponSwitching(); // ���� ��ü
     }
 
