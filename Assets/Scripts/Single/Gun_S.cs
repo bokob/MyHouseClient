@@ -5,6 +5,7 @@ using Cinemachine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 using TMPro;
+
 public class Gun_S : Weapon
 {
     #region 총 관련 변수
@@ -50,12 +51,13 @@ public class Gun_S : Weapon
 
     void Start()
     {
+        // 캐릭터 모양이 이상해서 애니메이션이랑 안맞는 여파로 총 조준 방향이 이상해지고 있음, 따라서 조준 안 할 때는 원래대로 돌리기 위해 저장
         _originalRotation = transform.localEulerAngles;
 
         _playerMove = base.Master.gameObject.GetComponent<PlayerMove_S>();
         _playerInputs = base.Master.gameObject.GetComponent<PlayerInputs>();
         
-        _animator = base.Master.gameObject.GetComponent<Animator>();
+        _animator = base.Master.GetChild(0).gameObject.GetComponent<Animator>();
         //rigBuilder = transform.root.GetChild(0).GetComponent<RigBuilder>();
         _cameraController = Camera.main.GetComponent<CameraController_S>();
 
@@ -188,18 +190,16 @@ public class Gun_S : Weapon
                 Destroy(RedEffect, 0.5f);
             }
 
-            // 몬스터나 플레이어가 맞은 경우
-            if (_hitTransform.GetComponent<MonsterStatus_S>() != null)
+            // 몬스터가 맞은 경우
+            MonsterStatus_S monsterStatus = _hitTransform.GetComponent<MonsterStatus_S>();
+            if (monsterStatus != null)
             {
-                _hitTransform.GetComponent<MonsterStatus_S>().TakedDamage(Attack);
-
-                if (_hitTransform.GetComponent<MonsterStatus_S>() != null)
+                monsterStatus.HitChangeMaterials();
+                monsterStatus.TakedDamage(Attack);
+                if(monsterStatus.Hp <= 0)
                 {
-                    _hitTransform.GetComponent<MonsterStatus_S>().HitChangeMaterials();
-                }
-                if (_hitTransform.GetComponent<Person>() != null)
-                {
-                    _hitTransform.GetComponent<Person>().HitChangeMaterials();
+                    GameManager_S._instance.Score++;
+                    _totalBulletCount += 10;
                 }
             }
 

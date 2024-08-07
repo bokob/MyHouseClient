@@ -9,7 +9,6 @@ public class InGameUI_S : MonoBehaviour
     GameObject _player;
     PlayerStatus_S _status;
     public WeaponManager_S _weaponManager;
-    public MonsterController_S mController;
 
     //UI 변수들
 
@@ -128,13 +127,6 @@ public class InGameUI_S : MonoBehaviour
 
     public void DisplayMonsterCount()
     {
-        if(mController != null)
-        {
-            _currentMonster.text = mController._monsterCount.ToString();
-        }
-        else
-        {
-            Debug.LogError("MonsterController is null");
-        }
+        _currentMonster.text = GameManager_S._instance._monsterCount.ToString();
     }
 }

@@ -36,7 +36,7 @@ public class Melee_S : Weapon
 
     void Start()
     {
-        _animator = transform.root.GetChild(2).GetChild(1).GetComponent<Animator>();
+        _animator = transform.root.GetChild(2).GetChild(0).GetComponent<Animator>();
 
         _meleeArea = gameObject.GetComponent<BoxCollider>();
         _trailEffet = gameObject.GetComponentInChildren<TrailRenderer>();

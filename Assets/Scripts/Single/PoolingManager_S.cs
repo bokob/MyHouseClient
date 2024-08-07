@@ -4,19 +4,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class GhostWave : MonoBehaviour
+public class PoolingManager_S : MonoBehaviour
 {
+    public static PoolingManager_S _instance;
+    
     [SerializeField]
-    private GameObject ghostPrefab;
+    private GameObject _monsterPrefab;
 
     private IObjectPool<ModifiedMonster_S> _pool;
 
-    public Transform ghostWavePosition;
-    float spawnGhostInterval = 60f;  // ëª¬ìŠ¤í„° ìƒì„± ê°„ê²©, ì²˜ìŒì— 60ì´ˆ ìˆë‹¤ê°€ ìƒì„±.
-    int additionalSpawnGhostCount = 0;  // ì¶”ê°€ ìƒì„±í•  ëª¬ìŠ¤í„° ìˆ˜
+    public List<Transform> _waveSpawnPoints = new List<Transform>();
+    float spawnGhostInterval = 60f;  // ¸ó½ºÅÍ »ı¼º °£°İ, Ã³À½¿¡ 60ÃÊ ÀÖ´Ù°¡ »ı¼º.
+    int additionalSpawnGhostCount = 0;  // Ãß°¡ »ı¼ºÇÒ ¸ó½ºÅÍ ¼ö
+
+    int spawnPointIdx = 0;
+
 
     private void Awake()
     {
+        _instance = this;
+
         if (_pool == null)
         {
             Debug.Log("Centralized pool initialization in Awake");
@@ -26,7 +33,7 @@ public class GhostWave : MonoBehaviour
 
     private void Start()
     {
-        // ì²˜ìŒì— ê° GhostWave ì˜¤ë¸Œì íŠ¸ì—ì„œ 2ë§ˆë¦¬ì”© ìƒì„±
+        // Ã³À½¿¡ °¢ GhostWave ¿ÀºêÁ§Æ®¿¡¼­ 2¸¶¸®¾¿ »ı¼º
         for (int i = 0; i < 2; i++)
         {
             _pool.Get();
@@ -53,11 +60,14 @@ public class GhostWave : MonoBehaviour
 
     private ModifiedMonster_S CreateMonster()
     {
-        Vector3 randomPosition = ghostWavePosition.position + Random.insideUnitSphere * 7f;
-        randomPosition.y = 0; // Ghost ìƒì„± ì‹œ position.y ê°’ì´ 0ì´ë„ë¡ ê³ ì •
+        if (spawnPointIdx == _waveSpawnPoints.Count)
+            spawnPointIdx = spawnPointIdx % _waveSpawnPoints.Count;
+
+        Vector3 randomPosition = _waveSpawnPoints[spawnPointIdx].position + Random.insideUnitSphere * 7f;
+        randomPosition.y = 0; // Ghost »ı¼º ½Ã position.y °ªÀÌ 0ÀÌµµ·Ï °íÁ¤
 
         Debug.Log("CreateMonster called");
-        ModifiedMonster_S monster = Instantiate(ghostPrefab, randomPosition, Quaternion.identity, ghostWavePosition).GetComponent<ModifiedMonster_S>();
+        ModifiedMonster_S monster = Instantiate(_monsterPrefab, randomPosition, Quaternion.identity, _waveSpawnPoints[spawnPointIdx]).GetComponent<ModifiedMonster_S>();
         if (monster != null)
         {
             monster.SetManagedPool(_pool);
@@ -67,6 +77,8 @@ public class GhostWave : MonoBehaviour
         {
             Debug.LogError("ModifiedMonster_S component not found");
         }
+
+        spawnPointIdx++;
 
         return monster;
     }
