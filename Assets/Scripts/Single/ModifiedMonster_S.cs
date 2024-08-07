@@ -13,7 +13,6 @@ public class ModifiedMonster_S : MonoBehaviour
     NavMeshAgent _nmAgent;
     Animator _anim;
     MonsterStatus_S _status;
-    MonsterController_S _mContoller;
 
     // ���� ����
     public Transform _centerPoint;  // ���� ��ġ ���� ������
@@ -67,11 +66,11 @@ public class ModifiedMonster_S : MonoBehaviour
         Debug.Log("����");
         _anim = GetComponent<Animator>();
         _nmAgent = GetComponent<NavMeshAgent>();
-        _mContoller = transform.parent.parent.GetComponent<MonsterController_S>();
         _centerPoint = transform;
         _status = GetComponent<MonsterStatus_S>();
         _status.Hp = Hp;
-        _mContoller._monsterCount += 1;
+
+        GameManager_S._instance._monsterCount += 1;
         
 
         // ������ ��� ���͸��� ���ϱ�
@@ -382,8 +381,8 @@ public class ModifiedMonster_S : MonoBehaviour
         if (_state != Define.MonsterState.None && _status.Hp <= 0)
         {
             _isDead = true;
-            _mContoller._monsterCount -= 1;
-            _mContoller.score += 1;
+            GameManager_S._instance._monsterCount -= 1;
+            GameManager_S._instance.Score += 1;
             _nmAgent.ResetPath();
             _anim.Play("Die", 0, 0);
             _state = Define.MonsterState.None; // ��ü

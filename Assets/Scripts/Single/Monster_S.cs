@@ -9,44 +9,44 @@ public class Monster_S : MonoBehaviour
     NavMeshAgent _nmAgent;
     Animator _anim;
     PlayerStatus_S _status;
-    MonsterController_S _mContoller;
 
-    // 순찰 관련
-    public Transform _centerPoint;  // 순찰 위치 정할 기준점
-    public float _range;            // 순찰 위치 정할 범위
-    public float _patrolSpeed = 1f; // 순찰 속도
-
-    // 상태 관련
-    public float Hp { get; private set; } = 300f;                   // 체력
-    public int _attack { get; private set; } = 30;                   // 공격력
+    #region 상태, 능력치
     public Define.MonsterState _state = Define.MonsterState.Patrol; // 현재 상태
     public bool _isDead = false;
 
-    // 적 시야 관련
+    List<Renderer> _renderers; // 피해 입었을 때 렌더러 색 변환에 사용할 리스트
+    List<Color> _originColors;
+
+    public float Hp { get; private set; } = 300f;                   // 체력
+    public int _attack { get; private set; } = 30;                   // 공격력
+    #endregion
+
+    #region 시야 관련
     public float _radius;              // 시야 범위
     [Range(0, 360)]
     public float _angle;               // 시야각
     public LayerMask _targetMask;      // 목표
     public LayerMask _obstructionMask; // 장애물
     public bool _canSeePlayer;
+    #endregion
 
-    // 추격 관련
+    #region 추격 관련
     public float _chaseRange = 10f; // 추격 범위
     public float _lostDistance; // 놓치는 거리
+    #endregion
 
-    // 공격 관련
+    #region 순찰 및 공격 관련
+    public Transform _centerPoint;  // 순찰 위치 정할 기준점
+    public float _range;            // 순찰 위치 정할 범위
+    public float _patrolSpeed = 1f; // 순찰 속도
+
     public float _attackRange = 0.1f; // 공격 범위
     public float _attackDelay = 2f; // 공격 간격
     float nextAttackTime = 0f;
-
-    // 유령 카운트 관련
-
-    public int _monsterCount = 0;
-
     public Transform _target = null; // 목표
+    #endregion
 
-    List<Renderer> _renderers; // 피해 입었을 때 렌더러 색 변환에 사용할 리스트
-    List<Color> _originColors;
+    public int _monsterCount = 0; // 유령 수
 
     void Awake()
     {
@@ -58,11 +58,10 @@ public class Monster_S : MonoBehaviour
         Debug.Log("시작");
         _anim = GetComponent<Animator>();
         _nmAgent = GetComponent<NavMeshAgent>();
-        _mContoller = transform.parent.GetComponent<MonsterController_S>();
         _centerPoint = transform;
         _status = GetComponent<PlayerStatus_S>();
         _status.Hp = Hp;
-        _mContoller._monsterCount += 1;
+        GameManager_S._instance._monsterCount += 1;
         
 
         // 하위의 모든 매터리얼 구하기
@@ -336,6 +335,7 @@ public class Monster_S : MonoBehaviour
             StartCoroutine(ResetMaterialAfterDelay(0.5f));
         }
     }
+
     IEnumerator ResetMaterialAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -405,10 +405,6 @@ public class Monster_S : MonoBehaviour
             if(_target.GetComponent<PlayerStatus_S>()!=null)
             {
                 _target.GetComponent<PlayerStatus_S>().HitChangeMaterials();
-            }
-            if (_target.GetComponent<Person>() != null)
-            {
-                _target.GetComponent<Person>().HitChangeMaterials();
             }
         }
     }

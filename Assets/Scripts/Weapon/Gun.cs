@@ -54,6 +54,7 @@ public class Gun : Weapon
 
     void Start()
     {
+        // 캐릭터 모양이 이상해서 애니메이션이랑 안맞는 여파로 총 조준 방향이 이상해지고 있음, 따라서 조준 안 할 때는 원래대로 돌리기 위해 저장
         _originalRotation = transform.localEulerAngles;
 
         _playerMove = base.Master.gameObject.GetComponent<PlayerMove>();

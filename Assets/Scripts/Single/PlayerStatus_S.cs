@@ -26,14 +26,12 @@ public class PlayerStatus_S : MonoBehaviour
     public GameObject endUI;
     public TextMeshProUGUI endText;
     public TextMeshProUGUI quitText;
-    public MonsterController_S mController;
-
     bool _dead;
     
 
     void Awake()
     {
-        _animator = GetComponent<Animator>();
+        _animator = transform.GetChild(0).gameObject.GetComponent<Animator>();
         InitRole();
         endUI.SetActive(false);
         
@@ -49,10 +47,6 @@ public class PlayerStatus_S : MonoBehaviour
                 // if (renderer.material.color == null) Debug.Log("왜 색이 널?");
             }
         }
-    }
-
-    private void Start() {
-        TransformIntoHouseowner();
     }
 
     void Update()
@@ -177,25 +171,6 @@ public class PlayerStatus_S : MonoBehaviour
     {
 
     }
-
-    /// <summary>
-    /// 집주인으로 변신
-    /// </summary>
-    public void TransformIntoHouseowner()
-    {
-        transform.GetChild(0).gameObject.SetActive(false); // 강도 비활성화
-        transform.GetChild(1).gameObject.SetActive(true);  // 집주인 활성화
-        Role = Define.Role.Houseowner;
-
-        Debug.Log("현재 상태: " + Role);
-
-        Camera.main.gameObject.GetComponent<CameraController_S>().SetHouseownerView(); // 집주인 시점으로 설정
-
-        Debug.Log("집주인 시점을 변환");
-
-        Debug.Log("집주인으로 변신 완료");
-    }
-
     
     /// <summary>
     /// 사망
@@ -204,7 +179,7 @@ public class PlayerStatus_S : MonoBehaviour
     {
         if (Role != Define.Role.None && Hp <= 0)
         {
-            score = mController._score;
+            score = GameManager_S._instance._score;
             endUI.SetActive(true);
             endText.text = "Killed Ghost : " + score.ToString();
             _animator.SetTrigger("setDie");
@@ -264,7 +239,8 @@ public class PlayerStatus_S : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         //// 자기 자신에게 닿은 경우 무시
-        //if (other.transform.root.name == gameObject.name) return;
+        if(other.transform.root.name == gameObject.name) return;
+
         if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
             HitChangeMaterials();
     }
