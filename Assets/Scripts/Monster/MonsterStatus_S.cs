@@ -109,7 +109,6 @@ public class MonsterStatus_S : MonoBehaviour
             transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
             yield return null;
         }
-        Destroy(gameObject);
     }
 
     /// <summary>
