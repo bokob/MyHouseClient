@@ -13,63 +13,67 @@ public class ModifiedMonster_S : MonoBehaviour
     NavMeshAgent _nmAgent;
     Animator _anim;
     MonsterStatus_S _status;
-    MonsterController_S _mContoller;
 
-    // 순찰 관련
-    public Transform _centerPoint;  // 순찰 위치 정할 기준점
-    public float _range = 10f;            // 순찰 위치 정할 범위
-    public float _patrolSpeed = 1f; // 순찰 속도
+    // ���� ����
+    public Transform _centerPoint;  // ���� ��ġ ���� ������
+    public float _range = 10f;            // ���� ��ġ ���� ����
+    public float _patrolSpeed = 1f; // ���� �ӵ�
 
-    // 상태 관련
-    public float Hp { get; private set; } = 100f;                   // 체력
-    public int _attack { get; private set; } = 30;                   // 공격력
-    public Define.MonsterState _state = Define.MonsterState.Patrol; // 현재 상태
+    // ���� ����
+    public float Hp { get; private set; } = 100f;                   // ü��
+    public int _attack { get; private set; } = 30;                   // ���ݷ�
+    public Define.MonsterState _state = Define.MonsterState.Patrol; // ���� ����
     public bool _isDead = false;
 
-    // 적 시야 관련
-    public float _radius;              // 시야 범위
+    // �� �þ� ����
+    public float _radius;              // �þ� ����
     [Range(0, 360)]
-    public float _angle;               // 시야각
-    public LayerMask _targetMask;      // 목표
-    public LayerMask _obstructionMask; // 장애물
+    public float _angle;               // �þ߰�
+    public LayerMask _targetMask;      // ��ǥ
+    public LayerMask _obstructionMask; // ��ֹ�
     public bool _canSeePlayer;
 
-    // 추격 관련
-    public float _chaseRange = 10f; // 추격 범위
-    public float _lostDistance; // 놓치는 거리
+    // �߰� ����
+    public float _chaseRange = 10f; // �߰� ����
+    public float _lostDistance; // ��ġ�� �Ÿ�
 
-    // 공격 관련
-    public float _attackRange = 0.1f; // 공격 범위
-    public float _attackDelay = 2f; // 공격 간격
+    // ���� ����
+    public float _attackRange = 0.1f; // ���� ����
+    public float _attackDelay = 2f; // ���� ����
     float nextAttackTime = 0f;
 
-    // 유령 카운트 관련
+    // ���� ī��Ʈ ����
 
     //public int _monsterCount = 0;
 
-    public Transform _target = null; // 목표
+    public Transform _target; // 목표
 
-    List<Renderer> _renderers; // 피해 입었을 때 렌더러 색 변환에 사용할 리스트
+    List<Renderer> _renderers; // ���� �Ծ��� �� ������ �� ��ȯ�� ����� ����Ʈ
     List<Color> _originColors;
 
     void Awake()
     {
-        MonsterInit(); // 몬스터 세팅
+        //MonsterInit(); // ���� ����
+    }
+
+    private void Start()
+    {
+        MonsterInit();
     }
 
     void MonsterInit()
     {
-        Debug.Log("시작");
+        Debug.Log("����");
         _anim = GetComponent<Animator>();
         _nmAgent = GetComponent<NavMeshAgent>();
-        //_mContoller = transform.parent.GetComponent<MonsterController_S>();
         _centerPoint = transform;
         _status = GetComponent<MonsterStatus_S>();
         _status.Hp = Hp;
-        //_mContoller._monsterCount += 1;
+
+        GameManager_S._instance._monsterCount += 1;
         
 
-        // 하위의 모든 매터리얼 구하기
+        // ������ ��� ���͸��� ���ϱ�
         _renderers = new List<Renderer>();
         Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
         for (int i = 0; i < underTransforms.Length; i++)
@@ -78,7 +82,7 @@ public class ModifiedMonster_S : MonoBehaviour
             if (renderer != null)
             {
                 _renderers.Add(renderer);
-                if (renderer.material.color == null) Debug.Log("왜 색이 널?");
+                if (renderer.material.color == null) Debug.Log("�� ���� ��?");
             }
         }
     }
@@ -103,7 +107,7 @@ public class ModifiedMonster_S : MonoBehaviour
     {
         if (_isDead) return;
 
-        FieldOfViewCheck(); // 시야에 플레이어 있는지 확인
+        FieldOfViewCheck(); // �þ߿� �÷��̾� �ִ��� Ȯ��
 
         switch (_state)
         {
@@ -129,7 +133,7 @@ public class ModifiedMonster_S : MonoBehaviour
 
     }
 
-    void FieldOfViewCheck() // 시야
+    void FieldOfViewCheck() // �þ�
     {
         Collider[] rangeChecks = Physics.OverlapSphere(transform.position, _radius, _targetMask);
 
@@ -138,16 +142,16 @@ public class ModifiedMonster_S : MonoBehaviour
             Transform findTarget = rangeChecks[0].transform;
             Vector3 directionToTarget = (findTarget.position - transform.position).normalized;
 
-            if (Vector3.Angle(transform.forward, directionToTarget) < _angle / 2) // 플레이어로부터 부채꼴처럼 볼 수 있게
+            if (Vector3.Angle(transform.forward, directionToTarget) < _angle / 2) // �÷��̾�κ��� ��ä��ó�� �� �� �ְ�
             {
                 float distanceToTarget = Vector3.Distance(transform.position, findTarget.position);
 
                 if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, _obstructionMask))
                 {
-                    _target = findTarget; // 목표 설정
-                    _canSeePlayer = true; // 플레이어 감지
+                    _target = findTarget; // ��ǥ ����
+                    _canSeePlayer = true; // �÷��̾� ����
                 }
-                else // 벽 감지한 경우
+                else // �� ������ ���
                 {
                     _canSeePlayer = false;
                     _target = null;
@@ -159,16 +163,16 @@ public class ModifiedMonster_S : MonoBehaviour
                 _target = null;
             }
         }
-        else if (_canSeePlayer) // 보고 있다가 시야에서 사라진거
+        else if (_canSeePlayer) // ���� �ִٰ� �þ߿��� �������
         {
             _canSeePlayer = false;
             _target = null;
         }
     }
 
-    IEnumerator Idle() // 대기
+    IEnumerator Idle() // ���
     {
-        // 애니메이터 상태 정보 얻기
+        // �ִϸ����� ���� ���� ���
         AnimatorStateInfo currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
         if (!currentAnimStateInfo.IsName("Idle"))
@@ -176,10 +180,10 @@ public class ModifiedMonster_S : MonoBehaviour
 
         yield return new WaitForSeconds(currentAnimStateInfo.length);
 
-        if (_canSeePlayer) // 플레이어 관측
+        if (_canSeePlayer) // �÷��̾� ����
         {
             StopAllCoroutines();
-            _nmAgent.SetDestination(_target.position); // 목표 지정
+            _nmAgent.SetDestination(_target.position); // ��ǥ ����
             ChangeState(Define.MonsterState.Chase);
         }
         else
@@ -188,65 +192,65 @@ public class ModifiedMonster_S : MonoBehaviour
             ChangeState(Define.MonsterState.Patrol);
         }
     }
-    IEnumerator Patrol() // 순찰
+    IEnumerator Patrol() // ����
     {
-        Debug.Log("순찰");
-        // 애니메이터 상태 정보 얻기
+        Debug.Log("����");
+        // �ִϸ����� ���� ���� ���
         AnimatorStateInfo currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
         if (!currentAnimStateInfo.IsName("Move"))
             _anim.Play("Move", 0, 0);
 
-        // 랜덤하게 순찰 지점 정하기
-        if (_nmAgent.remainingDistance <= _nmAgent.stoppingDistance) // 플레이어 못봤을 때
+        // �����ϰ� ���� ���� ���ϱ�
+        if (_nmAgent.remainingDistance <= _nmAgent.stoppingDistance) // �÷��̾� ������ ��
         {
             Vector3 point;
             if (RandomPoint(_centerPoint.position, _range, out point))
             {
-                Debug.DrawRay(point, Vector3.up, Color.red, 3.0f); // 갈 지점 표시
+                Debug.DrawRay(point, Vector3.up, Color.red, 3.0f); // �� ���� ǥ��
 
                 _nmAgent.SetDestination(point);
 
                 yield return null;
             }
         }
-        else if(_canSeePlayer && _nmAgent.remainingDistance <= _nmAgent.stoppingDistance) // 공격 범위 안에 있을 때
+        else if(_canSeePlayer && _nmAgent.remainingDistance <= _nmAgent.stoppingDistance) // ���� ���� �ȿ� ���� ��
         {
-            StopAllCoroutines(); // 모든 코루틴 종료
+            StopAllCoroutines(); // ��� �ڷ�ƾ ����
             _nmAgent.ResetPath();
-            ChangeState(Define.MonsterState.Attack);  // 공격
+            ChangeState(Define.MonsterState.Attack);  // ����
         }
-        else if(_canSeePlayer && _nmAgent.remainingDistance > _nmAgent.stoppingDistance) // 공격범위 밖이면 추격
+        else if(_canSeePlayer && _nmAgent.remainingDistance > _nmAgent.stoppingDistance) // ���ݹ��� ���̸� �߰�
         {
-            StopAllCoroutines(); // 모든 코루틴 종료
-            _nmAgent.SetDestination(_target.position); // 목표 지정
-            ChangeState(Define.MonsterState.Chase);  // 추격
+            StopAllCoroutines(); // ��� �ڷ�ƾ ����
+            _nmAgent.SetDestination(_target.position); // ��ǥ ����
+            ChangeState(Define.MonsterState.Chase);  // �߰�
         }
     }
 
-    IEnumerator Chase() // 추격
+    IEnumerator Chase() // �߰�
     {
         AnimatorStateInfo currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
 
         if (!currentAnimStateInfo.IsName("Move"))
         {
             _anim.Play("Move", 0, 0);
-            // SetDestination 을 위해 한 frame을 넘기기위한 코드
+            // SetDestination �� ���� �� frame�� �ѱ������ �ڵ�
             yield return null;
         }
 
-        // 목표까지의 남은 거리가 멈추는 지점보다 작거나 같으면
+        // ��ǥ������ ���� �Ÿ��� ���ߴ� �������� �۰ų� ������
         if (_canSeePlayer && _nmAgent.remainingDistance <= _nmAgent.stoppingDistance)
         {
             StopAllCoroutines();
             _nmAgent.ResetPath();
             ChangeState(Define.MonsterState.Attack);
         }
-        else if(_canSeePlayer) // 목표가 시야에 있는데 계속 움직이면 경로 다시 계산해서 추격
+        else if(_canSeePlayer) // ��ǥ�� �þ߿� �ִµ� ��� �����̸� ��� �ٽ� ����ؼ� �߰�
         {
             _nmAgent.SetDestination(_target.position);
         }
-        else if (!_canSeePlayer) // 시야에서 사라졌으면 Idle로 전환
+        else if (!_canSeePlayer) // �þ߿��� ��������� Idle�� ��ȯ
         {
             StopAllCoroutines();
             _nmAgent.ResetPath();
@@ -255,7 +259,7 @@ public class ModifiedMonster_S : MonoBehaviour
         }
         else
         {
-            // 애니메이션의 한 사이클 동안 대기
+            // �ִϸ��̼��� �� ����Ŭ ���� ���
             yield return new WaitForSeconds(currentAnimStateInfo.length);
         }
     }
@@ -265,11 +269,11 @@ public class ModifiedMonster_S : MonoBehaviour
         AnimatorStateInfo currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
         _nmAgent.isStopped = true;
 
-        if (_target==null) // 목표물이 사라지면
+        if (_target==null) // ��ǥ���� �������
         {
             StopAllCoroutines();
             _nmAgent.isStopped = false;
-            ChangeState(Define.MonsterState.Patrol); // 순찰
+            ChangeState(Define.MonsterState.Patrol); // ����
         }
         else _nmAgent.SetDestination(_target.position);
 
@@ -277,7 +281,7 @@ public class ModifiedMonster_S : MonoBehaviour
         {
             _anim.Play("Attack", 0, 0);
             AnimatorStateInfo attackStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
-            // SetDestination 을 위해 한 frame을 넘기기위한 코드
+            // SetDestination �� ���� �� frame�� �ѱ������ �ڵ�
             // yield return null;
 
             //if (_target != null)
@@ -286,12 +290,12 @@ public class ModifiedMonster_S : MonoBehaviour
             //}
         }
 
-        // 시야 범위에서 사라지면
+        // �þ� �������� �������
         if (!_canSeePlayer)
         {
             StopAllCoroutines();
             _nmAgent.isStopped = false;
-            ChangeState(Define.MonsterState.Patrol); // 순찰
+            ChangeState(Define.MonsterState.Patrol); // ����
         }
         else if(_canSeePlayer && _nmAgent.remainingDistance > _nmAgent.stoppingDistance)
         {
@@ -311,12 +315,12 @@ public class ModifiedMonster_S : MonoBehaviour
             {
                 _anim.Play("Surprised", 0, 0);
                 currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
-                // SetDestination 을 위해 한 frame을 넘기기위한 코드
-                HitChangeMaterials(other); // 매터리얼 변환
+                // SetDestination �� ���� �� frame�� �ѱ������ �ڵ�
+                HitChangeMaterials(other); // ���͸��� ��ȯ
                 yield return new WaitForSeconds(currentAnimStateInfo.length);
             }
 
-            Debug.Log("공격받은 측의 체력:" + _status.Hp);
+            Debug.Log("���ݹ��� ���� ü��:" + _status.Hp);
 
             if (_status.Hp <= 0)
                 Dead();
@@ -332,7 +336,7 @@ public class ModifiedMonster_S : MonoBehaviour
             for (int i = 0; i < _renderers.Count; i++)
             {
                 _renderers[i].material.color = Color.red;
-                Debug.Log("색변한다.");
+                Debug.Log("�����Ѵ�.");
                 Debug.Log(_renderers[i].material.name);
             }
 
@@ -358,7 +362,7 @@ public class ModifiedMonster_S : MonoBehaviour
     {
         //if (_state == Define.MonsterState.None) return;
 
-        // 태그가 무기 태그인 경우
+        // �±װ� ���� �±��� ���
         if (other.tag == "Melee" || other.tag == "Gun")
         {
             if (Hp > 0)
@@ -369,7 +373,7 @@ public class ModifiedMonster_S : MonoBehaviour
             }
         }
         else 
-            Debug.Log("왜 안닿지?");
+            Debug.Log("�� �ȴ���?");
     }
 
     public void Dead()
@@ -377,10 +381,11 @@ public class ModifiedMonster_S : MonoBehaviour
         if (_state != Define.MonsterState.None && _status.Hp <= 0)
         {
             _isDead = true;
-            //_monsterCount -= 1;
+            GameManager_S._instance._monsterCount -= 1;
+            GameManager_S._instance.Score += 1;
             _nmAgent.ResetPath();
             _anim.Play("Die", 0, 0);
-            _state = Define.MonsterState.None; // 시체
+            _state = Define.MonsterState.None; // ��ü
             StartCoroutine(DeadSinkCoroutine());
         }
 
@@ -389,12 +394,12 @@ public class ModifiedMonster_S : MonoBehaviour
 
     IEnumerator DeadSinkCoroutine()
     {
-        Debug.Log("시체처리");
-        _nmAgent.enabled = false; // 안하면 밑으로 안내려가짐
+        Debug.Log("��üó��");
+        _nmAgent.enabled = false; // ���ϸ� ������ �ȳ�������
         yield return new WaitForSeconds(3f);
         while (transform.position.y > -1.5f)
         {
-            Debug.Log("땅속으로 들어가는중");
+            Debug.Log("�������� ������");
             transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
             yield return null;
         }
@@ -404,11 +409,11 @@ public class ModifiedMonster_S : MonoBehaviour
     {
         if (_target != null)
         {
-            _target.GetComponent<MonsterStatus_S>().TakedDamage(_attack);
+            _target.GetComponent<PlayerStatus_S>().TakedDamage(_attack);
 
-            if(_target.GetComponent<MonsterStatus_S>()!=null)
+            if(_target.GetComponent<PlayerStatus_S>()!=null)
             {
-                _target.GetComponent<MonsterStatus_S>().HitChangeMaterials();
+                _target.GetComponent<PlayerStatus_S>().HitChangeMaterials();
             }
             if (_target.GetComponent<Person>() != null)
             {
@@ -420,6 +425,6 @@ public class ModifiedMonster_S : MonoBehaviour
     public void SetManagedPool(IObjectPool<ModifiedMonster_S> pool)
     {
         _managedPool = pool;
-        Debug.Log("SetManagedPool 호출됨");
+        Debug.Log("SetManagedPool ȣ���");
     }
 }

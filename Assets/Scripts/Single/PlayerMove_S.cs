@@ -61,7 +61,7 @@ public class PlayerMove_S : MonoBehaviour
 
     void Awake()
     {
-        _hasAnimator = TryGetComponent(out _animator);
+        _hasAnimator = transform.GetChild(0).gameObject.TryGetComponent(out _animator);
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<PlayerInputs>();
         _status = GetComponent<PlayerStatus_S>();
@@ -75,16 +75,6 @@ public class PlayerMove_S : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-//        _hasAnimator = TryGetComponent(out _animator);
-//        _controller = GetComponent<CharacterController>();
-//        _input = GetComponent<PlayerInputs>();
-//        _status = GetComponent<PlayerStatus>();
-//#if ENABLE_INPUT_SYSTEM 
-//        _playerInput = GetComponent<PlayerInput>();
-//#else
-//		Debug.LogError( "Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
-//#endif
-
         AssignAnimationIDs();
 
         // reset our timeouts on start

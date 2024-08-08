@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerStatus_S : MonoBehaviour
 {
@@ -17,23 +19,45 @@ public class PlayerStatus_S : MonoBehaviour
     Animator _animator;
     List<Renderer> _renderers;
     #endregion
+
+    [Header("EndUI")]
+    public int score = 0;
+    public float endTime = 5f;
+    public GameObject endUI;
+    public TextMeshProUGUI endText;
+    public TextMeshProUGUI quitText;
+    bool _dead;
     
 
     void Awake()
     {
-        _animator = GetComponent<Animator>();
+        _animator = transform.GetChild(0).gameObject.GetComponent<Animator>();
         InitRole();
+        endUI.SetActive(false);
         
-    }
-
-    private void Start() {
-        TransformIntoHouseowner();
+        // 렌더 가져오기
+        _renderers = new List<Renderer>();
+        Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < underTransforms.Length; i++)
+        {
+            Renderer renderer = underTransforms[i].GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                _renderers.Add(renderer);
+                // if (renderer.material.color == null) Debug.Log("왜 색이 널?");
+            }
+        }
     }
 
     void Update()
     {
         Dead();
         //TransformIntoHouseowner();
+        if(_dead)
+        {
+            endTime -= Time.deltaTime;
+            quitText.text = Mathf.FloorToInt(endTime) + " seconds to quit.";
+        }
     }
 
     /// <summary>
@@ -147,25 +171,6 @@ public class PlayerStatus_S : MonoBehaviour
     {
 
     }
-
-    /// <summary>
-    /// 집주인으로 변신
-    /// </summary>
-    public void TransformIntoHouseowner()
-    {
-        transform.GetChild(0).gameObject.SetActive(false); // 강도 비활성화
-        transform.GetChild(1).gameObject.SetActive(true);  // 집주인 활성화
-        Role = Define.Role.Houseowner;
-
-        Debug.Log("현재 상태: " + Role);
-
-        Camera.main.gameObject.GetComponent<CameraController_S>().SetHouseownerView(); // 집주인 시점으로 설정
-
-        Debug.Log("집주인 시점을 변환");
-
-        Debug.Log("집주인으로 변신 완료");
-    }
-
     
     /// <summary>
     /// 사망
@@ -174,25 +179,28 @@ public class PlayerStatus_S : MonoBehaviour
     {
         if (Role != Define.Role.None && Hp <= 0)
         {
+            score = GameManager_S._instance._score;
+            endUI.SetActive(true);
+            endText.text = "Killed Ghost : " + score.ToString();
             _animator.SetTrigger("setDie");
+            _dead = true;
             Role = Define.Role.None; // 시체
             StartCoroutine(DeadSinkCoroutine());
         }
     }
 
     /// <summary>
-    /// 시체 바닥으로 가라앉기
+    /// 게임 끝내기
     /// </summary>
     /// <returns></returns>
     IEnumerator DeadSinkCoroutine()
     {
-        yield return new WaitForSeconds(3f);
-        while (transform.position.y > -1.5f)
-        {
-            transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
-            yield return null;
-        }
-        Destroy(gameObject);
+        yield return new WaitForSeconds(5f);
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     /// <summary>
@@ -231,7 +239,8 @@ public class PlayerStatus_S : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         //// 자기 자신에게 닿은 경우 무시
-        //if (other.transform.root.name == gameObject.name) return;
+        if(other.transform.root.name == gameObject.name) return;
+
         if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
             HitChangeMaterials();
     }

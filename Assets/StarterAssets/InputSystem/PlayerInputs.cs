@@ -14,7 +14,7 @@ public class PlayerInputs : MonoBehaviour
 	public bool aim;
 	public bool shoot;
 	public bool swing;
-	public bool stap;
+	public bool stab;
 	public bool reload;
 
 	[Header("Movement Settings")]
@@ -111,7 +111,7 @@ public class PlayerInputs : MonoBehaviour
 
     public void StapInput(bool newSwingState)
     {
-        stap = newSwingState;
+        stab = newSwingState;
     }
 
 	public void ReloadInput(bool newReloadState)

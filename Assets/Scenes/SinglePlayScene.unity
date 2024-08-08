@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028359, g: 0.22571385, b: 0.30692258, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -640,6 +640,12 @@ MonoBehaviour:
   <MaxHp>k__BackingField: 100
   <MaxSp>k__BackingField: 100
   <Defence>k__BackingField: 1
+  score: 0
+  endTime: 5
+  endUI: {fileID: 0}
+  endText: {fileID: 0}
+  quitText: {fileID: 0}
+  mController: {fileID: 0}
 --- !u!114 &28806565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -841,6 +847,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 55946399}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &60082202 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 339527213678310029, guid: 06ae9215121e7664aa589981daed690d,
+    type: 3}
+  m_PrefabInstance: {fileID: 2542555991073345221}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 475300951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e087ecce43ebbff45a1b360637807d93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &61527715
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3084,6 +3102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 128de70cd091b4d46926f9f89d5fd7b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _weaponManager: {fileID: 0}
   mController: {fileID: 798475541}
   _weaponImages:
   - {fileID: 0}
@@ -3983,6 +4002,12 @@ MonoBehaviour:
   <MaxHp>k__BackingField: 100
   <MaxSp>k__BackingField: 100
   <Defence>k__BackingField: 1
+  score: 0
+  endTime: 5
+  endUI: {fileID: 0}
+  endText: {fileID: 0}
+  quitText: {fileID: 0}
+  mController: {fileID: 0}
 --- !u!195 &429739431
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -4613,6 +4638,12 @@ MonoBehaviour:
   <MaxHp>k__BackingField: 100
   <MaxSp>k__BackingField: 100
   <Defence>k__BackingField: 1
+  score: 0
+  endTime: 5
+  endUI: {fileID: 0}
+  endText: {fileID: 0}
+  quitText: {fileID: 0}
+  mController: {fileID: 0}
 --- !u!114 &475300954
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4640,22 +4671,10 @@ MonoBehaviour:
   _groundLayers:
     serializedVersion: 2
     m_Bits: 64
-  _input: {fileID: 475300960}
+  _input: {fileID: 0}
   _mainCamera: {fileID: 1033016453}
   _landingAudioClip: {fileID: 0}
   _footstepAudioVolume: 0.5
---- !u!114 &475300960 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 339527213678310029, guid: 06ae9215121e7664aa589981daed690d,
-    type: 3}
-  m_PrefabInstance: {fileID: 2542555991073345221}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 475300951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e087ecce43ebbff45a1b360637807d93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &477270865
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7433,6 +7452,8 @@ MonoBehaviour:
   _isAim: 0
   _mouseWorldPosition: {x: -4.903652, y: 6.5, z: -6.639223}
   _rigBuilder: {fileID: 1046469444}
+  _bulletCount: {fileID: 0}
+  _totalbulletCount: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -8699,6 +8720,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55d80fad8438a724c8abfc367b81ebad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 0}
   _sliceMask:
     serializedVersion: 2
     m_Bits: 65536
@@ -8777,6 +8799,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _monsterCount: 0
+  _score: 0
+  _guns: {fileID: 0}
 --- !u!1001 &800019114
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10047,6 +10071,12 @@ MonoBehaviour:
   <MaxHp>k__BackingField: 100
   <MaxSp>k__BackingField: 100
   <Defence>k__BackingField: 1
+  score: 0
+  endTime: 5
+  endUI: {fileID: 0}
+  endText: {fileID: 0}
+  quitText: {fileID: 0}
+  mController: {fileID: 0}
 --- !u!195 &948221684
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -10863,7 +10893,7 @@ MonoBehaviour:
   _cameraAngleOverride: 0
   _lockCameraPosition: 0
   View: 0
-  _input: {fileID: 475300960}
+  _input: {fileID: 0}
   _sensitivity: 1
 --- !u!20 &1033016458 stripped
 Camera:
@@ -10909,7 +10939,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 2542555991073345221}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1046469437}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
   m_Name: 
@@ -11375,6 +11405,12 @@ MonoBehaviour:
   <MaxHp>k__BackingField: 100
   <MaxSp>k__BackingField: 100
   <Defence>k__BackingField: 1
+  score: 0
+  endTime: 5
+  endUI: {fileID: 0}
+  endText: {fileID: 0}
+  quitText: {fileID: 0}
+  mController: {fileID: 0}
 --- !u!195 &1142081058
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -19933,6 +19969,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55d80fad8438a724c8abfc367b81ebad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 0}
   _sliceMask:
     serializedVersion: 2
     m_Bits: 65536
@@ -22601,10 +22638,25 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2061517080169912548, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2603725838200515023, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 3439450309009642615, guid: 06ae9215121e7664aa589981daed690d,
         type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3531995156298350539, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3807563812614108485, guid: 06ae9215121e7664aa589981daed690d,
         type: 3}
@@ -22616,6 +22668,11 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5701201760511210623, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: _input
+      value: 
+      objectReference: {fileID: 60082202}
     - target: {fileID: 5701201760511210623, guid: 06ae9215121e7664aa589981daed690d,
         type: 3}
       propertyPath: m_Enabled
@@ -22630,6 +22687,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6430400050690901876, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 6944045431907438263, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7323974387594366461, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9000910341719139050, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9002483722234610334, guid: 06ae9215121e7664aa589981daed690d,
         type: 3}
@@ -22721,15 +22798,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3171256508
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
 --- !u!4 &2542555991073345224 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 92126774998445019, guid: 06ae9215121e7664aa589981daed690d,

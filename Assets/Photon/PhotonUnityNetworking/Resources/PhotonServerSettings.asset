@@ -28,7 +28,7 @@ MonoBehaviour:
     AuthMode: 0
     EnableLobbyStatistics: 0
     NetworkLogging: 1
-  DevRegion: 
+  DevRegion: kr
   PunLogging: 0
   EnableSupportLogger: 0
   RunInBackground: 1
@@ -40,6 +40,29 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - ChatRPC
+  - UpdateUserInRoomUI
+  - LoadMultiPlayScene
+  - SetNickname
+  - SetRole
+  - TransformIntoHouseowner
+  - TransformIntoRobber
+  - SetRoleAnimator
+  - SetWeapon
+  - RequestRoleAssignment
+  - FadeOutAndRespawn
+  - SetRigBuilder
+  - TakedDamage
+  - HitChangeMaterials
+  - PlayAudioSource
+  - PlayMuzzleFalsh
+  - InstantiateVFX
+  - SetMeleeAreaClientRpc
+  - SetMeleeAreaServerRpc
+  - SetTrailEffectClientRpc
+  - SetTrailEffectServerRpc
+  - SetMeleeArea
+  - SetTrailEffect
+  - Dead
   DisableAutoOpenWizard: 1
   ShowSettings: 0
-  DevRegionSetOnce: 0
+  DevRegionSetOnce: 1

@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,11 +10,12 @@ public class Melee : Weapon
 {
     PlayerMove _playerMove;
     PlayerInputs _playerInputs;
-    NewWeaponManager _weaponManager;
+    WeaponManager _weaponManager;
+    PlayerStatus _playerStatus;
 
     BoxCollider _meleeArea;       // 근접 공격 범위
     TrailRenderer _trailEffet;    // 휘두를 때 효과
-    Animator _animator;
+    public Animator _animator;
 
     [Header("공격 관련")]
     bool _isSwingReady;  // 공격 준비
@@ -30,13 +32,28 @@ public class Melee : Weapon
     bool _hasExited = false; // 오브젝트를 뚫고 나갔는지 여부를 저장하는 변수
     #endregion
 
+    private void Awake()
+    {
+        
+    }
+
+
     void Start()
     {
         base.Type = Define.Type.Melee;
 
         _playerMove = transform.root.GetChild(2).GetComponent<PlayerMove>();
         _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
-        _animator = base.Master.gameObject.GetComponent<Animator>();
+        _playerStatus = transform.root.GetChild(2).GetComponent<PlayerStatus>();
+
+        if (_playerStatus.Role == Define.Role.Robber)
+            _animator = transform.root.GetChild(2).GetChild(0).gameObject.GetComponent<Animator>();
+        else if (_playerStatus.Role == Define.Role.Houseowner)
+            _animator = transform.root.GetChild(2).GetChild(1).gameObject.GetComponent<Animator>();
+        else if (_playerStatus == null)
+            Debug.LogWarning("무기 애니메이터가 왜 널이지");
+        else if (_playerStatus.Role == Define.Role.None)
+            Debug.Log("왜 None이야?");
 
         _meleeArea = gameObject.GetComponent<BoxCollider>();
         _trailEffet = gameObject.GetComponentInChildren<TrailRenderer>();
@@ -54,6 +71,12 @@ public class Melee : Weapon
 
     void Update()
     {
+        AttackDelay();
+        Use();
+    }
+
+    void AttackDelay()
+    {
         _swingDelay += Time.deltaTime;
         _stabDelay += Time.deltaTime;
     }
@@ -64,11 +87,13 @@ public class Melee : Weapon
     /// </summary>
     public override void Use()
     {
-        _swingDelay += Time.deltaTime;
-        _stabDelay += Time.deltaTime;
         _isSwingReady = base.Rate < _swingDelay; // 공격속도가 공격 딜레이보다 작으면 공격준비 완료
         _isStabReady = base.Rate < _stabDelay;
-        if (_playerInputs.swing && _isSwingReady && _playerMove._grounded || _playerInputs.stap && _isStabReady && _playerMove._grounded)
+
+        if (_playerInputs == null) Debug.Log("널");
+        if (_playerMove == null) Debug.Log("널");
+
+        if (_playerInputs.swing && _isSwingReady && _playerMove._grounded || _playerInputs.stab && _isStabReady && _playerMove._grounded)
         {
             StopCoroutine("MeleeAttackEffect");
 
@@ -85,7 +110,7 @@ public class Melee : Weapon
                 _animator.SetTrigger("setSwing");
                 _swingDelay = 0;
             }
-            else if (_playerInputs.stap && _playerMove._grounded) // 찌르기
+            else if (_playerInputs.stab && _playerMove._grounded) // 찌르기
             {
                 Debug.Log("찌르기");
                 // _weaponManager._selectedWeapon.GetComponent<Melee>().Use();
@@ -93,63 +118,47 @@ public class Melee : Weapon
                 _stabDelay = 0;
 
             }
-
             _playerInputs.swing = false;
-            _playerInputs.stap = false;
-
+            _playerInputs.stab = false;
             StartCoroutine("MeleeAttackEffect");
         }
         else
         {
             // 시작하자마자 휘두르는 문제 방지(유니티 Play 누를 때 클릭 때문에 그런 듯 하다)
             _playerInputs.swing = false;
-            _playerInputs.stap = false;
+            _playerInputs.stab = false;
         }
     }
 
-    ///// <summary>
-    ///// 코루틴으로 Collider, TrailRenderer 특정 시간 동안만 활성화
-    ///// </summary>
-    //IEnumerator MeleeAttackEffect()
-    //{
-    //    yield return new WaitForSeconds(0.5f);
-    //    SetMeleeAreaServerRpc(true);
-    //    SetTrailEffectServerRpc(true);
+    /// <summary>
+    /// 코루틴으로 Collider, TrailRenderer 특정 시간 동안만 활성화
+    /// </summary>
+    IEnumerator MeleeAttackEffect()
+    {
+        yield return new WaitForSeconds(0.5f);
+        GetComponent<PhotonView>().RPC("SetMeleeArea", RpcTarget.All, true);
+        GetComponent<PhotonView>().RPC("SetTrailEffect", RpcTarget.All, true);
 
-    //    yield return new WaitForSeconds(0.5f);
-    //    SetMeleeAreaServerRpc(false);
+        yield return new WaitForSeconds(0.5f);
+        GetComponent<PhotonView>().RPC("SetMeleeArea", RpcTarget.All, false);
 
-    //    yield return new WaitForSeconds(0.5f);
-    //    SetTrailEffectServerRpc(false);
-    //}
+        yield return new WaitForSeconds(0.5f);
+        GetComponent<PhotonView>().RPC("SetTrailEffect", RpcTarget.All, false);
+    }
 
-    //[ServerRpc]
-    //void SetMeleeAreaServerRpc(bool state)
-    //{
-    //    SetMeleeAreaClientRpc(state); // 서버에서 다른 클라이언트들에게 바꾸라고 명령
-    //}
+    // punchCollider 상태를 모든 클라이언트에서 설정하는 ClientRpc 메서드
+    [PunRPC]
+    void SetMeleeArea(bool state)
+    {
+        _meleeArea.enabled = state;
+    }
 
-    //// punchCollider 상태를 모든 클라이언트에서 설정하는 ClientRpc 메서드
-    //[ClientRpc]
-    //void SetMeleeAreaClientRpc(bool state)
-    //{
-    //    _meleeArea.enabled = state;
-    //}
-
-    //[ServerRpc]
-    //void SetTrailEffectServerRpc(bool state)
-    //{
-    //    SetTrailEffectClientRpc(state); // 서버에서 다른 클라이언트들에게 바꾸라고 명령
-    //}
-
-    //// _trailEffect 상태를 모든 클라이언트에서 설정하는 ClientRpc 메서드
-    //[ClientRpc]
-    //void SetTrailEffectClientRpc(bool state)
-    //{
-    //    _trailEffet.enabled = state;
-    //}
-
-
+    // _trailEffect 상태를 모든 클라이언트에서 설정하는 ClientRpc 메서드
+    [PunRPC]
+    void SetTrailEffect(bool state)
+    { 
+        _trailEffet.enabled = state;
+    }
 
     // 칼이 트리거 안에 있을 때
     // _hasExited를 false로 설정
@@ -163,18 +172,13 @@ public class Melee : Weapon
         // 자기 자신에게 닿은 경우 무시
         if (other.transform.root.name == gameObject.name) return;
 
-        if (other.GetComponent<PlayerStatus>() != null)
-        {
-            other.GetComponent<PlayerStatus>().TakedDamage(Attack);
+        PlayerStatus otherPlayerStatus = other.GetComponent<PlayerStatus>();
 
-            if (other.GetComponent<PlayerStatus>() != null)
-            {
-                other.GetComponent<PlayerStatus>().HitChangeMaterials();
-            }
-            if (other.GetComponent<Person>() != null)
-            {
-                other.GetComponent<Person>().HitChangeMaterials();
-            }
+        if (otherPlayerStatus != null)
+        {
+            otherPlayerStatus.gameObject.GetComponent<PhotonView>().RPC("TakedDamage", RpcTarget.All, base.Attack);
+            otherPlayerStatus.gameObject.GetComponent<PhotonView>().RPC("HitChangeMaterials", RpcTarget.All);
+
         }
     }
 
@@ -185,6 +189,12 @@ public class Melee : Weapon
 
     // 관통 다 되면 레이어에 따라 절단
     void OnTriggerExit(Collider other)
+    {
+        MeshCutting(other);
+    }
+
+    // 메시 자르기
+    public void MeshCutting(Collider other)
     {
         // 충돌 지점의 방향을 자르는 방향으로 설정
         _exitPoint = other.ClosestPoint(transform.position);

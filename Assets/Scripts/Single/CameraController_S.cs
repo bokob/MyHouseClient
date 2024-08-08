@@ -37,15 +37,9 @@ public class CameraController_S : MonoBehaviour
         CameraInit();
     }
 
-    void Start()
-    {
-        CameraInit();
-    }
-
     void LateUpdate()
     {
-        if (View != Define.View.Third)
-            CameraRotation();
+        CameraRotation();
     }
 
 
@@ -56,14 +50,6 @@ public class CameraController_S : MonoBehaviour
         _quaterFollowCamera = _mainCamera.transform.parent.GetChild(1).gameObject;
         _thirdFollowCamera = _mainCamera.transform.parent.GetChild(2).gameObject;
         _aimCamera = _mainCamera.transform.parent.GetChild(3).gameObject;
-    }
-
-    public void SetRobberView() // 강도 시점 설정
-    {
-        // 강도에 맞는 카메라 설정
-        _quaterFollowCamera.SetActive(true);
-        _thirdFollowCamera.SetActive(false);
-        _aimCamera.SetActive(false);
     }
 
     public void SetHouseownerView() // 집주인 시점 설정

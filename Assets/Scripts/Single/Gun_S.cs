@@ -4,6 +4,8 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
+using TMPro;
+
 public class Gun_S : Weapon
 {
     #region 총 관련 변수
@@ -12,7 +14,7 @@ public class Gun_S : Weapon
     [Tooltip("한 번 장전 시, 장전할 탄약 수")] [SerializeField] int _reloadBulletCount;
     [Tooltip("현재 탄약 수")] [SerializeField] int _currentBulletCount;
     [Tooltip("최대 탄약 수")] [SerializeField] int _maxBulletMagazine;
-    [Tooltip("총 탄약 수")] [SerializeField] int _totalBulletCount;
+    [Tooltip("총 탄약 수")] [SerializeField] public int _totalBulletCount;
     [Tooltip("총 소리")] [SerializeField] AudioClip _fireSound;
     [Tooltip("음원")] [SerializeField] AudioSource _audioSource;
     [Tooltip("총구 섬광 효과")] [SerializeField] ParticleSystem _muzzleFlash;
@@ -41,22 +43,31 @@ public class Gun_S : Weapon
     Animator _animator;
     public RigBuilder _rigBuilder; // IK 활성/비활성화를 조절하기 위해 접근
     CameraController_S _cameraController;
+    public TextMeshProUGUI _bulletCount;
+    public TextMeshProUGUI _totalbulletCount;
     #endregion
 
     Vector3 _originalRotation; // 총의 원래 회전값
 
     void Start()
     {
+        // 캐릭터 모양이 이상해서 애니메이션이랑 안맞는 여파로 총 조준 방향이 이상해지고 있음, 따라서 조준 안 할 때는 원래대로 돌리기 위해 저장
         _originalRotation = transform.localEulerAngles;
 
         _playerMove = base.Master.gameObject.GetComponent<PlayerMove_S>();
         _playerInputs = base.Master.gameObject.GetComponent<PlayerInputs>();
-
-        _animator = base.Master.gameObject.GetComponent<Animator>();
+        
+        _animator = base.Master.GetChild(0).gameObject.GetComponent<Animator>();
         //rigBuilder = transform.root.GetChild(0).GetComponent<RigBuilder>();
         _cameraController = Camera.main.GetComponent<CameraController_S>();
 
         Attack = 50;
+
+    }
+
+    private void Update() {
+        _bulletCount.text = _currentBulletCount.ToString();
+        _totalbulletCount.text = _totalBulletCount.ToString(); 
     }
 
     void HitRayCheck()
@@ -179,18 +190,16 @@ public class Gun_S : Weapon
                 Destroy(RedEffect, 0.5f);
             }
 
-            // 몬스터나 플레이어가 맞은 경우
-            if (_hitTransform.GetComponent<PlayerStatus>() != null)
+            // 몬스터가 맞은 경우
+            MonsterStatus_S monsterStatus = _hitTransform.GetComponent<MonsterStatus_S>();
+            if (monsterStatus != null)
             {
-                _hitTransform.GetComponent<PlayerStatus>().TakedDamage(Attack);
-
-                if (_hitTransform.GetComponent<PlayerStatus>() != null)
+                monsterStatus.HitChangeMaterials();
+                monsterStatus.TakedDamage(Attack);
+                if(monsterStatus.Hp <= 0)
                 {
-                    _hitTransform.GetComponent<PlayerStatus>().HitChangeMaterials();
-                }
-                if (_hitTransform.GetComponent<Person>() != null)
-                {
-                    _hitTransform.GetComponent<Person>().HitChangeMaterials();
+                    GameManager_S._instance.Score++;
+                    _totalBulletCount += 10;
                 }
             }
 
@@ -216,7 +225,7 @@ public class Gun_S : Weapon
     }
 
     // 장전
-    void Realod()
+    void Reload()
     {
         if (_playerInputs.reload && !_isReload && _currentBulletCount < _reloadBulletCount)
         {
@@ -288,7 +297,7 @@ public class Gun_S : Weapon
         HitRayCheck();
         Aim();
         Fire();
-        Realod();
+        Reload();
     }
 
     public int GetCurrentBullet()

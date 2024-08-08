@@ -17,7 +17,6 @@ public class PoolingManager_S : MonoBehaviour
     float spawnGhostInterval = 60f;  // Monster generation interval. Created after 60 seconds at first.
     int additionalSpawnGhostCount = 0;  // Number of additional monsters to create.
 
-
     private void Awake()
     {
         _instance = this;

@@ -4,6 +4,7 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
+using Photon.Pun;
 
 //TODO
 // Player에서 접근하는게 아닌 총 자체에서 사용하는 것으로 하기
@@ -39,6 +40,9 @@ public class Gun : Weapon
     [Tooltip("조준 중인지 여부")] [SerializeField] bool _isAim = false;
     [Tooltip("마우스 조준 좌표")][SerializeField] Vector3 _mouseWorldPosition;
 
+    [Header("VFX")]
+    [SerializeField] GameObject _hitVFX;
+
     PlayerMove _playerMove;
     PlayerInputs _playerInputs;
     Animator _animator;
@@ -50,12 +54,13 @@ public class Gun : Weapon
 
     void Start()
     {
+        // 캐릭터 모양이 이상해서 애니메이션이랑 안맞는 여파로 총 조준 방향이 이상해지고 있음, 따라서 조준 안 할 때는 원래대로 돌리기 위해 저장
         _originalRotation = transform.localEulerAngles;
 
         _playerMove = base.Master.gameObject.GetComponent<PlayerMove>();
         _playerInputs = base.Master.gameObject.GetComponent<PlayerInputs>();
 
-        _animator = base.Master.gameObject.GetComponent<Animator>();
+        _animator = base.Master.GetChild(1).gameObject.GetComponent<Animator>();
         //rigBuilder = transform.root.GetChild(0).GetComponent<RigBuilder>();
         _cameraController = Camera.main.GetComponent<CameraController>();
 
@@ -104,7 +109,8 @@ public class Gun : Weapon
 
             transform.localEulerAngles = new Vector3(-125f, 0f, 90f);
 
-            _rigBuilder.enabled = true; // IK 설정
+            //_rigBuilder.enabled = true; // IK 설정
+            GetComponent<PhotonView>().RPC("SetRigBuilder", RpcTarget.All, true);
 
             // 조준 시점으로 카메라 변경
             _aimVirtualCamera.gameObject.SetActive(true);
@@ -123,7 +129,8 @@ public class Gun : Weapon
         else
         {
             _isAim = false;
-            _rigBuilder.enabled = false; // IK 해제
+            //_rigBuilder.enabled = false; // IK 해제
+            GetComponent<PhotonView>().RPC("SetRigBuilder", RpcTarget.All, false);
 
             _animator.SetBool("isAim", false);
             transform.localEulerAngles = _originalRotation;
@@ -169,7 +176,11 @@ public class Gun : Weapon
             // 무언가 맞았으면
             if (_hitTransform.GetComponent<BulletTarget>() != null)
             {
+                Debug.Log("엄준식");
+                GetComponent<PhotonView>().RPC("InstantiateVFX", RpcTarget.All, _hitVFX.name, _hitTransform.position, Quaternion.identity); // 탄착 지점 효과
+
                 GameObject GreenEffect = Instantiate(_vfxHitGreen, _mouseWorldPosition, Quaternion.identity);
+                
                 // 피격 당한 입장에서 상대의 스텟에 접근하기 위함, false로 월드 좌표계 유지
                 //GreenEffect.transform.SetParent(transform);
                 Destroy(GreenEffect, 0.1f);
@@ -177,24 +188,22 @@ public class Gun : Weapon
             }
             else
             {
+                PhotonNetwork.Instantiate(_hitVFX.name, _mouseWorldPosition, Quaternion.identity);
+                //GetComponent<PhotonView>().RPC("InstantiateVFX", RpcTarget.All, _hitVFX.name, _hitTransform.position, Quaternion.identity); // 탄착 지점 효과
                 GameObject RedEffect = Instantiate(_vfxHitRed, _mouseWorldPosition, Quaternion.identity);
                 //RedEffect.transform.SetParent(transform);
                 Destroy(RedEffect, 0.5f);
             }
 
             // 몬스터나 플레이어가 맞은 경우
-            if (_hitTransform.GetComponent<PlayerStatus>() != null)
+            PlayerStatus otherPlayerStatus = _hitTransform.GetComponent<PlayerStatus>();
+            if (otherPlayerStatus != null)
             {
-                _hitTransform.GetComponent<PlayerStatus>().TakedDamage(Attack);
-
-                if (_hitTransform.GetComponent<PlayerStatus>() != null)
-                {
-                    _hitTransform.GetComponent<PlayerStatus>().HitChangeMaterials();
-                }
-                if (_hitTransform.GetComponent<Person>() != null)
-                {
-                    _hitTransform.GetComponent<Person>().HitChangeMaterials();
-                }
+                otherPlayerStatus.gameObject.GetComponent<PhotonView>().RPC("TakedDamage", RpcTarget.AllBuffered, base.Attack);
+                otherPlayerStatus.gameObject.GetComponent<PhotonView>().RPC("HitChangeMaterials", RpcTarget.AllBuffered);
+                
+                //otherPlayerStatus.HitChangeMaterials();
+                //otherPlayerStatus.TakedDamage(Attack);
             }
 
             Rigidbody hitRigidbody = _hitTransform.GetComponent<Rigidbody>();
@@ -209,10 +218,14 @@ public class Gun : Weapon
 
         // 탄약 날라가는 로직
         // ProjectBullet();
-        
+
         _currentBulletCount--;
-        _muzzleFlash.Play();
-        PlayAudioSource(_fireSound);
+
+
+        GetComponent<PhotonView>().RPC("PlayMuzzleFalsh", RpcTarget.All); // 총구 효과
+        GetComponent<PhotonView>().RPC("PlayAudioSource", RpcTarget.All); // 사격 소리 RPC
+        //PlayAudioSource(_fireSound);
+        
         // 총기 반동 코루틴 실행
         StartCoroutine(ReactionCoroutine());
         _playerInputs.shoot = false;
@@ -271,10 +284,28 @@ public class Gun : Weapon
         _isShoot = false;
     }
 
-    // 사격 소리
-    void PlayAudioSource(AudioClip _clip)
+    [PunRPC]
+    void InstantiateVFX(string VFXName, Vector3 position, Quaternion rotation)
     {
-        _audioSource.clip = _clip;
+        PhotonNetwork.Instantiate(VFXName, position, rotation); // 탄착 지점 효과
+    }
+
+    /// <summary>
+    /// 총구 섬광 재생
+    /// </summary>
+    [PunRPC]
+    void PlayMuzzleFalsh()
+    {
+        _muzzleFlash.Play();
+    }
+
+    /// <summary>
+    /// 사격 소리 재생
+    /// </summary>
+    [PunRPC]
+    void PlayAudioSource()
+    {
+        _audioSource.clip = _fireSound;
         _audioSource.Play();
     }
 
@@ -288,10 +319,19 @@ public class Gun : Weapon
     // 총 사용
     public override void Use()
     {
-        HitRayCheck();
-        Aim();
+        if (transform.root.GetChild(2).gameObject.GetComponent<PhotonView>().IsMine)
+        {
+            HitRayCheck();
+            Aim();
+        }
         Fire();
         Realod();
+    }
+
+    [PunRPC]
+    public void SetRigBuilder(bool isActive)
+    {
+        _rigBuilder.enabled = isActive;
     }
 
     public int GetCurrentBullet()

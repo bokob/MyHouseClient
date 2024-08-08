@@ -7,14 +7,14 @@ public class WeaponManager_S : MonoBehaviour
     PlayerInputs _playerInputs;
     PlayerStatus_S _playerStatus;
 
-    [Tooltip("���� ��ȯ �� ���� �ð��� ����")]
+    [Tooltip("???? ??? ?? ???? ?��??? ????")]
     public float _switchDelay = 1f;
 
-    [Header("���� ����")]
-    [SerializeField] public GameObject _leftItemHand;           // �޼տ� �ִ� ������ (�ڽ�: źâ)
-    [SerializeField] public GameObject _rightItemHand;          // �����տ� �ִ� ������ (�ڽ�: ����)
+    [Header("???? ????")]
+    [SerializeField] public GameObject _leftItemHand;           // ???? ??? ?????? (???: ??)
+    [SerializeField] public GameObject _rightItemHand;          // ??????? ??? ?????? (???: ????)
 
-    [Header("���� ���� ����")]
+    [Header("???? ???? ????")]
     public int _selectedWeaponIdx = 0;
     public GameObject _selectedWeapon;
     public bool _isHoldGun;
@@ -32,32 +32,32 @@ public class WeaponManager_S : MonoBehaviour
 
     void Update()
     {
-        if(!_playerInputs.aim && !_playerInputs.reload) // �������� �ʰ�, �������� ���� �� ���� ��ü ����
-            WeaponSwitching(); // ���� ��ü
+        if(!_playerInputs.aim && !_playerInputs.reload) // ???????? ???, ???????? ???? ?? ???? ??? ????
+            WeaponSwitching(); // ???? ???
     }
 
     /// <summary>
-    /// ���ҿ� ���� ���� �ʱ�ȭ
+    /// ????? ???? ???? ????
     /// </summary>
     public void InitRoleWeapon()
     {
-        // ���ҿ� ���� ù ���� ����
-        if (_playerStatus.Role == Define.Role.Robber) // ����
+        // ????? ???? ? ???? ????
+        if (_playerStatus.Role == Define.Role.Robber) // ????
         {
             _selectedWeaponIdx = 0;
         }
-        else if (_playerStatus.Role == Define.Role.Houseowner) // ������
+        else if (_playerStatus.Role == Define.Role.Houseowner) // ??????
         {
             _selectedWeaponIdx = 1;
         }
         SelectWeapon();
 
-        Debug.Log("���ҿ� ���� ���� �ʱ�ȭ �Ϸ�");
+        Debug.Log("????? ???? ???? ???? ???");
     }
 
 
     /// <summary>
-    /// ���� ��ü
+    /// ???? ???
     /// </summary>
     void WeaponSwitching()
     {
@@ -78,17 +78,17 @@ public class WeaponManager_S : MonoBehaviour
                 _selectedWeaponIdx--;
         }
 
-        // if(Input.GetKeyDown(KeyCode.Alpha1)) // ���� ����
+        // if(Input.GetKeyDown(KeyCode.Alpha1)) // ???? ????
 
 
-        if (previousSelectedWeapon != _selectedWeaponIdx) // ���콺 �ٷ� ���� �ε��� �ٱ͸� ��ü
+        if (previousSelectedWeapon != _selectedWeaponIdx) // ???�J ??? ???? ?��??? ???? ???
         {
             SelectWeapon();
         }
     }
 
     /// <summary>
-    /// ���� ����
+    /// ???? ????
     /// </summary>
     void SelectWeapon()
     {
@@ -98,7 +98,7 @@ public class WeaponManager_S : MonoBehaviour
             if (idx == _selectedWeaponIdx)
             {
                 weapon.gameObject.SetActive(true);
-                _selectedWeapon = weapon.gameObject; // ���� ���� ���� ����
+                _selectedWeapon = weapon.gameObject; // ???? ???? ???? ????
                 IsHoldGun();
                 _playerStatus.ChangeIsHoldGun(_isHoldGun);
             }
@@ -111,7 +111,7 @@ public class WeaponManager_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ���õ� ���� ���
+    /// ????? ???? ???
     /// </summary>
     public void UseSelectedWeapon()
     {
@@ -129,7 +129,7 @@ public class WeaponManager_S : MonoBehaviour
         }
     }
 
-    // �� ��� �ִ��� ����, �� �ִϸ��̼� �����ϱ� ����
+    // ?? ??? ????? ????, ?? ??????? ??????? ????
     void IsHoldGun()
     {
         if (_selectedWeapon.tag == "Gun")
@@ -144,7 +144,7 @@ public class WeaponManager_S : MonoBehaviour
 
 
     /// <summary>
-    /// ���� �ݱ�
+    /// ???? ???
     /// </summary>
     void PickUp()
     {
@@ -152,7 +152,7 @@ public class WeaponManager_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ���� ������
+    /// ???? ??????
     /// </summary>
     void Drop()
     {
