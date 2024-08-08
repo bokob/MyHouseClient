@@ -47,6 +47,7 @@ public class StatusItemR : Item
     /// <param name="other"></param>
     void TakeStatusItem(Collider other)
     {
+        if (other.tag == "Monster") return;
         PlayerStatus status = other.GetComponent<PlayerStatus>();
         if (base.itemType == Define.Item.Heart)
         {
