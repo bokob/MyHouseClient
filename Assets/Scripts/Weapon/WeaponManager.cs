@@ -41,7 +41,7 @@ public class WeaponManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ���ҿ� ���� ���� �ʱ�ȭ
+    /// 역할에 따른 무기 초기화
     /// </summary>
     public void InitRoleWeapon()
     {
@@ -158,7 +158,7 @@ public class WeaponManager : MonoBehaviour
 
 
     /// <summary>
-    /// ���� �ݱ�
+    /// 무기 줍기
     /// </summary>
     void PickUp()
     {
@@ -166,7 +166,7 @@ public class WeaponManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ���� ������
+    /// 무기 버리기
     /// </summary>
     void Drop()
     {
