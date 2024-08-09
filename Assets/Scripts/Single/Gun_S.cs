@@ -38,6 +38,9 @@ public class Gun_S : Weapon
     [Tooltip("조준 중인지 여부")] [SerializeField] bool _isAim = false;
     [Tooltip("마우스 조준 좌표")][SerializeField] Vector3 _mouseWorldPosition;
 
+    [Header("VFX")]
+    [SerializeField] GameObject _hitVFX;
+
     PlayerMove_S _playerMove;
     PlayerInputs _playerInputs;
     Animator _animator;
@@ -175,6 +178,7 @@ public class Gun_S : Weapon
         if (_hitTransform != null)
         {
             // 무언가 맞았으면
+            GameObject vfxEffect = Instantiate(_hitVFX, _mouseWorldPosition, Quaternion.identity);
             if (_hitTransform.GetComponent<BulletTarget>() != null)
             {
                 GameObject GreenEffect = Instantiate(_vfxHitGreen, _mouseWorldPosition, Quaternion.identity);

@@ -24963,6 +24963,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7749572759170456238, guid: f779b4856bae3c340a762818bdd663dd,
         type: 3}
+      propertyPath: _hitVFX
+      value: 
+      objectReference: {fileID: 5880797563127281583, guid: 944653ee13893fd408245395498b26d8,
+        type: 3}
+    - target: {fileID: 7749572759170456238, guid: f779b4856bae3c340a762818bdd663dd,
+        type: 3}
+      propertyPath: _isShoot
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7749572759170456238, guid: f779b4856bae3c340a762818bdd663dd,
+        type: 3}
       propertyPath: _bulletCount
       value: 
       objectReference: {fileID: 976301330}
