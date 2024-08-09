@@ -22,11 +22,14 @@ public class PlayerStatus_S : MonoBehaviour
 
     [Header("EndUI")]
     public int score = 0;
-    public float endTime = 5f;
+    public float endTime = 6f;
+    public float fadeDuration = 4.0f;
     public GameObject endUI;
+    public Image fadeImage;
     public TextMeshProUGUI endText;
     public TextMeshProUGUI quitText;
     bool _dead;
+
     
 
     void Awake()
@@ -190,6 +193,7 @@ public class PlayerStatus_S : MonoBehaviour
         {
             score = GameManager_S._instance._score;
             endUI.SetActive(true);
+            StartCoroutine(FadeInRoutine());
             endText.text = "Killed Ghost : " + score.ToString();
             _animator.SetTrigger("setDie");
             _dead = true;
@@ -259,5 +263,23 @@ public class PlayerStatus_S : MonoBehaviour
     {
         if (Role != Define.Role.Houseowner) return;
         _animator.SetBool("isHoldGun", isHoldGun);
+    }
+
+    private IEnumerator FadeInRoutine()
+    {
+        float elapsedTime = 1.0f;
+        Color color = fadeImage.color;
+        color.a = 0.0f; // 시작 알파 값 (완전히 불투명)
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            color.a = Mathf.Lerp(0.0f, 1.0f, elapsedTime / fadeDuration); // 알파 값을 1에서 0으로 서서히 변경
+            fadeImage.color = color;
+            yield return null;
+        }
+
+        color.a = 1.0f; // 최종 알파 값 (완전히 투명)
+        fadeImage.color = color;
     }
 }

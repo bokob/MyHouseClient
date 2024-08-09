@@ -62,6 +62,7 @@ public class InGameUI_S : MonoBehaviour
        DisplaySp();
        DisplayWeaponInfo();
        DisplayMonsterCount();
+       DisplayOut();
     }
 
     public void DisplayLivingTime()
@@ -128,5 +129,9 @@ public class InGameUI_S : MonoBehaviour
     public void DisplayMonsterCount()
     {
         _currentMonster.text = GameManager_S._instance._monsterCount.ToString();
+    }
+    public void DisplayOut()
+    {
+        if(_status.Hp <= 0) gameObject.SetActive(false);
     }
 }

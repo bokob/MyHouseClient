@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class Melee_S : Weapon
@@ -7,24 +8,25 @@ public class Melee_S : Weapon
     PlayerMove_S _playerMove;
     PlayerInputs _playerInputs;
     WeaponManager _weaponManager;
+    WeaponData _weaponData;
 
-    BoxCollider _meleeArea;       // ê·¼ì ‘ ê³µê²© ë²”ìœ„
-    TrailRenderer _trailEffet;    // íœ˜ë‘ë¥¼ ë•Œ íš¨ê³¼
+    BoxCollider _meleeArea;       // ±ÙÁ¢ °ø°İ ¹üÀ§
+    TrailRenderer _trailEffet;    // ÈÖµÎ¸¦ ¶§ È¿°ú
     Animator _animator;
 
-    [Header("ê³µê²© ê´€ë ¨")]
-    bool _isSwingReady;  // ê³µê²© ì¤€ë¹„
-    float _swingDelay;   // ê³µê²© ë”œë ˆì´
-    bool _isStabReady;  // ê³µê²© ì¤€ë¹„
-    float _stabDelay;   // ê³µê²© ë”œë ˆì´
+    [Header("°ø°İ °ü·Ã")]
+    bool _isSwingReady;  // °ø°İ ÁØºñ
+    float _swingDelay;   // °ø°İ µô·¹ÀÌ
+    bool _isStabReady;  // °ø°İ ÁØºñ
+    float _stabDelay;   // °ø°İ µô·¹ÀÌ
 
-    #region ì ˆë‹¨ íš¨ê³¼
-    public LayerMask _sliceMask; // ìë¥¼ ëŒ€ìƒì¸ ë ˆì´ì–´ ë§ˆìŠ¤í¬
-    public float _cutForce = 250f; // ìë¥¼ ë•Œ ê°€í•´ì§€ëŠ” í˜
+    #region Àı´Ü È¿°ú
+    public LayerMask _sliceMask; // ÀÚ¸¦ ´ë»óÀÎ ·¹ÀÌ¾î ¸¶½ºÅ©
+    public float _cutForce = 250f; // ÀÚ¸¦ ¶§ °¡ÇØÁö´Â Èû
 
-    Vector3 _entryPoint; // ì˜¤ë¸Œì íŠ¸ì— ë“¤ì–´ê°„ ì§€ì 
-    Vector3 _exitPoint; // ì˜¤ë¸Œì íŠ¸ë¥¼ ëš«ê³  ë‚˜ê°„ ì§€ì 
-    bool _hasExited = false; // ì˜¤ë¸Œì íŠ¸ë¥¼ ëš«ê³  ë‚˜ê°”ëŠ”ì§€ ì—¬ë¶€ë¥¼ ì €ì¥í•˜ëŠ” ë³€ìˆ˜
+    Vector3 _entryPoint; // ¿ÀºêÁ§Æ®¿¡ µé¾î°£ ÁöÁ¡
+    Vector3 _exitPoint; // ¿ÀºêÁ§Æ®¸¦ ¶Õ°í ³ª°£ ÁöÁ¡
+    bool _hasExited = false; // ¿ÀºêÁ§Æ®¸¦ ¶Õ°í ³ª°¬´ÂÁö ¿©ºÎ¸¦ ÀúÀåÇÏ´Â º¯¼ö
     #endregion
 
     private void Awake()
@@ -43,10 +45,16 @@ public class Melee_S : Weapon
 
         // TODO
         /*
-         * ë¬´ê¸° ëŠ¥ë ¥ì¹˜ë¥¼ ì—‘ì…€ì´ë‚˜ jsonì„ ì´ìš©í•´ ê´€ë¦¬ ì˜ˆì •
-         * ë”°ë¡œ ì½ì–´ì™€ì„œ ê·¸ ê°’ë“¤ì„ ì„¸íŒ…í•´ì¤˜ì•¼ í•¨
-         * í˜„ì¬ ì„ì‹œë¡œ í…ŒìŠ¤íŠ¸ë¥¼ ìœ„í•´ í•˜ë“œì½”ë”© í•¨
+         * ¹«±â ´É·ÂÄ¡¸¦ ¿¢¼¿ÀÌ³ª jsonÀ» ÀÌ¿ëÇØ °ü¸® ¿¹Á¤
+         * µû·Î ÀĞ¾î¿Í¼­ ±× °ªµéÀ» ¼¼ÆÃÇØÁà¾ß ÇÔ
+         * ÇöÀç ÀÓ½Ã·Î Å×½ºÆ®¸¦ À§ÇØ ÇÏµåÄÚµù ÇÔ
         */
+
+        string folderPath = Path.Combine(Application.dataPath, "Item");
+        string path = Path.Combine(folderPath, "weaponData.json");
+        string jsonData = File.ReadAllText(path);
+
+        //weaponData = JsonUtility.FromJson<WeaponData>(jsonData);
         if (gameObject.tag == "Melee")
             base.Attack = 50;
 
@@ -59,14 +67,14 @@ public class Melee_S : Weapon
     }
 
     /// <summary>
-    /// ê·¼ì ‘ ê³µê²©: ì¢Œí´ë¦­(íœ˜ë‘ë¥´ê¸°), ìš°í´ë¦­(ì°Œë¥´ê¸°)
-    /// ê³µê²© íš¨ê³¼ ì½”ë£¨í‹´ ê°™ì´ ì‹¤í–‰ëœë‹¤.
+    /// ±ÙÁ¢ °ø°İ: ÁÂÅ¬¸¯(ÈÖµÎ¸£±â), ¿ìÅ¬¸¯(Âî¸£±â)
+    /// °ø°İ È¿°ú ÄÚ·çÆ¾ °°ÀÌ ½ÇÇàµÈ´Ù.
     /// </summary>
     public override void Use()
     {
         _swingDelay += Time.deltaTime;
         _stabDelay += Time.deltaTime;
-        _isSwingReady = base.Rate < _swingDelay; // ê³µê²©ì†ë„ê°€ ê³µê²© ë”œë ˆì´ë³´ë‹¤ ì‘ìœ¼ë©´ ê³µê²©ì¤€ë¹„ ì™„ë£Œ
+        _isSwingReady = base.Rate < _swingDelay; // °ø°İ¼Óµµ°¡ °ø°İ µô·¹ÀÌº¸´Ù ÀÛÀ¸¸é °ø°İÁØºñ ¿Ï·á
         _isStabReady = base.Rate < _stabDelay;
 
         if (_playerInputs == null)
@@ -78,23 +86,23 @@ public class Melee_S : Weapon
         {
             StopCoroutine("MeleeAttackEffect");
 
-            //// ê·¼ì ‘ ë¬´ê¸°ê°€ ì•„ë‹ˆê±°ë‚˜ ë¬´ê¸°ê°€ í™œì„±í™” ë˜ì–´ ìˆì§€ ì•Šìœ¼ë©´ ì¢…ë£Œ
+            //// ±ÙÁ¢ ¹«±â°¡ ¾Æ´Ï°Å³ª ¹«±â°¡ È°¼ºÈ­ µÇ¾î ÀÖÁö ¾ÊÀ¸¸é Á¾·á
             //if (_weaponManager._selectedWeapon.tag != "Melee" || !_weaponManager._selectedWeapon.activeSelf) return;
 
-            // ê³µê²©ì†ë„ê°€ ê³µê²© ë”œë ˆì´ë³´ë‹¤ ì‘ìœ¼ë©´ ê³µê²©ì¤€ë¹„ ì™„ë£Œ
+            // °ø°İ¼Óµµ°¡ °ø°İ µô·¹ÀÌº¸´Ù ÀÛÀ¸¸é °ø°İÁØºñ ¿Ï·á
             //_isSwingReady = _weaponManager._selectedWeapon.GetComponent<Melee>().Rate < _swingDelay;
             //_isStabReady = _weaponManager._selectedWeapon.GetComponent<Melee>().Rate < _stabDelay;
 
-            if (_playerInputs.swing && _playerMove._grounded) // íœ˜ë‘ë¥´ê¸°
+            if (_playerInputs.swing && _playerMove._grounded) // ÈÖµÎ¸£±â
             {
-                Debug.Log("íœ˜ë‘ë¥´ê¸°");
+                Debug.Log("ÈÖµÎ¸£±â");
                 // _weaponManager._selectedWeapon.GetComponent<Melee>().Use();
                 _animator.SetTrigger("setSwing");
                 _swingDelay = 0;
             }
-            else if (_playerInputs.stab && _playerMove._grounded) // ì°Œë¥´ê¸°
+            else if (_playerInputs.stab && _playerMove._grounded) // Âî¸£±â
             {
-                Debug.Log("ì°Œë¥´ê¸°");
+                Debug.Log("Âî¸£±â");
                 // _weaponManager._selectedWeapon.GetComponent<Melee>().Use();
                 _animator.SetTrigger("setStab");
                 _stabDelay = 0;
@@ -107,14 +115,14 @@ public class Melee_S : Weapon
         }
         else
         {
-            // ì‹œì‘í•˜ìë§ˆì íœ˜ë‘ë¥´ëŠ” ë¬¸ì œ ë°©ì§€(ìœ ë‹ˆí‹° Play ëˆ„ë¥¼ ë•Œ í´ë¦­ ë•Œë¬¸ì— ê·¸ëŸ° ë“¯ í•˜ë‹¤)
+            // ½ÃÀÛÇÏÀÚ¸¶ÀÚ ÈÖµÎ¸£´Â ¹®Á¦ ¹æÁö(À¯´ÏÆ¼ Play ´©¸¦ ¶§ Å¬¸¯ ¶§¹®¿¡ ±×·± µí ÇÏ´Ù)
             _playerInputs.swing = false;
             _playerInputs.stab = false;
         }
     }
 
     /// <summary>
-    /// ì½”ë£¨í‹´ìœ¼ë¡œ Collider, TrailRenderer íŠ¹ì • ì‹œê°„ ë™ì•ˆë§Œ í™œì„±í™”
+    /// ÄÚ·çÆ¾À¸·Î Collider, TrailRenderer Æ¯Á¤ ½Ã°£ µ¿¾È¸¸ È°¼ºÈ­
     /// </summary>
     IEnumerator MeleeAttackEffect()
     {
@@ -129,16 +137,16 @@ public class Melee_S : Weapon
         _trailEffet.enabled = false;
     }
 
-    // ì¹¼ì´ íŠ¸ë¦¬ê±° ì•ˆì— ìˆì„ ë•Œ
-    // ë¥¼ falseë¡œ ì„¤ì •
+    // Ä®ÀÌ Æ®¸®°Å ¾È¿¡ ÀÖÀ» ¶§
+    // ¸¦ false·Î ¼³Á¤
     void OnTriggerEnter(Collider other)
     {
         _hasExited = false;
         _entryPoint = other.ClosestPoint(transform.position);
 
-        // ë°ë¯¸ì§€ ì ìš©
+        // µ¥¹ÌÁö Àû¿ë
 
-        // ìê¸° ìì‹ ì—ê²Œ ë‹¿ì€ ê²½ìš° ë¬´ì‹œ
+        // ÀÚ±â ÀÚ½Å¿¡°Ô ´êÀº °æ¿ì ¹«½Ã
         if (other.transform.root.name == gameObject.name) return;
 
         if (other.GetComponent<Monster>() != null)
@@ -149,13 +157,13 @@ public class Melee_S : Weapon
 
     void OnTriggerStay(Collider other)
     {
-        Debug.Log("ê´€í†µ");
+        Debug.Log("°üÅë");
     }
 
-    // ê´€í†µ ë‹¤ ë˜ë©´ ë ˆì´ì–´ì— ë”°ë¼ ì ˆë‹¨
+    // °üÅë ´Ù µÇ¸é ·¹ÀÌ¾î¿¡ µû¶ó Àı´Ü
     void OnTriggerExit(Collider other)
     {
-        // ì¶©ëŒ ì§€ì ì˜ ë°©í–¥ì„ ìë¥´ëŠ” ë°©í–¥ìœ¼ë¡œ ì„¤ì •
+        // Ãæµ¹ ÁöÁ¡ÀÇ ¹æÇâÀ» ÀÚ¸£´Â ¹æÇâÀ¸·Î ¼³Á¤
         _exitPoint = other.ClosestPoint(transform.position);
 
         Vector3 cutDirection = _exitPoint - _entryPoint;
@@ -167,38 +175,38 @@ public class Melee_S : Weapon
 
         if (cutPlaneNormal.x == 0 && cutPlaneNormal.y == 0 && cutPlaneNormal.z == 0)
         {
-            // ì›ë˜ ìë¥´ë˜ ë°©í–¥ì„ normalize í•´ì„œ ë„£ì–´ì¤˜ì•¼ ë¨
+            // ¿ø·¡ ÀÚ¸£´ø ¹æÇâÀ» normalize ÇØ¼­ ³Ö¾îÁà¾ß µÊ
             cutPlaneNormal = (_entryPoint - _exitPoint).normalized;
-            Debug.Log("ëŒ€ì²´: " + cutPlaneNormal.x + " " + cutPlaneNormal.y + " " + cutPlaneNormal.z);
+            Debug.Log("´ëÃ¼: " + cutPlaneNormal.x + " " + cutPlaneNormal.y + " " + cutPlaneNormal.z);
 
             bool isHorizontalCut = Mathf.Abs(cutDirection.x) > Mathf.Abs(cutDirection.y);
 
-            // ê°€ë¡œë¡œ ìë¥´ëŠ” ê²½ìš°
+            // °¡·Î·Î ÀÚ¸£´Â °æ¿ì
             if (isHorizontalCut)
             {
-                // x ì¶• ë°©í–¥ìœ¼ë¡œ ìë¥´ê¸° ë•Œë¬¸ì— cutPlaneNormalì„ x ì¶• ë°©í–¥ ë²¡í„°ë¡œ ì„¤ì •
+                // x Ãà ¹æÇâÀ¸·Î ÀÚ¸£±â ¶§¹®¿¡ cutPlaneNormalÀ» x Ãà ¹æÇâ º¤ÅÍ·Î ¼³Á¤
                 cutPlaneNormal = Vector3.up;
             }
-            else // ì„¸ë¡œë¡œ ìë¥´ëŠ” ê²½ìš°
+            else // ¼¼·Î·Î ÀÚ¸£´Â °æ¿ì
             {
-                // y ì¶• ë°©í–¥ìœ¼ë¡œ ìë¥´ê¸° ë•Œë¬¸ì— cutPlaneNormalì„ y ì¶• ë°©í–¥ ë²¡í„°ë¡œ ì„¤ì •
+                // y Ãà ¹æÇâÀ¸·Î ÀÚ¸£±â ¶§¹®¿¡ cutPlaneNormalÀ» y Ãà ¹æÇâ º¤ÅÍ·Î ¼³Á¤
                 cutPlaneNormal = Vector3.right;
             }
         }
 
         LayerMask cutableMask = LayerMask.GetMask(LayerMask.LayerToName(other.gameObject.layer));
-        //Debug.Log("ì˜ë¦´ ë ˆì´ì–´: " + LayerMask.LayerToName(other.gameObject.layer));
+        //Debug.Log("Àß¸± ·¹ÀÌ¾î: " + LayerMask.LayerToName(other.gameObject.layer));
         if (_sliceMask.value == cutableMask)
         {
-            Debug.LogWarning("ìë¥¼ ìˆ˜ ìˆëŠ” ì˜¤ë¸Œì íŠ¸");
-            // ì˜¤ë¸Œì íŠ¸ë¥¼ ìë¥´ê¸°
+            Debug.LogWarning("ÀÚ¸¦ ¼ö ÀÖ´Â ¿ÀºêÁ§Æ®");
+            // ¿ÀºêÁ§Æ®¸¦ ÀÚ¸£±â
             Cutter.Cut(other.gameObject, cutInPlane, cutPlaneNormal);
 
-            // ìë¥¼ ë•Œ ê°€í•´ì§€ëŠ” í˜ì„ ì ìš©í•˜ì—¬ ì˜¤ë¸Œì íŠ¸ë¥¼ ë°€ì–´ëƒ„
+            // ÀÚ¸¦ ¶§ °¡ÇØÁö´Â ÈûÀ» Àû¿ëÇÏ¿© ¿ÀºêÁ§Æ®¸¦ ¹Ğ¾î³¿
             Rigidbody rb = other.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.AddForce(-cutPlaneNormal * _cutForce); // cutDirection ëŒ€ì‹ ì— cutPlaneNormalì„ ì‚¬ìš©
+                rb.AddForce(-cutPlaneNormal * _cutForce); // cutDirection ´ë½Å¿¡ cutPlaneNormalÀ» »ç¿ë
             }
 
             _hasExited = true;
@@ -206,8 +214,8 @@ public class Melee_S : Weapon
         else
         {
             //Debug.Log("sliceMask: " + sliceMask.value);
-            //Debug.Log("ìë¥¼ ë ˆì´ì–´: " + other.gameObject.layer);
-            Debug.LogWarning("ì™œ ì•ˆë¼?");
+            //Debug.Log("ÀÚ¸¦ ·¹ÀÌ¾î: " + other.gameObject.layer);
+            Debug.LogWarning("¿Ö ¾ÈµÅ?");
         }
     }
 }
