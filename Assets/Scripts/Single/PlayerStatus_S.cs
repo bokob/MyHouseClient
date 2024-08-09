@@ -82,12 +82,21 @@ public class PlayerStatus_S : MonoBehaviour
     /// <param name="attack"> 가할 공격력 </param>
     public void TakedDamage(int attack)
     {
-        // 피해가 음수라면 회복되는 현상이 일어나므로 피해의 값을 0이상으로 되게끔 설정
-        float damage = Mathf.Max(0, attack - Defence);
-        Hp -= damage;
+        if (Role == Define.Role.None) return; // 시체일 경우 종료
 
-        Debug.Log(gameObject.name + "(이)가 " + damage + " 만큼 피해를 입었음!");
-        Debug.Log("남은 체력: " + Hp);
+        // 피해가 음수라면 회복되는 현상이 일어나므로 피해의 값을 0이상으로 되게끔 설정
+        float damage = Mathf.Max(0, attack);
+        Hp -= damage;
+        if (Hp > 0)
+        {
+            HitChangeMaterials();
+            Debug.Log(gameObject.name + "(이)가 " + damage + " 만큼 피해를 입었음!");
+            Debug.Log("남은 체력: " + Hp);
+        }
+        else
+        {
+            Dead();
+        }
     }
 
     /// <summary>
@@ -208,19 +217,13 @@ public class PlayerStatus_S : MonoBehaviour
     /// </summary>
     public void HitChangeMaterials()
     {
-        // 태그가 무기 또는 몬스터
-
         for (int i = 0; i < _renderers.Count; i++)
         {
             _renderers[i].material.color = Color.red;
             Debug.Log("색변한다.");
             //Debug.Log(_renderers[i].material.name);
         }
-
         StartCoroutine(ResetMaterialAfterDelay(1.7f));
-
-        //Debug.Log($"플레이어가 {other.transform.root.name}에게 공격 받음!");
-        Debug.Log("공격받은 측의 체력:" + Hp);
     }
 
     /// <summary>
@@ -240,9 +243,6 @@ public class PlayerStatus_S : MonoBehaviour
     {
         //// 자기 자신에게 닿은 경우 무시
         if(other.transform.root.name == gameObject.name) return;
-
-        if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
-            HitChangeMaterials();
     }
 
     public void SetRoleAnimator(RuntimeAnimatorController animController, Avatar avatar)
