@@ -23,4 +23,4 @@ public class GameManager_S : MonoBehaviour
         _instance = this;
         _score = 0;
     }
-}
+}   

@@ -55,7 +55,6 @@ public class PlayerStatus_S : MonoBehaviour
     void Update()
     {
         Dead();
-        //TransformIntoHouseowner();
         if(_dead)
         {
             endTime -= Time.deltaTime;
@@ -191,14 +190,16 @@ public class PlayerStatus_S : MonoBehaviour
     {
         if (Role != Define.Role.None && Hp <= 0)
         {
-            score = GameManager_S._instance._score;
-            endUI.SetActive(true);
-            StartCoroutine(FadeInRoutine());
-            endText.text = "Killed Ghost : " + score.ToString();
-            _animator.SetTrigger("setDie");
             _dead = true;
             Role = Define.Role.None; // 시체
+            _animator.SetTrigger("setDie");
             StartCoroutine(DeadSinkCoroutine());
+
+            // 게임 정산
+            endUI.SetActive(true);
+            score = GameManager_S._instance._score;
+            StartCoroutine(FadeInRoutine());
+            endText.text = "Killed Ghost : " + score.ToString();
         }
     }
 
@@ -265,11 +266,12 @@ public class PlayerStatus_S : MonoBehaviour
         _animator.SetBool("isHoldGun", isHoldGun);
     }
 
+    // 게임 오버 화면 서서히 나타나게 하기
     private IEnumerator FadeInRoutine()
     {
         float elapsedTime = 1.0f;
         Color color = fadeImage.color;
-        color.a = 0.0f; // 시작 알파 값 (완전히 불투명)
+        color.a = 0.0f; // 시작 알파 값 (완전히 투명)
 
         while (elapsedTime < fadeDuration)
         {
@@ -279,7 +281,7 @@ public class PlayerStatus_S : MonoBehaviour
             yield return null;
         }
 
-        color.a = 1.0f; // 최종 알파 값 (완전히 투명)
+        color.a = 1.0f; // 최종 알파 값 (완전히 불투명)
         fadeImage.color = color;
     }
 }
