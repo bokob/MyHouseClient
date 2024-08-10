@@ -17,6 +17,7 @@ public class WeaponManager_S : MonoBehaviour
     [Header("???? ???? ????")]
     public int _selectedWeaponIdx = 0;
     public GameObject _selectedWeapon;
+    public GameObject _recentMelee; // the most recent Melee
     public bool _isHoldGun;
 
     void Awake()
@@ -28,12 +29,18 @@ public class WeaponManager_S : MonoBehaviour
     void Start()
     {
         InitRoleWeapon();
+        _recentMelee = transform.Find("Knife").gameObject; // _recentMelee init
     }
 
     void Update()
     {
         if(!_playerInputs.aim && !_playerInputs.reload) // ???????? ???, ???????? ???? ?? ???? ??? ????
             WeaponSwitching(); // ???? ???
+
+        if (Input.GetKeyDown(KeyCode.Q) && _selectedWeapon.name != "Rifle" && _selectedWeapon.name != "Knife")
+        {
+            Drop();
+        }
     }
 
     /// <summary>
@@ -63,22 +70,26 @@ public class WeaponManager_S : MonoBehaviour
     {
         int previousSelectedWeapon = _selectedWeaponIdx;
 
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        if (_selectedWeapon.tag == "Melee") // if now pick weapon tag is Melee
         {
-            if (_selectedWeaponIdx >= transform.childCount - 1)
-                _selectedWeaponIdx = 0;
-            else
-                _selectedWeaponIdx++;
-        }
-        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
-        {
-            if (_selectedWeaponIdx <= 0)
-                _selectedWeaponIdx = transform.childCount - 1;
-            else
-                _selectedWeaponIdx--;
+            _recentMelee = _selectedWeapon;
         }
 
-        // if(Input.GetKeyDown(KeyCode.Alpha1)) // ???? ????
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        {
+            if (_selectedWeapon == _recentMelee)
+                _selectedWeaponIdx = 1;
+            else if (_selectedWeapon.tag == "Gun")
+                _selectedWeaponIdx = _recentMelee.transform.GetSiblingIndex();
+        }
+
+        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+        {
+            if (_selectedWeapon == _recentMelee)
+                _selectedWeaponIdx = 1;
+            else if (_selectedWeapon.tag == "Gun")
+                _selectedWeaponIdx = _recentMelee.transform.GetSiblingIndex();
+        }
 
 
         if (previousSelectedWeapon != _selectedWeaponIdx) // ???²J ??? ???? ?¥å??? ???? ???
@@ -146,9 +157,15 @@ public class WeaponManager_S : MonoBehaviour
     /// <summary>
     /// ???? ???
     /// </summary>
-    void PickUp()
+    public void PickUp(string meleeName)
     {
-
+        Transform newMelee = transform.Find(meleeName);
+        if (!_isHoldGun)
+        {
+            _selectedWeapon.SetActive(false);
+            _selectedWeapon = newMelee.gameObject;
+            newMelee.gameObject.SetActive(true);
+        }
     }
 
     /// <summary>
@@ -156,6 +173,8 @@ public class WeaponManager_S : MonoBehaviour
     /// </summary>
     void Drop()
     {
-
+        _selectedWeapon.SetActive(false);
+        _selectedWeapon = transform.Find("Knife").gameObject;
+        _selectedWeapon.SetActive(true);
     }
 }

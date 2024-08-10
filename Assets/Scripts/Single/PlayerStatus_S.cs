@@ -6,16 +6,16 @@ using UnityEngine.UI;
 
 public class PlayerStatus_S : MonoBehaviour
 {
-    #region ìƒíƒœ ë° ëŠ¥ë ¥ì¹˜
+    #region »óÅÂ ¹× ´É·ÂÄ¡
     [field: SerializeField] public Define.Role Role = Define.Role.None;
-    [field: SerializeField] public float Hp { get; set; } = 100;    // ì²´ë ¥
-    [field: SerializeField] public float Sp { get; set; } = 100;    // ìŠ¤í…Œë¯¸ë‚˜
-    [field: SerializeField] public float MaxHp { get; private set; } = 100; // ìµœëŒ€ ì²´ë ¥
-    [field: SerializeField] public float MaxSp { get; private set; } = 100; // ìµœëŒ€ ìŠ¤í…Œë¯¸ë‚˜
-    [field: SerializeField] public float Defence { get; private set; } = 1; // ë°©ì–´ë ¥
+    [field: SerializeField] public float Hp { get; set; } = 100;    // Ã¼·Â
+    [field: SerializeField] public float Sp { get; set; } = 100;    // ½ºÅ×¹Ì³ª
+    [field: SerializeField] public float MaxHp { get; private set; } = 100; // ÃÖ´ë Ã¼·Â
+    [field: SerializeField] public float MaxSp { get; private set; } = 100; // ÃÖ´ë ½ºÅ×¹Ì³ª
+    [field: SerializeField] public float Defence { get; private set; } = 1; // ¹æ¾î·Â
     #endregion
 
-    #region ì• ë‹ˆë©”ì´ì…˜ ë° í”¼í•´
+    #region ¾Ö´Ï¸ŞÀÌ¼Ç ¹× ÇÇÇØ
     Animator _animator;
     List<Renderer> _renderers;
     #endregion
@@ -27,15 +27,21 @@ public class PlayerStatus_S : MonoBehaviour
     public TextMeshProUGUI endText;
     public TextMeshProUGUI quitText;
     bool _dead;
-    
+
+    WeaponManager_S _weaponManager_S;
+    private GameObject nearMeleeObject;
+    private string meleeItemName;
+
 
     void Awake()
     {
         _animator = transform.GetChild(0).gameObject.GetComponent<Animator>();
         InitRole();
         endUI.SetActive(false);
-        
-        // ë Œë” ê°€ì ¸ì˜¤ê¸°
+
+        _weaponManager_S = transform.root.GetComponentInChildren<WeaponManager_S>();
+
+        // ·»´õ °¡Á®¿À±â
         _renderers = new List<Renderer>();
         Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
         for (int i = 0; i < underTransforms.Length; i++)
@@ -44,7 +50,7 @@ public class PlayerStatus_S : MonoBehaviour
             if (renderer != null)
             {
                 _renderers.Add(renderer);
-                // if (renderer.material.color == null) Debug.Log("ì™œ ìƒ‰ì´ ë„?");
+                // if (renderer.material.color == null) Debug.Log("¿Ö »öÀÌ ³Î?");
             }
         }
     }
@@ -53,23 +59,28 @@ public class PlayerStatus_S : MonoBehaviour
     {
         Dead();
         //TransformIntoHouseowner();
-        if(_dead)
+        if (_dead)
         {
             endTime -= Time.deltaTime;
             quitText.text = Mathf.FloorToInt(endTime) + " seconds to quit.";
         }
+
+        if (Input.GetKeyDown(KeyCode.P) && nearMeleeObject != null && _weaponManager_S._selectedWeapon.tag != "Gun")
+        {
+            GetMeleeItem();
+        }
     }
 
     /// <summary>
-    /// ì—­í•  ì´ˆê¸°í™”
+    /// ¿ªÇÒ ÃÊ±âÈ­
     /// </summary>
     public void InitRole()
     {
         /*
          TODO
-        í˜¸ìŠ¤íŠ¸ë©´, Houseownerìœ¼ë¡œ í•˜ê³ , í´ë¼ì´ì–¸íŠ¸ë©´ Robber
+        È£½ºÆ®¸é, HouseownerÀ¸·Î ÇÏ°í, Å¬¶óÀÌ¾ğÆ®¸é Robber
 
-        ì‹±ê¸€ì€ ì§‘ì£¼ì¸ë§Œ
+        ½Ì±ÛÀº ÁıÁÖÀÎ¸¸
          */
         Role = Define.Role.Houseowner;
     }
@@ -77,69 +88,69 @@ public class PlayerStatus_S : MonoBehaviour
 
 
     /// <summary>
-    /// ë°ë¯¸ì§€ ì…ê¸°
+    /// µ¥¹ÌÁö ÀÔ±â
     /// </summary>
-    /// <param name="attack"> ê°€í•  ê³µê²©ë ¥ </param>
+    /// <param name="attack"> °¡ÇÒ °ø°İ·Â </param>
     public void TakedDamage(int attack)
     {
-        // í”¼í•´ê°€ ìŒìˆ˜ë¼ë©´ íšŒë³µë˜ëŠ” í˜„ìƒì´ ì¼ì–´ë‚˜ë¯€ë¡œ í”¼í•´ì˜ ê°’ì„ 0ì´ìƒìœ¼ë¡œ ë˜ê²Œë” ì„¤ì •
+        // ÇÇÇØ°¡ À½¼ö¶ó¸é È¸º¹µÇ´Â Çö»óÀÌ ÀÏ¾î³ª¹Ç·Î ÇÇÇØÀÇ °ªÀ» 0ÀÌ»óÀ¸·Î µÇ°Ô²û ¼³Á¤
         float damage = Mathf.Max(0, attack - Defence);
         Hp -= damage;
 
-        Debug.Log(gameObject.name + "(ì´)ê°€ " + damage + " ë§Œí¼ í”¼í•´ë¥¼ ì…ì—ˆìŒ!");
-        Debug.Log("ë‚¨ì€ ì²´ë ¥: " + Hp);
+        Debug.Log(gameObject.name + "(ÀÌ)°¡ " + damage + " ¸¸Å­ ÇÇÇØ¸¦ ÀÔ¾úÀ½!");
+        Debug.Log("³²Àº Ã¼·Â: " + Hp);
     }
 
     /// <summary>
-    /// ìµœëŒ€ ì²´ë ¥ì˜ 0.2ë§Œí¼ íšŒë³µ
+    /// ÃÖ´ë Ã¼·ÂÀÇ 0.2¸¸Å­ È¸º¹
     /// </summary>
     public void Heal()
     {
-        // í˜„ì¬ ì²´ë ¥ì´ ìµœëŒ€ ì²´ë ¥ë³´ë‹¤ ì‘ì„ ë•Œë§Œ íšŒë³µ ì ìš©
+        // ÇöÀç Ã¼·ÂÀÌ ÃÖ´ë Ã¼·Âº¸´Ù ÀÛÀ» ¶§¸¸ È¸º¹ Àû¿ë
         if (Hp < MaxHp)
         {
-            // íšŒë³µëŸ‰
+            // È¸º¹·®
             float healAmount = MaxHp * 0.2f;
 
-            // íšŒë³µëŸ‰ê³¼ í˜„ì¬ ì²´ë ¥ê³¼ì˜ í•©ì´ ìµœëŒ€ ì²´ë ¥ì„ ë„˜ì§€ ì•Šë„ë¡ ì¡°ì ˆ
+            // È¸º¹·®°ú ÇöÀç Ã¼·Â°úÀÇ ÇÕÀÌ ÃÖ´ë Ã¼·ÂÀ» ³ÑÁö ¾Êµµ·Ï Á¶Àı
             float healedAmount = Mathf.Clamp(Hp + healAmount, 0, MaxHp) - Hp;
 
-            Debug.Log("ì´ì „ ì²´ë ¥" + Hp);
-            // ì²´ë ¥ íšŒë³µ
+            Debug.Log("ÀÌÀü Ã¼·Â" + Hp);
+            // Ã¼·Â È¸º¹
             Hp += healedAmount;
-            Debug.Log("ì²´ë ¥ì„ " + healedAmount + "ë§Œí¼ íšŒë³µ!");
-            Debug.Log("í˜„ì¬ ì²´ë ¥: " + Hp);
+            Debug.Log("Ã¼·ÂÀ» " + healedAmount + "¸¸Å­ È¸º¹!");
+            Debug.Log("ÇöÀç Ã¼·Â: " + Hp);
         }
         else
         {
-            Debug.Log("ìµœëŒ€ ì²´ë ¥. íšŒë³µí•  í•„ìš” ì—†ìŒ.");
+            Debug.Log("ÃÖ´ë Ã¼·Â. È¸º¹ÇÒ ÇÊ¿ä ¾øÀ½.");
         }
     }
 
     /// <summary>
-    /// ìµœëŒ€ ìŠ¤í…Œë¯¸ë‚˜ê¹Œì§€ ì „ë¶€ íšŒë³µ
+    /// ÃÖ´ë ½ºÅ×¹Ì³ª±îÁö ÀüºÎ È¸º¹
     /// </summary>
     public void SpUp()
     {
-        // í˜„ì¬ ìŠ¤í…Œë¯¸ë‚˜ê°€ ìµœëŒ€ ìŠ¤í…Œë¯¸ë‚˜ë³´ë‹¤ ì‘ì„ ë•Œë§Œ íšŒë³µ ì ìš©
+        // ÇöÀç ½ºÅ×¹Ì³ª°¡ ÃÖ´ë ½ºÅ×¹Ì³ªº¸´Ù ÀÛÀ» ¶§¸¸ È¸º¹ Àû¿ë
         if (Sp < MaxSp)
         {
-            // íšŒë³µëŸ‰ê³¼ í˜„ì¬ ìŠ¤í…Œë¯¸ë‚˜ì™€ì˜ í•©ì´ ìµœëŒ€ ìŠ¤í…Œë¯¸ë‚˜ë¥¼ ë„˜ì§€ ì•Šë„ë¡ ì¡°ì ˆ
+            // È¸º¹·®°ú ÇöÀç ½ºÅ×¹Ì³ª¿ÍÀÇ ÇÕÀÌ ÃÖ´ë ½ºÅ×¹Ì³ª¸¦ ³ÑÁö ¾Êµµ·Ï Á¶Àı
             float healedAmount = Mathf.Clamp(Sp + MaxSp, 0, MaxHp) - Sp;
 
-            Debug.Log("ì´ì „ ìŠ¤í…Œë¯¸ë‚˜" + Sp);
-            // ìŠ¤í…Œë¯¸ë‚˜ íšŒë³µ
+            Debug.Log("ÀÌÀü ½ºÅ×¹Ì³ª" + Sp);
+            // ½ºÅ×¹Ì³ª È¸º¹
             Sp += healedAmount;
-            Debug.Log("ì „ë¶€ íšŒë³µ! í˜„ì¬ Sp: " + Sp);
+            Debug.Log("ÀüºÎ È¸º¹! ÇöÀç Sp: " + Sp);
         }
         else
         {
-            Debug.Log("ìµœëŒ€ Sp. íšŒë³µí•  í•„ìš” ì—†ìŒ.");
+            Debug.Log("ÃÖ´ë Sp. È¸º¹ÇÒ ÇÊ¿ä ¾øÀ½.");
         }
     }
 
     /// <summary>
-    /// ìŠ¤í…Œë¯¸ë‚˜ ì°¨ì˜¤ë¥´ê¸°
+    /// ½ºÅ×¹Ì³ª Â÷¿À¸£±â
     /// </summary>
     public void ChargeSp()
     {
@@ -148,7 +159,7 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ìŠ¤í…Œë¯¸ë‚˜ ê¹ì´ê¸°
+    /// ½ºÅ×¹Ì³ª ±ğÀÌ±â
     /// </summary>
     public void DischargeSp()
     {
@@ -157,7 +168,7 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ì í”„ì‹œ, ìŠ¤í…Œë¯¸ë‚˜ ê°ì†Œ
+    /// Á¡ÇÁ½Ã, ½ºÅ×¹Ì³ª °¨¼Ò
     /// </summary>
     public void JumpSpDown()
     {
@@ -165,15 +176,15 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ë°©ì–´ë ¥ ì¦ê°€
+    /// ¹æ¾î·Â Áõ°¡
     /// </summary>
     public void DefenceUp()
     {
 
     }
-    
+
     /// <summary>
-    /// ì‚¬ë§
+    /// »ç¸Á
     /// </summary>
     public void Dead()
     {
@@ -184,13 +195,13 @@ public class PlayerStatus_S : MonoBehaviour
             endText.text = "Killed Ghost : " + score.ToString();
             _animator.SetTrigger("setDie");
             _dead = true;
-            Role = Define.Role.None; // ì‹œì²´
+            Role = Define.Role.None; // ½ÃÃ¼
             StartCoroutine(DeadSinkCoroutine());
         }
     }
 
     /// <summary>
-    /// ê²Œì„ ëë‚´ê¸°
+    /// °ÔÀÓ ³¡³»±â
     /// </summary>
     /// <returns></returns>
     IEnumerator DeadSinkCoroutine()
@@ -204,27 +215,27 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// í”¼í•´ ë°›ìœ¼ë©´ Material ë¶‰ê²Œ ë³€í™”
+    /// ÇÇÇØ ¹ŞÀ¸¸é Material ºÓ°Ô º¯È­
     /// </summary>
     public void HitChangeMaterials()
     {
-        // íƒœê·¸ê°€ ë¬´ê¸° ë˜ëŠ” ëª¬ìŠ¤í„°
+        // ÅÂ±×°¡ ¹«±â ¶Ç´Â ¸ó½ºÅÍ
 
         for (int i = 0; i < _renderers.Count; i++)
         {
             _renderers[i].material.color = Color.red;
-            Debug.Log("ìƒ‰ë³€í•œë‹¤.");
+            Debug.Log("»öº¯ÇÑ´Ù.");
             //Debug.Log(_renderers[i].material.name);
         }
 
         StartCoroutine(ResetMaterialAfterDelay(1.7f));
 
-        //Debug.Log($"í”Œë ˆì´ì–´ê°€ {other.transform.root.name}ì—ê²Œ ê³µê²© ë°›ìŒ!");
-        Debug.Log("ê³µê²©ë°›ì€ ì¸¡ì˜ ì²´ë ¥:" + Hp);
+        //Debug.Log($"ÇÃ·¹ÀÌ¾î°¡ {other.transform.root.name}¿¡°Ô °ø°İ ¹ŞÀ½!");
+        Debug.Log("°ø°İ¹ŞÀº ÃøÀÇ Ã¼·Â:" + Hp);
     }
 
     /// <summary>
-    /// í”¼í•´ ë°›ê³  Material ì›ë˜ëŒ€ë¡œ ë³µêµ¬
+    /// ÇÇÇØ ¹Ş°í Material ¿ø·¡´ë·Î º¹±¸
     /// </summary>
     /// <param name="delay"></param>
     /// <returns></returns>
@@ -238,11 +249,34 @@ public class PlayerStatus_S : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        //// ìê¸° ìì‹ ì—ê²Œ ë‹¿ì€ ê²½ìš° ë¬´ì‹œ
-        if(other.transform.root.name == gameObject.name) return;
+        //// ÀÚ±â ÀÚ½Å¿¡°Ô ´êÀº °æ¿ì ¹«½Ã
+        if (other.transform.root.name == gameObject.name) return;
 
         if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
             HitChangeMaterials();
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        if (other.tag == "MeleeItem")
+        {
+            nearMeleeObject = other.gameObject;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "MeleeItem")
+        {
+            nearMeleeObject = null;
+        }
+    }
+
+    public void GetMeleeItem()
+    {
+        meleeItemName = nearMeleeObject.name;
+        _weaponManager_S.PickUp(meleeItemName);
+        Destroy(nearMeleeObject);
     }
 
     public void SetRoleAnimator(RuntimeAnimatorController animController, Avatar avatar)
@@ -250,7 +284,7 @@ public class PlayerStatus_S : MonoBehaviour
         _animator.runtimeAnimatorController = animController;
         _animator.avatar = avatar;
 
-        // ì• ë‹ˆë©”ì´í„° ì†ì„± êµì²´í•˜ê³  ê»ë‹¤ê°€ ì¼œì•¼ ë™ì‘í•¨
+        // ¾Ö´Ï¸ŞÀÌÅÍ ¼Ó¼º ±³Ã¼ÇÏ°í ²°´Ù°¡ ÄÑ¾ß µ¿ÀÛÇÔ
         _animator.enabled = false;
         _animator.enabled = true;
     }

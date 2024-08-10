@@ -7,7 +7,7 @@ using UnityEngine.Pool;
 public class PoolingManager_S : MonoBehaviour
 {
     public static PoolingManager_S _instance;
-
+    
     [SerializeField]
     private GameObject _monsterPrefab;
 
@@ -35,7 +35,7 @@ public class PoolingManager_S : MonoBehaviour
             for (int j = 0; j < 2; j++)
             {
                 CreateMonsterAtSpawnPoint(i);
-            }
+        }
         }
 
         StartCoroutine(SpawnGhostsOverTime());
@@ -55,9 +55,9 @@ public class PoolingManager_S : MonoBehaviour
                 for (int j = 0; j < additionalSpawnGhostCount; j++)
                 {
                     CreateMonsterAtSpawnPoint(i);
-                }
             }
         }
+    }
     }
 
     private void CreateMonsterAtSpawnPoint(int spawnPointIndex)
@@ -91,7 +91,7 @@ public class PoolingManager_S : MonoBehaviour
     {
         if (monster.transform.position.y == -1.5f)
         {
-            monster.gameObject.SetActive(false);
-        }
+        monster.gameObject.SetActive(false);
+    }
     }
 }
