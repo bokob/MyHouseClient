@@ -254,7 +254,7 @@ public class PlayerStatus_S : MonoBehaviour
         //// ÀÚ±â ÀÚ½Å¿¡°Ô ´êÀº °æ¿ì ¹«½Ã
         if (other.transform.root.name == gameObject.name) return;
 
-        if (other.tag == "Melee" || other.tag == "Gun" || other.tag == "Monster")
+        if (other.tag == "Monster")
             HitChangeMaterials();
     }
 
@@ -306,7 +306,7 @@ public class PlayerStatus_S : MonoBehaviour
         while (elapsedTime < fadeDuration)
         {
             elapsedTime += Time.deltaTime;
-            color.a = Mathf.Lerp(0.0f, 1.0f, elapsedTime / fadeDuration); // ?ŒíŒŒ ê°’ì„ 1?ì„œ 0?¼ë¡œ ?œì„œ??ë³€ê²?
+            color.a = Mathf.Lerp(0.0f, 1.0f, elapsedTime / fadeDuration); // ?ŒíŒŒ ê°’ì„ 1?ì„œ 0?¼ë¡œ ?œì„œ??ë³€ê²?
             fadeImage.color = color;
             yield return null;
         }
