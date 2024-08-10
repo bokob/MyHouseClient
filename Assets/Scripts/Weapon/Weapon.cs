@@ -7,12 +7,12 @@ using UnityEngine;
 /// </summary>
 public class Weapon : MonoBehaviour
 {
-    public Define.Type Type { get; protected set; } // 무기 타입
+    public Define.Type Type { get; set; } // 무기 타입
 
-    public Transform Master { get; protected set; } // 주인
+    public Transform Master { get; set; } // 주인
 
-    public int Attack { get; protected set; }       // 공격력
-    public float Rate { get; protected set; } = 0.5f;      // 공격속도
+    public int Attack { get; set; }       // 공격력
+    public float Rate { get; set; } = 0.5f;      // 공격속도
 
 
     void Awake()

@@ -22,8 +22,10 @@ public class PlayerStatus_S : MonoBehaviour
 
     [Header("EndUI")]
     public int score = 0;
-    public float endTime = 5f;
+    public float endTime = 6f;
+    public float fadeDuration = 4.0f;
     public GameObject endUI;
+    public Image fadeImage;
     public TextMeshProUGUI endText;
     public TextMeshProUGUI quitText;
     bool _dead;
@@ -31,7 +33,6 @@ public class PlayerStatus_S : MonoBehaviour
     WeaponManager_S _weaponManager_S;
     private GameObject nearMeleeObject;
     private string meleeItemName;
-
 
     void Awake()
     {
@@ -192,6 +193,7 @@ public class PlayerStatus_S : MonoBehaviour
         {
             score = GameManager_S._instance._score;
             endUI.SetActive(true);
+            StartCoroutine(FadeInRoutine());
             endText.text = "Killed Ghost : " + score.ToString();
             _animator.SetTrigger("setDie");
             _dead = true;
@@ -293,5 +295,23 @@ public class PlayerStatus_S : MonoBehaviour
     {
         if (Role != Define.Role.Houseowner) return;
         _animator.SetBool("isHoldGun", isHoldGun);
+    }
+
+    private IEnumerator FadeInRoutine()
+    {
+        float elapsedTime = 1.0f;
+        Color color = fadeImage.color;
+        color.a = 0.0f; // ?œìž‘ ?ŒíŒŒ ê°?(?„ì „??ë¶ˆíˆ¬ëª?
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            color.a = Mathf.Lerp(0.0f, 1.0f, elapsedTime / fadeDuration); // ?ŒíŒŒ ê°’ì„ 1?ì„œ 0?¼ë¡œ ?œì„œ??ë³€ê²?
+            fadeImage.color = color;
+            yield return null;
+        }
+
+        color.a = 1.0f; // ìµœì¢… ?ŒíŒŒ ê°?(?„ì „???¬ëª…)
+        fadeImage.color = color;
     }
 }
