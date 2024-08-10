@@ -8,7 +8,6 @@ public class Melee_S : Weapon
     PlayerMove_S _playerMove;
     PlayerInputs _playerInputs;
     WeaponManager _weaponManager;
-    WeaponData _weaponData;
 
     BoxCollider _meleeArea;       // 근접 공격 범위
     TrailRenderer _trailEffet;    // 휘두를 때 효과
@@ -49,10 +48,6 @@ public class Melee_S : Weapon
          * 따로 읽어와서 그 값들을 세팅해줘야 함
          * 현재 임시로 테스트를 위해 하드코딩 함
         */
-
-        string folderPath = Path.Combine(Application.dataPath, "Item");
-        string path = Path.Combine(folderPath, "weaponData.json");
-        string jsonData = File.ReadAllText(path);
 
         //weaponData = JsonUtility.FromJson<WeaponData>(jsonData);
         if (gameObject.tag == "Melee")

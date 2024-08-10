@@ -10,7 +10,7 @@ TagManager:
   - Bullet
   - Monster
   - CinemachineTarget
-  - FxTemporaire
+  - MeleeItem
   layers:
   - Default
   - TransparentFX
