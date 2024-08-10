@@ -7,7 +7,6 @@ using System.IO;
 public class GameManager_S : MonoBehaviour
 {    
     public static GameManager_S _instance;
-    public event EventHandler OnVariableChanged;
     public int _monsterCount = 0;
     public int _score = 0;
     public int Score

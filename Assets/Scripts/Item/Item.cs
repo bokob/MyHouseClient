@@ -8,32 +8,34 @@ public class Item : MonoBehaviour
     public float _floatSpeed = 1.0f;  // 아이템의 떠다니는 속도
     public float _rotateSpeed = 30f;  // 아이템의 회전 속도
     public float _floatScale = 0.1f;  // sin 함수의 반환 값에 곱해줄 스케일링 팩터, 완만하게 움직이게 하려고 사용
+    public SphereCollider _collider; // 아이템 범위
 
-    // 빈 오브젝트니까 자식 오브젝트로 있는 Mesh 가져오기 위한 변수
-    Transform childMesh;
+    Transform childMesh; // 빈 오브젝트니까 자식 오브젝트로 있는 Mesh 가져오기 위한 변수
 
-    // 아이템 타입
-    [SerializeField]
-    protected Define.Item itemType;
+    [SerializeField] protected Define.Item itemType; // 아이템 타입
 
-    // 아이템 초기 세팅
+    /// <summary>
+    /// 아이템 초기 세팅
+    /// </summary>
     protected void ItemInit()
     {
         // Mesh를 가져온다.
         childMesh = transform.GetChild(0);
 
         // SphereCollider 설정
-        SphereCollider itemCollider = GetComponent<SphereCollider>();
-        if(itemCollider == null)
+        _collider = GetComponent<SphereCollider>();
+        if(_collider == null)
         {
             gameObject.AddComponent<SphereCollider>();
-            itemCollider = GetComponent<SphereCollider>();
+            _collider = GetComponent<SphereCollider>();
         }
-        itemCollider.isTrigger = true;
-        itemCollider.radius = 35f;
+        _collider.isTrigger = true;
+        _collider.radius = 35f;
     }
 
-    // 아이템 제자리에 떠다니기
+    /// <summary>
+    /// 아이템 제자리에 떠다니기
+    /// </summary>
     protected void Floating()
     {
         // 아이템을 회전 (월드 좌표 기준)

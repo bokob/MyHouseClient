@@ -117,10 +117,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2484831495094446813}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 46f311046d2104da8b56be3d0a49a119,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 237738938002283204}
   m_SourcePrefab: {fileID: 100100000, guid: 46f311046d2104da8b56be3d0a49a119, type: 3}
 --- !u!1 &19588385245968726 stripped
 GameObject:
@@ -183,10 +179,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cd932125746ae147a4c5f6cc2df8583, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _centerPoint: {fileID: 174848733327858528, guid: 8b5b180bb1fdcaf48874b59c494ef4cf,
-    type: 3}
-  _range: 10
-  _patrolSpeed: 2
   _state: 4
   _isDead: 0
   _radius: 10
@@ -200,9 +192,14 @@ MonoBehaviour:
   _canSeePlayer: 0
   _chaseRange: 10
   _lostDistance: 0
+  _centerPoint: {fileID: 174848733327858528, guid: 8b5b180bb1fdcaf48874b59c494ef4cf,
+    type: 3}
+  _range: 10
+  _patrolSpeed: 2
   _attackRange: 0.1
   _attackDelay: 2
   _target: {fileID: 0}
+  _monsterCount: 0
 --- !u!54 &4854686820582876448
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -225,7 +222,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 14
@@ -253,17 +250,3 @@ CapsuleCollider:
   m_Height: 1.15
   m_Direction: 1
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &237738938002283204
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 19588385245968726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4deacc5788fb8724e81b2c7f6daeb095, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <Hp>k__BackingField: 10
-  <MaxHp>k__BackingField: 10

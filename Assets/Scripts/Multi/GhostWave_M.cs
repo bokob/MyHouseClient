@@ -11,7 +11,7 @@ public class GhostWave_M : MonoBehaviourPunCallbacks
     [SerializeField]
     private GameObject ghostPrefab;
 
-    private IObjectPool<ModifiedMonster_S> _pool;
+    private IObjectPool<Monster> _pool;
     private Coroutine spawnCoroutine;
 
     public Transform ghostWavePosition;
@@ -24,7 +24,7 @@ public class GhostWave_M : MonoBehaviourPunCallbacks
     {
         if (_pool == null)
         {
-            _pool = new ObjectPool<ModifiedMonster_S>(CreateMonster, OnGetMonster, OnReleaseMonster, OnDestroyMonster, maxSize: 100);
+            _pool = new ObjectPool<Monster>(CreateMonster, OnGetMonster, OnReleaseMonster, OnDestroyMonster, maxSize: 100);
         }
     }
 
@@ -70,14 +70,14 @@ public class GhostWave_M : MonoBehaviourPunCallbacks
         }
     }
 
-    private ModifiedMonster_S CreateMonster()
+    private Monster CreateMonster()
     {
         Vector3 randomPosition = ghostWavePosition.position + Random.insideUnitSphere * 7f;
         randomPosition.y = 0; // Ghost 생성 시 position.y 값이 0이도록 고정.
 
         GameObject ghost = Instantiate(ghostPrefab, randomPosition, Quaternion.identity);
         ghost.transform.SetParent(transform, false); // 지역 위치로 소환
-        ModifiedMonster_S monster = ghost.GetComponent<ModifiedMonster_S>();
+        Monster monster = ghost.GetComponent<Monster>();
         if (monster != null)
         {
             monster.SetManagedPool(_pool);
@@ -90,17 +90,17 @@ public class GhostWave_M : MonoBehaviourPunCallbacks
         return monster;
     }
 
-    private void OnGetMonster(ModifiedMonster_S monster)
+    private void OnGetMonster(Monster monster)
     {
         monster.gameObject.SetActive(true);
     }
 
-    private void OnReleaseMonster(ModifiedMonster_S monster)
+    private void OnReleaseMonster(Monster monster)
     {
         monster.gameObject.SetActive(false);
     }
 
-    private void OnDestroyMonster(ModifiedMonster_S monster)
+    private void OnDestroyMonster(Monster monster)
     {
         Destroy(monster.gameObject);
     }
@@ -108,8 +108,8 @@ public class GhostWave_M : MonoBehaviourPunCallbacks
     public void AllGhostDestroy()
     {
         // 모든 고스트 오브젝트를 제거.
-        ModifiedMonster_S[] allGhosts = FindObjectsOfType<ModifiedMonster_S>();
-        foreach (ModifiedMonster_S ghost in allGhosts)
+        Monster[] allGhosts = FindObjectsOfType<Monster>();
+        foreach (Monster ghost in allGhosts)
         {
             Destroy(ghost.gameObject);
         }
