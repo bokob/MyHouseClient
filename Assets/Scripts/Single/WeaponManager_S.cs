@@ -1,6 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+using Newtonsoft.Json;
+
+
+public class WeaponData
+{
+    public string Name;
+    public Define.Type Type;
+    public int Attack;
+    public float Rate;
+}
 
 public class WeaponManager_S : MonoBehaviour
 {
@@ -19,6 +31,9 @@ public class WeaponManager_S : MonoBehaviour
     public GameObject _selectedWeapon;
     public bool _isHoldGun;
 
+    [Header("?? ??")]
+    public List<WeaponData> weapons;
+
     void Awake()
     {
         _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
@@ -28,12 +43,26 @@ public class WeaponManager_S : MonoBehaviour
     void Start()
     {
         InitRoleWeapon();
+        LoadWeaponData();
     }
 
     void Update()
     {
         if(!_playerInputs.aim && !_playerInputs.reload) // ???????? ???, ???????? ???? ?? ???? ??? ????
             WeaponSwitching(); // ???? ???
+        
+        if (Input.GetKeyDown(KeyCode.E)) // ???? ?? ?? ?? ??
+        {
+            if (GameManager_S._instance != null)
+            {
+                GameManager_S._instance.PickUpWeapon("Knife");
+            }
+            else
+            {
+                Debug.LogError("GameManager_S instance is not available.");
+            }
+        }
+    
     }
 
     /// <summary>
@@ -55,6 +84,54 @@ public class WeaponManager_S : MonoBehaviour
         Debug.Log("????? ???? ???? ???? ???");
     }
 
+    void LoadWeaponData()
+    {
+        string filePath = Path.Combine(Application.dataPath, "Scripts/Weapon/weapondata.json");
+
+        if (File.Exists(filePath))
+        {
+            try
+            {
+                string jsonContent = File.ReadAllText(filePath);
+                weapons = JsonConvert.DeserializeObject<List<WeaponData>>(jsonContent);
+
+                if (weapons != null)
+            {
+                Debug.Log("Weapon data loaded successfully.");
+
+                // ???? ????? ??
+                if (weapons.Count == 0)
+                {
+                    Debug.LogWarning("Weapon list is empty.");
+                }
+                else
+                {
+                    foreach (var weapon in weapons)
+                    {
+                        Debug.Log($"Weapon: {weapon.Name}, Attack: {weapon.Attack}, Rate: {weapon.Rate}");
+                    }
+                }
+            }
+            }
+            catch (JsonException ex)
+            {
+                Debug.LogError($"JSON parsing error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Failed to load weapon data: {ex.Message}");
+            }
+        }
+        else
+        {
+            Debug.LogError("Weapon data file not found.");
+        }
+
+    }
+    public WeaponData GetWeaponByName(string weaponName)
+    {
+        return weapons.Find(weapon => weapon.Name == weaponName);
+    }
 
     /// <summary>
     /// ???? ???
@@ -158,4 +235,11 @@ public class WeaponManager_S : MonoBehaviour
     {
 
     }
+}
+
+
+[System.Serializable]
+public class WeaponDataWrapper
+{
+    public WeaponData[] items;
 }
