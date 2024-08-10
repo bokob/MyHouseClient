@@ -11,7 +11,7 @@ public class PoolingManager_S : MonoBehaviour
     [SerializeField]
     private GameObject _monsterPrefab;
 
-    private IObjectPool<ModifiedMonster_S> _pool;
+    private IObjectPool<Monster> _pool;
 
     public List<Transform> _waveSpawnPoints = new List<Transform>();
     float spawnGhostInterval = 60f;  // Monster generation interval. Created after 60 seconds at first.
@@ -23,7 +23,7 @@ public class PoolingManager_S : MonoBehaviour
 
         if (_pool == null)
         {
-            _pool = new ObjectPool<ModifiedMonster_S>(CreateMonster, OnGetMonster, OnReleaseMonster, maxSize: 100);
+            _pool = new ObjectPool<Monster>(CreateMonster, OnGetMonster, OnReleaseMonster, maxSize: 100);
         }
     }
 
@@ -65,7 +65,7 @@ public class PoolingManager_S : MonoBehaviour
         Vector3 randomPosition = _waveSpawnPoints[spawnPointIndex].position + Random.insideUnitSphere * 7f;
         randomPosition.y = 0; // Fixed position.y value to 0 when creating Ghost.
 
-        ModifiedMonster_S monster = Instantiate(_monsterPrefab, randomPosition, Quaternion.identity, _waveSpawnPoints[spawnPointIndex]).GetComponent<ModifiedMonster_S>();
+        Monster monster = Instantiate(_monsterPrefab, randomPosition, Quaternion.identity, _waveSpawnPoints[spawnPointIndex]).GetComponent<Monster>();
         if (monster != null)
         {
             monster.SetManagedPool(_pool);
@@ -76,20 +76,20 @@ public class PoolingManager_S : MonoBehaviour
         }
     }
 
-    private ModifiedMonster_S CreateMonster()
+    private Monster CreateMonster()
     {
         // this method is no longer used, but left to initialize the Pool.
         return null;
     }
 
-    private void OnGetMonster(ModifiedMonster_S monster)
+    private void OnGetMonster(Monster monster)
     {
         monster.gameObject.SetActive(true);
     }
 
-    private void OnReleaseMonster(ModifiedMonster_S monster)
+    private void OnReleaseMonster(Monster monster)
     {
-        if (monster.transform.position.y == -1.5f)
+        if (monster.transform.position.y <= -1.5f)
         {
         monster.gameObject.SetActive(false);
     }

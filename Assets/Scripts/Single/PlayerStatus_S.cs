@@ -6,16 +6,16 @@ using UnityEngine.UI;
 
 public class PlayerStatus_S : MonoBehaviour
 {
-    #region »óÅÂ ¹× ´É·ÂÄ¡
+    #region ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½É·ï¿½Ä¡
     [field: SerializeField] public Define.Role Role = Define.Role.None;
-    [field: SerializeField] public float Hp { get; set; } = 100;    // Ã¼·Â
-    [field: SerializeField] public float Sp { get; set; } = 100;    // ½ºÅ×¹Ì³ª
-    [field: SerializeField] public float MaxHp { get; private set; } = 100; // ÃÖ´ë Ã¼·Â
-    [field: SerializeField] public float MaxSp { get; private set; } = 100; // ÃÖ´ë ½ºÅ×¹Ì³ª
-    [field: SerializeField] public float Defence { get; private set; } = 1; // ¹æ¾î·Â
+    [field: SerializeField] public float Hp { get; set; } = 100;    // Ã¼ï¿½ï¿½
+    [field: SerializeField] public float Sp { get; set; } = 100;    // ï¿½ï¿½ï¿½×¹Ì³ï¿½
+    [field: SerializeField] public float MaxHp { get; private set; } = 100; // ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½
+    [field: SerializeField] public float MaxSp { get; private set; } = 100; // ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½
+    [field: SerializeField] public float Defence { get; private set; } = 1; // ï¿½ï¿½ï¿½ï¿½
     #endregion
 
-    #region ¾Ö´Ï¸ŞÀÌ¼Ç ¹× ÇÇÇØ
+    #region ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     Animator _animator;
     List<Renderer> _renderers;
     #endregion
@@ -42,7 +42,7 @@ public class PlayerStatus_S : MonoBehaviour
 
         _weaponManager_S = transform.root.GetComponentInChildren<WeaponManager_S>();
 
-        // ·»´õ °¡Á®¿À±â
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         _renderers = new List<Renderer>();
         Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
         for (int i = 0; i < underTransforms.Length; i++)
@@ -51,7 +51,7 @@ public class PlayerStatus_S : MonoBehaviour
             if (renderer != null)
             {
                 _renderers.Add(renderer);
-                // if (renderer.material.color == null) Debug.Log("¿Ö »öÀÌ ³Î?");
+                // if (renderer.material.color == null) Debug.Log("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½?");
             }
         }
     }
@@ -59,8 +59,7 @@ public class PlayerStatus_S : MonoBehaviour
     void Update()
     {
         Dead();
-        //TransformIntoHouseowner();
-        if (_dead)
+        if(_dead)
         {
             endTime -= Time.deltaTime;
             quitText.text = Mathf.FloorToInt(endTime) + " seconds to quit.";
@@ -73,15 +72,15 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ¿ªÇÒ ÃÊ±âÈ­
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
     /// </summary>
     public void InitRole()
     {
         /*
          TODO
-        È£½ºÆ®¸é, HouseownerÀ¸·Î ÇÏ°í, Å¬¶óÀÌ¾ğÆ®¸é Robber
+        È£ï¿½ï¿½Æ®ï¿½ï¿½, Houseownerï¿½ï¿½ï¿½ï¿½ ï¿½Ï°ï¿½, Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ Robber
 
-        ½Ì±ÛÀº ÁıÁÖÀÎ¸¸
+        ï¿½Ì±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Î¸ï¿½
          */
         Role = Define.Role.Houseowner;
     }
@@ -89,69 +88,78 @@ public class PlayerStatus_S : MonoBehaviour
 
 
     /// <summary>
-    /// µ¥¹ÌÁö ÀÔ±â
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô±ï¿½
     /// </summary>
-    /// <param name="attack"> °¡ÇÒ °ø°İ·Â </param>
+    /// <param name="attack"> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½İ·ï¿½ </param>
     public void TakedDamage(int attack)
     {
-        // ÇÇÇØ°¡ À½¼ö¶ó¸é È¸º¹µÇ´Â Çö»óÀÌ ÀÏ¾î³ª¹Ç·Î ÇÇÇØÀÇ °ªÀ» 0ÀÌ»óÀ¸·Î µÇ°Ô²û ¼³Á¤
-        float damage = Mathf.Max(0, attack - Defence);
-        Hp -= damage;
+        if (Role == Define.Role.None) return; // ì‹œì²´ì¼ ê²½ìš° ì¢…ë£Œ
 
-        Debug.Log(gameObject.name + "(ÀÌ)°¡ " + damage + " ¸¸Å­ ÇÇÇØ¸¦ ÀÔ¾úÀ½!");
-        Debug.Log("³²Àº Ã¼·Â: " + Hp);
+        // í”¼í•´ê°€ ìŒìˆ˜ë¼ë©´ íšŒë³µë˜ëŠ” í˜„ìƒì´ ì¼ì–´ë‚˜ë¯€ë¡œ í”¼í•´ì˜ ê°’ì„ 0ì´ìƒìœ¼ë¡œ ë˜ê²Œë” ì„¤ì •
+        float damage = Mathf.Max(0, attack);
+        Hp -= damage;
+        if (Hp > 0)
+        {
+            HitChangeMaterials();
+            Debug.Log(gameObject.name + "(ì´)ê°€ " + damage + " ë§Œí¼ í”¼í•´ë¥¼ ì…ì—ˆìŒ!");
+            Debug.Log("ë‚¨ì€ ì²´ë ¥: " + Hp);
+        }
+        else
+        {
+            Dead();
+        }
     }
 
     /// <summary>
-    /// ÃÖ´ë Ã¼·ÂÀÇ 0.2¸¸Å­ È¸º¹
+    /// ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ 0.2ï¿½ï¿½Å­ È¸ï¿½ï¿½
     /// </summary>
     public void Heal()
     {
-        // ÇöÀç Ã¼·ÂÀÌ ÃÖ´ë Ã¼·Âº¸´Ù ÀÛÀ» ¶§¸¸ È¸º¹ Àû¿ë
+        // ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ Ã¼ï¿½Âºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (Hp < MaxHp)
         {
-            // È¸º¹·®
+            // È¸ï¿½ï¿½ï¿½ï¿½
             float healAmount = MaxHp * 0.2f;
 
-            // È¸º¹·®°ú ÇöÀç Ã¼·Â°úÀÇ ÇÕÀÌ ÃÖ´ë Ã¼·ÂÀ» ³ÑÁö ¾Êµµ·Ï Á¶Àı
+            // È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½Â°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             float healedAmount = Mathf.Clamp(Hp + healAmount, 0, MaxHp) - Hp;
 
-            Debug.Log("ÀÌÀü Ã¼·Â" + Hp);
-            // Ã¼·Â È¸º¹
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½" + Hp);
+            // Ã¼ï¿½ï¿½ È¸ï¿½ï¿½
             Hp += healedAmount;
-            Debug.Log("Ã¼·ÂÀ» " + healedAmount + "¸¸Å­ È¸º¹!");
-            Debug.Log("ÇöÀç Ã¼·Â: " + Hp);
+            Debug.Log("Ã¼ï¿½ï¿½ï¿½ï¿½ " + healedAmount + "ï¿½ï¿½Å­ È¸ï¿½ï¿½!");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½: " + Hp);
         }
         else
         {
-            Debug.Log("ÃÖ´ë Ã¼·Â. È¸º¹ÇÒ ÇÊ¿ä ¾øÀ½.");
+            Debug.Log("ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½. È¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½.");
         }
     }
 
     /// <summary>
-    /// ÃÖ´ë ½ºÅ×¹Ì³ª±îÁö ÀüºÎ È¸º¹
+    /// ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½
     /// </summary>
     public void SpUp()
     {
-        // ÇöÀç ½ºÅ×¹Ì³ª°¡ ÃÖ´ë ½ºÅ×¹Ì³ªº¸´Ù ÀÛÀ» ¶§¸¸ È¸º¹ Àû¿ë
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (Sp < MaxSp)
         {
-            // È¸º¹·®°ú ÇöÀç ½ºÅ×¹Ì³ª¿ÍÀÇ ÇÕÀÌ ÃÖ´ë ½ºÅ×¹Ì³ª¸¦ ³ÑÁö ¾Êµµ·Ï Á¶Àı
+            // È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             float healedAmount = Mathf.Clamp(Sp + MaxSp, 0, MaxHp) - Sp;
 
-            Debug.Log("ÀÌÀü ½ºÅ×¹Ì³ª" + Sp);
-            // ½ºÅ×¹Ì³ª È¸º¹
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½" + Sp);
+            // ï¿½ï¿½ï¿½×¹Ì³ï¿½ È¸ï¿½ï¿½
             Sp += healedAmount;
-            Debug.Log("ÀüºÎ È¸º¹! ÇöÀç Sp: " + Sp);
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½! ï¿½ï¿½ï¿½ï¿½ Sp: " + Sp);
         }
         else
         {
-            Debug.Log("ÃÖ´ë Sp. È¸º¹ÇÒ ÇÊ¿ä ¾øÀ½.");
+            Debug.Log("ï¿½Ö´ï¿½ Sp. È¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½.");
         }
     }
 
     /// <summary>
-    /// ½ºÅ×¹Ì³ª Â÷¿À¸£±â
+    /// ï¿½ï¿½ï¿½×¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void ChargeSp()
     {
@@ -160,7 +168,7 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ½ºÅ×¹Ì³ª ±ğÀÌ±â
+    /// ï¿½ï¿½ï¿½×¹Ì³ï¿½ ï¿½ï¿½ï¿½Ì±ï¿½
     /// </summary>
     public void DischargeSp()
     {
@@ -169,7 +177,7 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// Á¡ÇÁ½Ã, ½ºÅ×¹Ì³ª °¨¼Ò
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½×¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void JumpSpDown()
     {
@@ -177,7 +185,7 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ¹æ¾î·Â Áõ°¡
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void DefenceUp()
     {
@@ -185,25 +193,27 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// »ç¸Á
+    /// ï¿½ï¿½ï¿½
     /// </summary>
     public void Dead()
     {
         if (Role != Define.Role.None && Hp <= 0)
         {
-            score = GameManager_S._instance._score;
+            _dead = true;
+            Role = Define.Role.None; // ì‹œì²´
+            _animator.SetTrigger("setDie");
+            StartCoroutine(DeadSinkCoroutine());
+
+            // ê²Œì„ ì •ì‚°
             endUI.SetActive(true);
+            score = GameManager_S._instance._score;
             StartCoroutine(FadeInRoutine());
             endText.text = "Killed Ghost : " + score.ToString();
-            _animator.SetTrigger("setDie");
-            _dead = true;
-            Role = Define.Role.None; // ½ÃÃ¼
-            StartCoroutine(DeadSinkCoroutine());
         }
     }
 
     /// <summary>
-    /// °ÔÀÓ ³¡³»±â
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     /// <returns></returns>
     IEnumerator DeadSinkCoroutine()
@@ -217,27 +227,21 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ÇÇÇØ ¹ŞÀ¸¸é Material ºÓ°Ô º¯È­
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Material ï¿½Ó°ï¿½ ï¿½ï¿½È­
     /// </summary>
     public void HitChangeMaterials()
     {
-        // ÅÂ±×°¡ ¹«±â ¶Ç´Â ¸ó½ºÅÍ
-
         for (int i = 0; i < _renderers.Count; i++)
         {
             _renderers[i].material.color = Color.red;
-            Debug.Log("»öº¯ÇÑ´Ù.");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.");
             //Debug.Log(_renderers[i].material.name);
         }
-
         StartCoroutine(ResetMaterialAfterDelay(1.7f));
-
-        //Debug.Log($"ÇÃ·¹ÀÌ¾î°¡ {other.transform.root.name}¿¡°Ô °ø°İ ¹ŞÀ½!");
-        Debug.Log("°ø°İ¹ŞÀº ÃøÀÇ Ã¼·Â:" + Hp);
     }
 
     /// <summary>
-    /// ÇÇÇØ ¹Ş°í Material ¿ø·¡´ë·Î º¹±¸
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½Ş°ï¿½ Material ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     /// <param name="delay"></param>
     /// <returns></returns>
@@ -251,7 +255,7 @@ public class PlayerStatus_S : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        //// ÀÚ±â ÀÚ½Å¿¡°Ô ´êÀº °æ¿ì ¹«½Ã
+        //// ï¿½Ú±ï¿½ ï¿½Ú½Å¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (other.transform.root.name == gameObject.name) return;
 
         if (other.tag == "Monster")
@@ -286,7 +290,7 @@ public class PlayerStatus_S : MonoBehaviour
         _animator.runtimeAnimatorController = animController;
         _animator.avatar = avatar;
 
-        // ¾Ö´Ï¸ŞÀÌÅÍ ¼Ó¼º ±³Ã¼ÇÏ°í ²°´Ù°¡ ÄÑ¾ß µ¿ÀÛÇÔ
+        // ï¿½Ö´Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ ï¿½ï¿½Ã¼ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Ù°ï¿½ ï¿½Ñ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         _animator.enabled = false;
         _animator.enabled = true;
     }
@@ -297,21 +301,22 @@ public class PlayerStatus_S : MonoBehaviour
         _animator.SetBool("isHoldGun", isHoldGun);
     }
 
+    // ê²Œì„ ì˜¤ë²„ í™”ë©´ ì„œì„œíˆ ë‚˜íƒ€ë‚˜ê²Œ í•˜ê¸°
     private IEnumerator FadeInRoutine()
     {
         float elapsedTime = 1.0f;
         Color color = fadeImage.color;
-        color.a = 0.0f; // ?œì‘ ?ŒíŒŒ ê°?(?„ì „??ë¶ˆíˆ¬ëª?
+        color.a = 0.0f; // ì‹œì‘ ì•ŒíŒŒ ê°’ (ì™„ì „íˆ íˆ¬ëª…)
 
         while (elapsedTime < fadeDuration)
         {
             elapsedTime += Time.deltaTime;
-            color.a = Mathf.Lerp(0.0f, 1.0f, elapsedTime / fadeDuration); // ?ŒíŒŒ ê°’ì„ 1?ì„œ 0?¼ë¡œ ?œì„œ??ë³€ê²?
+            color.a = Mathf.Lerp(0.0f, 1.0f, elapsedTime / fadeDuration); // ?ï¿½íŒŒ ê°’ì„ 1?ï¿½ì„œ 0?ï¿½ë¡œ ?ï¿½ì„œ??ë³€ï¿½?
             fadeImage.color = color;
             yield return null;
         }
 
-        color.a = 1.0f; // ìµœì¢… ?ŒíŒŒ ê°?(?„ì „???¬ëª…)
+        color.a = 1.0f; // ìµœì¢… ì•ŒíŒŒ ê°’ (ì™„ì „íˆ ë¶ˆíˆ¬ëª…)
         fadeImage.color = color;
     }
 }

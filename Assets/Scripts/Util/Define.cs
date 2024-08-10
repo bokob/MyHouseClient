@@ -18,6 +18,7 @@ public class Define
 
     public enum Item
     {
+        None,
         Heart,
         Energy,
         Weapon,
