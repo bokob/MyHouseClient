@@ -255,8 +255,11 @@ public class PlayerStatus_S : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        //// 자기 자신에게 닿은 경우 무시
-        if(other.transform.root.name == gameObject.name) return;
+        //// �ڱ� �ڽſ��� ���� ��� ����
+        if (other.transform.root.name == gameObject.name) return;
+
+        if (other.tag == "Monster")
+            HitChangeMaterials();
     }
 
     void OnTriggerStay(Collider other)

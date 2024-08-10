@@ -23,22 +23,5 @@ public class GameManager_S : MonoBehaviour
         _instance = this;
         _score = 0;
     }
-
-    // ���⸦ �ֿ��� �� ȣ��Ǵ� �޼���
-    public void PickUpWeapon(string weaponName)
-    {
-        WeaponData weapon = weaponManager_S.GetWeaponByName(weaponName);
-        if (weapon != null)
-        {
-            Debug.Log($"Picked up {weapon.Name}. Attack: {weapon.Attack}, Rate: {weapon.Rate}");
-            _currentWeapon = weapon.Name;
-            _currentAttack = weapon.Attack;
-            _currentRate = weapon.Rate;
-        }
-        else
-        {
-            Debug.LogWarning("Weapon not found!");
-        }
-    }
 }
 

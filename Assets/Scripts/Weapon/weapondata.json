@@ -18,9 +18,9 @@
         "Rate" : 0.6
     },
     {
-        "name" : "AK",
-        "Define.Type" : "Range",
-        "Attack" : 25,
-        "Rate" : 0
+        "name" : "HockeyStick",
+        "Define.Type" : "Melee",
+        "Attack" : 100,
+        "Rate" : 0.4
     }
 ]

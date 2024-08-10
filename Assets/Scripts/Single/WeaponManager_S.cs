@@ -59,18 +59,6 @@ public class WeaponManager_S : MonoBehaviour
         {
             Drop();
         }
-
-        if (Input.GetKeyDown(KeyCode.E)) // ???? ?? ?? ?? ??
-        {
-            if (GameManager_S._instance != null)
-            {
-                GameManager_S._instance.PickUpWeapon("Knife");
-            }
-            else
-            {
-                Debug.LogError("GameManager_S instance is not available.");
-            }
-        }
     }
 
     /// <summary>
@@ -243,6 +231,18 @@ public class WeaponManager_S : MonoBehaviour
             _selectedWeapon.SetActive(false);
             _selectedWeapon = newMelee.gameObject;
             newMelee.gameObject.SetActive(true);
+        }
+        WeaponData weapon = GetWeaponByName(meleeName);
+        if (weapon != null)
+        {
+            Debug.Log($"Picked up {weapon.Name}. Attack: {weapon.Attack}, Rate: {weapon.Rate}");
+            Melee_S _currentWeapon = _selectedWeapon.GetComponent<Melee_S>(); 
+            _currentWeapon.Attack = weapon.Attack;
+            _currentWeapon.Rate = weapon.Rate;
+        }
+        else
+        {
+            Debug.LogWarning("Weapon not found!");
         }
     }
 
