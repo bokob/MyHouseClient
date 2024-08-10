@@ -50,8 +50,8 @@ public class Melee_S : Weapon
         */
 
         //weaponData = JsonUtility.FromJson<WeaponData>(jsonData);
-        if (gameObject.tag == "Melee")
-            base.Attack = 50;
+        // if (gameObject.tag == "Melee")
+        //     base.Attack = 50;
 
     }
 

@@ -20,7 +20,7 @@
     {
         "name" : "HockeyStick",
         "Define.Type" : "Melee",
-        "Attack" : 100,
+        "Attack" : 150,
         "Rate" : 0.4
     }
 ]
