@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
 
 public class Monster : MonoBehaviour
 {
@@ -64,8 +65,10 @@ public class Monster : MonoBehaviour
         _nmAgent = GetComponent<NavMeshAgent>();
         _centerPoint = transform;
 
-        GameManager_S._instance._monsterCount += 1;
-
+        if(SceneManager.GetActiveScene().name == "SinglePlayScene" ) 
+        { 
+            GameManager_S._instance._monsterCount += 1;
+        }
 
         // 하위의 모든 매터리얼 구하기
         _renderers = new List<Renderer>();
