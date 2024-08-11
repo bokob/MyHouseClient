@@ -1468,6 +1468,11 @@ MonoBehaviour:
   View: 0
   _input: {fileID: 339527213678310029}
   _sensitivity: 1
+  mainCamera: {fileID: 2032695330483795685}
+  player: {fileID: 3553760118849809345}
+  rayDistance: 100
+  raysPerAxis: 10
+  maxRenderDistance: 10
 --- !u!1 &4689430382722686034
 GameObject:
   m_ObjectHideFlags: 0
