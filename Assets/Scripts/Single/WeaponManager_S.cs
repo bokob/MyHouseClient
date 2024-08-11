@@ -19,14 +19,14 @@ public class WeaponManager_S : MonoBehaviour
     PlayerInputs _playerInputs;
     PlayerStatus_S _playerStatus;
 
-    [Tooltip("???? ??? ?? ???? ?ð??? ????")]
+    [Tooltip("무기 전환 시 지연 시간을 설정")]
     public float _switchDelay = 1f;
 
-    [Header("???? ????")]
-    [SerializeField] public GameObject _leftItemHand;           // ???? ??? ?????? (???: ??)
-    [SerializeField] public GameObject _rightItemHand;          // ??????? ??? ?????? (???: ????)
+    [Header("무기 관련")]
+    [SerializeField] public GameObject _leftItemHand;           // 왼손에 있는 아이템 (자식: 탄창)
+    [SerializeField] public GameObject _rightItemHand;          // 오른손에 있는 아이템 (자식: 무기)
 
-    [Header("???? ???? ????")]
+    [Header("현재 무기 관련")]
     public int _selectedWeaponIdx = 0;
     public GameObject _selectedWeapon;
     public GameObject _recentMelee; // the most recent Melee
@@ -52,8 +52,8 @@ public class WeaponManager_S : MonoBehaviour
 
     void Update()
     {
-        if (!_playerInputs.aim && !_playerInputs.reload) // ???????? ???, ???????? ???? ?? ???? ??? ????
-            WeaponSwitching(); // ???? ???
+        if (!_playerInputs.aim && !_playerInputs.reload) // 조준하지 않고, 장전하지 않을 때 무기 교체 가능
+            WeaponSwitching(); // 무기 교체
 
         if (Input.GetKeyDown(KeyCode.Q) && _selectedWeapon.name != "Rifle" && _selectedWeapon.name != "Knife")
         {
@@ -62,22 +62,22 @@ public class WeaponManager_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ????? ???? ???? ????
+    /// 역할에 따른 무기 초기화
     /// </summary>
     public void InitRoleWeapon()
     {
-        // ????? ???? ? ???? ????
-        if (_playerStatus.Role == Define.Role.Robber) // ????
+        // 역할에 따른 첫 무기 설정
+        if (_playerStatus.Role == Define.Role.Robber) // 강도
         {
             _selectedWeaponIdx = 0;
         }
-        else if (_playerStatus.Role == Define.Role.Houseowner) // ??????
+        else if (_playerStatus.Role == Define.Role.Houseowner) // 집주인
         {
             _selectedWeaponIdx = 1;
         }
         SelectWeapon();
 
-        Debug.Log("????? ???? ???? ???? ???");
+        Debug.Log("역할에 따른 무기 초기화 완료");
     }
 
     void LoadWeaponData()
@@ -160,12 +160,14 @@ public class WeaponManager_S : MonoBehaviour
 
         if (previousSelectedWeapon != _selectedWeaponIdx) // ???콺 ??? ???? ?ε??? ???? ???
         {
+            if (_playerStatus.Role == Define.Role.Robber) _selectedWeaponIdx = 0;
+
             SelectWeapon();
         }
     }
 
     /// <summary>
-    /// ???? ????
+    /// 무기 선택
     /// </summary>
     void SelectWeapon()
     {
@@ -188,7 +190,7 @@ public class WeaponManager_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ????? ???? ???
+    /// 선택된 무기 사용
     /// </summary>
     public void UseSelectedWeapon()
     {
@@ -206,7 +208,7 @@ public class WeaponManager_S : MonoBehaviour
         }
     }
 
-    // ?? ??? ????? ????, ?? ??????? ??????? ????
+    // Check Hold Gun, To apply for Gun animation
     void IsHoldGun()
     {
         if (_selectedWeapon.tag == "Gun")
@@ -221,7 +223,7 @@ public class WeaponManager_S : MonoBehaviour
 
 
     /// <summary>
-    /// ???? ???
+    /// 무기 줍기
     /// </summary>
     public void PickUp(string meleeName)
     {
@@ -247,7 +249,7 @@ public class WeaponManager_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ???? ??????
+    /// 무기 버리기
     /// </summary>
     void Drop()
     {
