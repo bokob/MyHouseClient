@@ -75,13 +75,13 @@ public class InGameUI : MonoBehaviour
 
     public void DisplayWeaponInfo()
     {
-        //string weaponTag = _weaponManager.GetCurrentWeaponTag();
+        //string weaponTag = _weaponManager._selectedWeapon.tag;
         //Debug.Log("현재무기: " + weaponTag);
         //if (weaponTag == "Gun") // 원거리 무기일 경우
         //{
-        //    if(!_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(true);
-        //    if(!_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(true);
-        //    if(!_crossHair.activeSelf) _crossHair.SetActive(true);
+        //    if (!_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(true);
+        //    if (!_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(true);
+        //    if (!_crossHair.activeSelf) _crossHair.SetActive(true);
 
         //    DisplayWeaponIcon(1);
         //    DisplayCurrentBullet();
@@ -114,6 +114,11 @@ public class InGameUI : MonoBehaviour
     public void DisplayConnectedPlayers()
     {
 
+    }
+
+    public void DisplayOut()
+    {
+        if (_status.Hp <= 0) gameObject.SetActive(false);
     }
 }
 
