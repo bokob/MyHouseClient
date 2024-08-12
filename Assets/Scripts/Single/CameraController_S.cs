@@ -20,6 +20,9 @@ public class CameraController_S : MonoBehaviour
 
     public Define.View View = Define.View.None; // 카메라 시점
 
+    public LayerMask _notOptionalRenderring; // 선택적으로 렌더링하지 않을 레이어 마스크
+
+
     // player
 #if ENABLE_INPUT_SYSTEM
     PlayerInput _playerInput;
@@ -45,7 +48,8 @@ public class CameraController_S : MonoBehaviour
         {
             //TestRay();
             //TestRay2();
-            TestRay3();
+            //TestRay3();
+            TestRay4();
         }
     }
 
@@ -275,6 +279,53 @@ public class CameraController_S : MonoBehaviour
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    void TestRay4()
+    {
+        // 기존에 비활성화된 모든 렌더러를 다시 활성화
+        List<GameObject> toEnable = new List<GameObject>();
+
+        foreach (var item in hiddenRenderers)
+        {
+            if (item.Value != null)
+            {
+                item.Value.enabled = true;
+                Debug.Log(item.Key.name + "활성화");
+                toEnable.Add(item.Key);
+            }
+        }
+
+        foreach (var obj in toEnable)
+        {
+            hiddenRenderers.Remove(obj);
+        }
+
+        // 플레이어 위치에서 카메라 위치를 향해 레이 쏘기
+        Vector3 direction = (mainCamera.transform.position - player.position).normalized;
+        Ray ray = new Ray(player.position, direction);
+        RaycastHit[] hits;
+
+        // 레이캐스트로 충돌된 특정 레이어를 제외한 모든 오브젝트 탐지
+        hits = Physics.RaycastAll(ray, rayDistance, ~_notOptionalRenderring);
+
+        foreach (RaycastHit hit in hits)
+        {
+            Renderer rend = hit.collider.GetComponent<Renderer>();
+
+
+            Debug.LogWarning(hit.collider.name + " 카메라에서 감지");
+
+            if (rend != null)
+            {
+                Debug.Log(hit.transform.name + "비활성화");
+                rend.enabled = false;
+                if (!hiddenRenderers.ContainsKey(hit.collider.gameObject))
+                {
+                    hiddenRenderers.Add(hit.collider.gameObject, rend);
                 }
             }
         }
