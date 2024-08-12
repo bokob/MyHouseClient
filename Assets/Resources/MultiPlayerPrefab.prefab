@@ -515,15 +515,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 3663872514510027535}
   _status: {fileID: 5549235745164027755}
-  _timeSecond: {fileID: 0}
-  _hpBar: {fileID: 0}
-  _spBar: {fileID: 0}
+  _timeSecond: {fileID: 4581439909432448670}
+  _hpBar: {fileID: 5120205539043705206}
+  _spBar: {fileID: 5872146435952174819}
   _weaponImages:
   - {fileID: 2800000, guid: 9ca5afea04666da4e930736809573295, type: 3}
   - {fileID: 2800000, guid: 553a29b2870f12545a5d8107b3038391, type: 3}
-  _currentBullet: {fileID: 0}
-  _totalBullet: {fileID: 0}
-  _crossHair: {fileID: 0}
+  _currentBullet: {fileID: 288693638803329473}
+  _totalBullet: {fileID: 7324413957931764720}
+  _crossHair: {fileID: 16094343009655249}
 --- !u!1 &3238051328473077693
 GameObject:
   m_ObjectHideFlags: 0
@@ -1466,6 +1466,9 @@ MonoBehaviour:
   _cameraAngleOverride: 0
   _lockCameraPosition: 0
   View: 0
+  _notOptionalRenderring:
+    serializedVersion: 2
+    m_Bits: 2048
   _input: {fileID: 339527213678310029}
   _sensitivity: 1
   mainCamera: {fileID: 2032695330483795685}
