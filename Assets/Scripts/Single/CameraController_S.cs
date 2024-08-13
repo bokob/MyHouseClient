@@ -49,7 +49,7 @@ public class CameraController_S : MonoBehaviour
             //TestRay();
             //TestRay2();
             //TestRay3();
-            TestRay4();
+            //TestRay4();
         }
     }
 
