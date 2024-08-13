@@ -515,6 +515,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 3663872514510027535}
   _status: {fileID: 5549235745164027755}
+  _robberWeaponManager: {fileID: 3807563812614108485}
+  _houseownerWeaponManager: {fileID: 3305869340648136288}
   _timeSecond: {fileID: 4581439909432448670}
   _hpBar: {fileID: 5120205539043705206}
   _spBar: {fileID: 5872146435952174819}
@@ -948,7 +950,7 @@ MonoBehaviour:
   _groundedRadius: 0.28
   _groundLayers:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 2049
   _input: {fileID: 0}
   _mainCamera: {fileID: 3439450309009642615}
   _landingAudioClip: {fileID: 0}
@@ -3727,6 +3729,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4710764553882554599}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6184d9d3c0383d64da2237781045d714,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1058558228838975888}
   m_SourcePrefab: {fileID: 100100000, guid: 6184d9d3c0383d64da2237781045d714, type: 3}
 --- !u!4 &608486646984927878 stripped
 Transform:
@@ -3826,6 +3832,28 @@ MonoBehaviour:
     LayerIndex: 0
   - SynchronizeType: 1
     LayerIndex: 1
+--- !u!114 &1058558228838975888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7069601818433305018}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0f4bcfd6ee929f4ab4ddfc38e380ba6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LayerMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  Target: {fileID: 2681211414610034083}
+  Camera: {fileID: 2032695330483795685}
+  FadedAlpha: 0.33
+  RetainShadows: 1
+  TargetPositionOffset: {x: 0, y: 1, z: 0}
+  FadeSpeed: 1
+  ObjectsBlockingView: []
 --- !u!4 &7590700388980646656 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6184d9d3c0383d64da2237781045d714,
