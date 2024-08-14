@@ -1,4 +1,5 @@
 using Photon.Pun;
+using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,6 +45,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         _playerMove.enabled = true;         // PlayerMove 활성화
         _cameraController.gameObject.transform.parent.gameObject.SetActive(true);
         _inGameUI.gameObject.SetActive(true);
+        transform.GetChild(0).gameObject.GetComponent<FadeObjectBlockingObject>().enabled = true; // 강도 층별 투명화 활성화
     }
 
     [PunRPC]
@@ -229,12 +231,12 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     [PunRPC]
     public void TransformIntoRobber()
     {
-        transform.GetChild(0).gameObject.SetActive(true); // 강도 비활성화
-        transform.GetChild(1).gameObject.SetActive(false);  // 집주인 활성화
+        transform.GetChild(0).gameObject.SetActive(true); // 강도 활성화
+        transform.GetChild(1).gameObject.SetActive(false);  // 집주인 비활성화
 
         Debug.Log("현재 상태: " + Role);
 
-        _cameraController.gameObject.GetComponent<CameraController>().SetRobberView(); // 집주인 시점으로 설정
+        _cameraController.gameObject.GetComponent<CameraController>().SetRobberView(); // 강도 시점으로 설정
 
         Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(이)가 강도로 변신 완료");
     }
@@ -250,6 +252,8 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         transform.GetChild(1).gameObject.SetActive(true);  // 집주인 활성화
 
         _inGameUI.gameObject.transform.GetChild(4).gameObject.SetActive(true); // 조준점 활성화
+
+        transform.GetChild(0).gameObject.GetComponent<FadeObjectBlockingObject>().enabled = false; // 강도 층별 투명화 비활성화
 
         Debug.Log($"현재 상태({transform.root.GetChild(2).GetComponent<PlayerStatus>()._nickName}): " + Role);
 

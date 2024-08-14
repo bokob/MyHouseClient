@@ -515,15 +515,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _player: {fileID: 3663872514510027535}
   _status: {fileID: 5549235745164027755}
-  _timeSecond: {fileID: 0}
-  _hpBar: {fileID: 0}
-  _spBar: {fileID: 0}
+  _robberWeaponManager: {fileID: 3807563812614108485}
+  _houseownerWeaponManager: {fileID: 3305869340648136288}
+  _timeSecond: {fileID: 4581439909432448670}
+  _hpBar: {fileID: 5120205539043705206}
+  _spBar: {fileID: 5872146435952174819}
   _weaponImages:
   - {fileID: 2800000, guid: 9ca5afea04666da4e930736809573295, type: 3}
   - {fileID: 2800000, guid: 553a29b2870f12545a5d8107b3038391, type: 3}
-  _currentBullet: {fileID: 0}
-  _totalBullet: {fileID: 0}
-  _crossHair: {fileID: 0}
+  _currentBullet: {fileID: 288693638803329473}
+  _totalBullet: {fileID: 7324413957931764720}
+  _crossHair: {fileID: 16094343009655249}
 --- !u!1 &3238051328473077693
 GameObject:
   m_ObjectHideFlags: 0
@@ -948,7 +950,7 @@ MonoBehaviour:
   _groundedRadius: 0.28
   _groundLayers:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 2049
   _input: {fileID: 0}
   _mainCamera: {fileID: 3439450309009642615}
   _landingAudioClip: {fileID: 0}
@@ -1466,8 +1468,16 @@ MonoBehaviour:
   _cameraAngleOverride: 0
   _lockCameraPosition: 0
   View: 0
+  _notOptionalRenderring:
+    serializedVersion: 2
+    m_Bits: 2048
   _input: {fileID: 339527213678310029}
   _sensitivity: 1
+  mainCamera: {fileID: 2032695330483795685}
+  player: {fileID: 3553760118849809345}
+  rayDistance: 100
+  raysPerAxis: 10
+  maxRenderDistance: 10
 --- !u!1 &4689430382722686034
 GameObject:
   m_ObjectHideFlags: 0
@@ -3719,6 +3729,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4710764553882554599}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6184d9d3c0383d64da2237781045d714,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1058558228838975888}
   m_SourcePrefab: {fileID: 100100000, guid: 6184d9d3c0383d64da2237781045d714, type: 3}
 --- !u!4 &608486646984927878 stripped
 Transform:
@@ -3818,6 +3832,28 @@ MonoBehaviour:
     LayerIndex: 0
   - SynchronizeType: 1
     LayerIndex: 1
+--- !u!114 &1058558228838975888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7069601818433305018}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0f4bcfd6ee929f4ab4ddfc38e380ba6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LayerMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  Target: {fileID: 2681211414610034083}
+  Camera: {fileID: 2032695330483795685}
+  FadedAlpha: 0.33
+  RetainShadows: 1
+  TargetPositionOffset: {x: 0, y: 1, z: 0}
+  FadeSpeed: 1
+  ObjectsBlockingView: []
 --- !u!4 &7590700388980646656 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6184d9d3c0383d64da2237781045d714,

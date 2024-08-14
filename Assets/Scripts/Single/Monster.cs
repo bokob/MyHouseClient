@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
 
 public class Monster : MonoBehaviour
 {
@@ -64,8 +65,10 @@ public class Monster : MonoBehaviour
         _nmAgent = GetComponent<NavMeshAgent>();
         _centerPoint = transform;
 
-        GameManager_S._instance._monsterCount += 1;
-
+        if(SceneManager.GetActiveScene().name == "SinglePlayScene" ) 
+        { 
+            GameManager_S._instance._monsterCount += 1;
+        }
 
         // 하위의 모든 매터리얼 구하기
         _renderers = new List<Renderer>();
@@ -378,8 +381,13 @@ public class Monster : MonoBehaviour
             _state = Define.MonsterState.None; // 시체처리
             _collider.enabled = false;
             _isDead = true;
-            GameManager_S._instance._monsterCount -= 1;
-            GameManager_S._instance.Score += 1;
+
+            if (SceneManager.GetActiveScene().name == "SinglePlayScene")
+            {
+                GameManager_S._instance._monsterCount -= 1;
+                GameManager_S._instance.Score += 1;
+            }
+            
             _anim.Play("Die", 0, 0);
             StartCoroutine(DeadSinkCoroutine());
         }

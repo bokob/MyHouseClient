@@ -205,6 +205,11 @@ public class Gun : Weapon
                 //otherPlayerStatus.HitChangeMaterials();
                 //otherPlayerStatus.TakedDamage(Attack);
             }
+            Monster monster = _hitTransform.GetComponent<Monster>();
+            if(monster != null)
+            {
+                monster.TakedDamage(base.Attack);
+            }
 
             Rigidbody hitRigidbody = _hitTransform.GetComponent<Rigidbody>();
             if (hitRigidbody != null)
