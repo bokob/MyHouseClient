@@ -12,6 +12,7 @@ public class WeaponData
     public Define.Type Type;
     public int Attack;
     public float Rate;
+    public float Range;
 }
 
 public class WeaponManager_S : MonoBehaviour
@@ -239,6 +240,7 @@ public class WeaponManager_S : MonoBehaviour
             Melee_S _currentWeapon = _selectedWeapon.GetComponent<Melee_S>(); 
             _currentWeapon.Attack = weapon.Attack;
             _currentWeapon.Rate = weapon.Rate;
+            _currentWeapon.Range = weapon.Range;
         }
         else
         {

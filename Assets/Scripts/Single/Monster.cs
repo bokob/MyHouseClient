@@ -300,7 +300,7 @@ public class Monster : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator OnHit(Collider other) {
+    public IEnumerator OnHit(Collider other) {
         if (_state != Define.MonsterState.None)
         {
             AnimatorStateInfo currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);

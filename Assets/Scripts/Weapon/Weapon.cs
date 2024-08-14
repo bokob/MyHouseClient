@@ -13,6 +13,7 @@ public class Weapon : MonoBehaviour
 
     public int Attack { get; set; }       // 공격력
     public float Rate { get; set; } = 0.5f;      // 공격속도
+    public float Range { get; set; } = 5f;
 
 
     void Awake()
