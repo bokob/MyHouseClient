@@ -303,7 +303,7 @@ public class Monster : MonoBehaviour
         yield return null;
     }
 
-    IEnumerator OnHit(Collider other) {
+    public IEnumerator OnHit() {
         if (_state != Define.MonsterState.None)
         {
             AnimatorStateInfo currentAnimStateInfo = _anim.GetCurrentAnimatorStateInfo(0);
@@ -360,14 +360,7 @@ public class Monster : MonoBehaviour
         // 태그가 무기 태그인 경우
         if (other.tag == "Melee" || other.tag == "Gun")
         {
-            if (Hp > 0)
-            {
-                if (_state != Define.MonsterState.Hit)
-                {
-                    ChangeState(Define.MonsterState.Hit);
-                    StartCoroutine(OnHit(other));
-                }
-            }
+            HitStart();
         }
         else 
             Debug.Log("닿지 않음");
@@ -441,5 +434,16 @@ public class Monster : MonoBehaviour
         {
             _target.GetComponent<PlayerStatus_S>().TakedDamage(_attack);
         }
+    }
+    public void HitStart()
+    {
+        if (Hp > 0)
+            {
+                if (_state != Define.MonsterState.Hit)
+                {
+                    ChangeState(Define.MonsterState.Hit);
+                    StartCoroutine(OnHit());
+                }
+            }
     }
 }

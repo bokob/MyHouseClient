@@ -78,6 +78,9 @@ public class Melee_S : Weapon
         _stabDelay += Time.deltaTime;
         _isSwingReady = base.Rate < _swingDelay; // 공격속도가 공격 딜레이보다 작으면 공격준비 완료
         _isStabReady = base.Rate < _stabDelay;
+        int rayCount = 10;
+        float angle = 60f;  // 부채꼴 각도
+        float halfAngle = angle / 2.0f;
 
         if (_playerInputs == null)
             _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
@@ -97,10 +100,33 @@ public class Melee_S : Weapon
 
             if (_playerInputs.swing && _playerMove._grounded) // 휘두르기
             {
+                Vector3 startPosition = transform.root.GetChild(2).position;
+                startPosition.y += 1.0f;
                 Debug.Log("휘두르기");
                 // _weaponManager._selectedWeapon.GetComponent<Melee>().Use();
                 _animator.SetTrigger("setSwing");
                 _swingDelay = 0;
+                
+                for (int i = 0; i < rayCount; i++)
+                {
+                    float currentAngle = -halfAngle + (i * (angle / (rayCount - 1)));
+                    Vector3 direction = Quaternion.Euler(0, currentAngle, 0) * transform.root.GetChild(2).forward;
+
+                    RaycastHit hit;
+                    if (Physics.Raycast(startPosition, direction, out hit, base.Range))
+                    {
+                        if (hit.collider.CompareTag("Monster"))
+                        {
+                            Monster monster = hit.collider.GetComponent<Monster>();
+                            if (monster != null)
+                            {
+                                StartCoroutine(DelayedDamage(monster));
+                            }
+                        }
+                    }
+
+                    Debug.DrawRay(transform.root.GetChild(2).position, direction * base.Range, Color.red, 1.0f);
+                }
             }
             else if (_playerInputs.stab && _playerMove._grounded) // 찌르기
             {
@@ -141,21 +167,21 @@ public class Melee_S : Weapon
 
     // 칼이 트리거 안에 있을 때
     // 를 false로 설정
-    void OnTriggerEnter(Collider other)
-    {
-        _hasExited = false;
-        _entryPoint = other.ClosestPoint(transform.position);
+    // void OnTriggerEnter(Collider other)
+    // {
+    //     _hasExited = false;
+    //     _entryPoint = other.ClosestPoint(transform.position);
 
-        // 데미지 적용
+    //     // 데미지 적용
 
-        // 자기 자신에게 닿은 경우 무시
-        if (other.transform.root.name == gameObject.name) return;
+    //     // 자기 자신에게 닿은 경우 무시
+    //     if (other.transform.root.name == gameObject.name) return;
 
-        if (other.GetComponent<Monster>() != null)
-        {
-            other.GetComponent<Monster>().TakedDamage(Attack);
-        }
-    }
+    //     if (other.GetComponent<Monster>() != null)
+    //     {
+    //         other.GetComponent<Monster>().TakedDamage(Attack);
+    //     }
+    // }
 
     void OnTriggerStay(Collider other)
     {
@@ -219,5 +245,13 @@ public class Melee_S : Weapon
             //Debug.Log("자를 레이어: " + other.gameObject.layer);
             Debug.LogWarning("왜 안돼?");
         }
+    }
+    IEnumerator DelayedDamage(Monster monster)
+    {
+        yield return new WaitForSeconds(0.8f); // 0.5초 지연
+
+        monster.TakedDamage(base.Attack);
+        Debug.Log("적이 공격받았습니다: " + monster.name);
+        monster.HitStart();
     }
 }
