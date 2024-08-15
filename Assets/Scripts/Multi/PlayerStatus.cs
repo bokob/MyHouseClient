@@ -11,6 +11,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     public PlayerMove _playerMove;
     public CameraController _cameraController;
     public InGameUI _inGameUI;
+    public GameObject _tombStone;
 
     #region 상태 및 능력치, 이름 등
     public bool _isLocalPlayer;
@@ -92,7 +93,8 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         {
             _animator.SetTrigger("setDie");
             Role = Define.Role.None; // 시체
-            StartCoroutine(DeadSinkCoroutine());
+            // StartCoroutine(DeadSinkCoroutine());
+            StartCoroutine(TombCoroutine());
         }
     }
 
@@ -266,17 +268,30 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     /// 시체 바닥으로 가라앉기
     /// </summary>
     /// <returns></returns>
-    IEnumerator DeadSinkCoroutine()
+    // IEnumerator DeadSinkCoroutine()
+    // {
+    //     GetComponent<CharacterController>().enabled = false;
+    //     yield return new WaitForSeconds(3f);
+    //     while (transform.position.y > -1.5f)
+    //     {
+    //         transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
+    //         yield return null;
+    //     }
+    //     // Destroy(gameObject);
+    //     Application.Quit(); // 게임 종료
+    // }
+
+    IEnumerator TombCoroutine()
     {
         GetComponent<CharacterController>().enabled = false;
+        yield return new WaitForSeconds(2f);
+        transform.GetChild(0).gameObject.SetActive(false);
+        transform.GetChild(1).gameObject.SetActive(false);  
+        _tombStone.SetActive(true);
         yield return new WaitForSeconds(3f);
-        while (transform.position.y > -1.5f)
-        {
-            transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
-            yield return null;
-        }
-        // Destroy(gameObject);
-        Application.Quit(); // 게임 종료
+        Destroy(gameObject);
+        _tombStone.SetActive(false);
+        Application.Quit();
     }
 
     /// <summary>
