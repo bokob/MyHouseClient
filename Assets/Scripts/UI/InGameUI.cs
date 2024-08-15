@@ -50,10 +50,17 @@ public class InGameUI : MonoBehaviour
 
     void Update()
     {
-        DisplayLivingTime();
-        DisplayHp();
-        DisplaySp();
-        DisplayWeaponInfo();
+        if(_status.Hp > 0)
+        {
+            DisplayLivingTime();
+            DisplayHp();
+            DisplaySp();
+            DisplayWeaponInfo();
+        }
+        else
+        {
+            DisplayOut();
+        }
     }
 
     public void DisplayLivingTime()
@@ -77,7 +84,6 @@ public class InGameUI : MonoBehaviour
 
     public void DisplayWeaponInfo()
     {
-
         _weaponManager = (_status.Role == Define.Role.Robber) ? _robberWeaponManager : _houseownerWeaponManager;
         string weaponTag = _weaponManager._selectedWeapon.tag;
         Debug.Log("현재무기: " + weaponTag);
@@ -117,7 +123,11 @@ public class InGameUI : MonoBehaviour
 
     public void DisplayOut()
     {
-        if (_status.Hp <= 0) gameObject.SetActive(false);
+        if (_status.Hp <= 0)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
     }
 }
 

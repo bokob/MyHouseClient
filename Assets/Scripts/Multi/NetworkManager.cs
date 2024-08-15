@@ -534,6 +534,8 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             }
             else
             {
+                if (player.GetComponent<PlayerStatus>().Hp <= 0) return; // 죽으면 이전 집주인이 강도가 되어서 죽지 않고 서있는 문제 방지
+
                 // 나머지 플레이어들에게 Robber 역할 부여
                 player.GetComponent<PhotonView>().RPC("SetRole", RpcTarget.AllBuffered, Define.Role.Robber);
 

@@ -4,6 +4,7 @@ using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 
 public class PlayerStatus : MonoBehaviourPunCallbacks
@@ -68,20 +69,6 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
             _animator = transform.GetChild(1).GetComponent<Animator>();
     }
 
-    [PunRPC]
-    public void SetWeapon(int weaponIndex)
-    {
-        foreach (Transform weapon in _weaponHolder)
-        {
-            weapon.gameObject.SetActive(false);
-        }
-
-        Debug.LogWarning($"인덱스 아웃 무기?({_nickName}): " + weaponIndex);
-
-        _weaponHolder.GetChild(weaponIndex).gameObject.SetActive(true);
-    }
-
-
     /// <summary>
     /// 사망
     /// </summary>
@@ -115,7 +102,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     void Update()
     {
         //if (!IsLocalPlayer) return;
-        Dead();
+        //Dead();
     }
 
     /// <summary>
@@ -269,14 +256,22 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     IEnumerator DeadSinkCoroutine()
     {
         GetComponent<CharacterController>().enabled = false;
+        GetComponent<PlayerInput>().enabled = false;
         yield return new WaitForSeconds(3f);
-        while (transform.position.y > -1.5f)
+        while (transform.position.y > -5f)
         {
             transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
             yield return null;
         }
         // Destroy(gameObject);
-        Application.Quit(); // 게임 종료
+
+        if(GetComponent<PhotonView>().IsMine)
+        {
+            Application.Quit();
+        }
+
+        //Application.Quit(); // 게임 종료
+        Debug.Log("게임 강제 종료");
     }
 
     /// <summary>
