@@ -93,16 +93,16 @@ public class PlayerStatus_S : MonoBehaviour
     /// <param name="attack"> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½İ·ï¿½ </param>
     public void TakedDamage(int attack)
     {
-        if (Role == Define.Role.None) return; // ì‹œì²´ì¼ ê²½ìš° ì¢…ë£Œ
+        if (Role == Define.Role.None) return; // ?‹œì²´ì¼ ê²½ìš° ì¢…ë£Œ
 
-        // í”¼í•´ê°€ ìŒìˆ˜ë¼ë©´ íšŒë³µë˜ëŠ” í˜„ìƒì´ ì¼ì–´ë‚˜ë¯€ë¡œ í”¼í•´ì˜ ê°’ì„ 0ì´ìƒìœ¼ë¡œ ë˜ê²Œë” ì„¤ì •
+        // ?”¼?•´ê°? ?Œ?ˆ˜?¼ë©? ?šŒë³µë˜?Š” ?˜„?ƒ?´ ?¼?–´?‚˜ë¯?ë¡? ?”¼?•´?˜ ê°’ì„ 0?´?ƒ?œ¼ë¡? ?˜ê²Œë” ?„¤? •
         float damage = Mathf.Max(0, attack);
         Hp -= damage;
         if (Hp > 0)
         {
             HitChangeMaterials();
-            Debug.Log(gameObject.name + "(ì´)ê°€ " + damage + " ë§Œí¼ í”¼í•´ë¥¼ ì…ì—ˆìŒ!");
-            Debug.Log("ë‚¨ì€ ì²´ë ¥: " + Hp);
+            Debug.Log(gameObject.name + "(?´)ê°? " + damage + " ë§Œí¼ ?”¼?•´ë¥? ?…?—ˆ?Œ!");
+            Debug.Log("?‚¨??? ì²´ë ¥: " + Hp);
         }
         else
         {
@@ -193,18 +193,18 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½
+    /// ï¿½ï¿½ï¿?
     /// </summary>
     public void Dead()
     {
         if (Role != Define.Role.None && Hp <= 0)
         {
             _dead = true;
-            Role = Define.Role.None; // ì‹œì²´
+            Role = Define.Role.None; // ?‹œì²?
             _animator.SetTrigger("setDie");
             StartCoroutine(DeadSinkCoroutine());
 
-            // ê²Œì„ ì •ì‚°
+            // ê²Œì„ ? •?‚°
             endUI.SetActive(true);
             score = GameManager_S._instance._score;
             StartCoroutine(FadeInRoutine());
@@ -241,7 +241,7 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ ï¿½Ş°ï¿½ Material ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½Ş°ï¿½ Material ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     /// <param name="delay"></param>
     /// <returns></returns>
@@ -255,11 +255,11 @@ public class PlayerStatus_S : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        //// ï¿½Ú±ï¿½ ï¿½Ú½Å¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        //// ï¿½Ú±ï¿½ ï¿½Ú½Å¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½
         if (other.transform.root.name == gameObject.name) return;
 
-        if (other.tag == "Monster")
-            HitChangeMaterials();
+        // if (other.tag == "Monster")
+        //     HitChangeMaterials();
     }
 
     void OnTriggerStay(Collider other)
@@ -301,22 +301,22 @@ public class PlayerStatus_S : MonoBehaviour
         _animator.SetBool("isHoldGun", isHoldGun);
     }
 
-    // ê²Œì„ ì˜¤ë²„ í™”ë©´ ì„œì„œíˆ ë‚˜íƒ€ë‚˜ê²Œ í•˜ê¸°
+    // ê²Œì„ ?˜¤ë²? ?™”ë©? ?„œ?„œ?ˆ ?‚˜????‚˜ê²? ?•˜ê¸?
     private IEnumerator FadeInRoutine()
     {
         float elapsedTime = 1.0f;
         Color color = fadeImage.color;
-        color.a = 0.0f; // ì‹œì‘ ì•ŒíŒŒ ê°’ (ì™„ì „íˆ íˆ¬ëª…)
+        color.a = 0.0f; // ?‹œ?‘ ?•Œ?ŒŒ ê°? (?™„? „?ˆ ?ˆ¬ëª?)
 
         while (elapsedTime < fadeDuration)
         {
             elapsedTime += Time.deltaTime;
-            color.a = Mathf.Lerp(0.0f, 1.0f, elapsedTime / fadeDuration); // ?ï¿½íŒŒ ê°’ì„ 1?ï¿½ì„œ 0?ï¿½ë¡œ ?ï¿½ì„œ??ë³€ï¿½?
+            color.a = Mathf.Lerp(0.0f, 1.0f, elapsedTime / fadeDuration); // ?ï¿½íŒŒ ê°’ì„ 1?ï¿½ì„œ 0?ï¿½ë¡œ ?ï¿½ì„œ??ë³?ï¿??
             fadeImage.color = color;
             yield return null;
         }
 
-        color.a = 1.0f; // ìµœì¢… ì•ŒíŒŒ ê°’ (ì™„ì „íˆ ë¶ˆíˆ¬ëª…)
+        color.a = 1.0f; // ìµœì¢… ?•Œ?ŒŒ ê°? (?™„? „?ˆ ë¶ˆíˆ¬ëª?)
         fadeImage.color = color;
     }
 }
