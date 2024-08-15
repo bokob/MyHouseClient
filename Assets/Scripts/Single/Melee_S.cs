@@ -31,13 +31,20 @@ public class Melee_S : Weapon
     private void Awake()
     {
         base.Type = Define.Type.Melee;
-        _playerMove = transform.root.GetChild(2).GetComponent<PlayerMove_S>();
-        _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
+
+        if (transform.root.childCount > 2)
+        {
+            _playerMove = transform.root.GetChild(2).GetComponent<PlayerMove_S>();
+            _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
+        }
     }
 
     void Start()
     {
-        _animator = transform.root.GetChild(2).GetChild(0).GetComponent<Animator>();
+        if (transform.root.childCount > 2)
+        {
+            _animator = transform.root.GetChild(2).GetChild(0).GetComponent<Animator>();
+        }
 
         _meleeArea = gameObject.GetComponent<BoxCollider>();
         _trailEffet = gameObject.GetComponentInChildren<TrailRenderer>();

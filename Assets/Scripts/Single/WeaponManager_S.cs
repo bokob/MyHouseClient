@@ -238,7 +238,7 @@ public class WeaponManager_S : MonoBehaviour
         if (weapon != null)
         {
             Debug.Log($"Picked up {weapon.Name}. Attack: {weapon.Attack}, Rate: {weapon.Rate}");
-            Melee_S _currentWeapon = _selectedWeapon.GetComponent<Melee_S>(); 
+            Melee_S _currentWeapon = _selectedWeapon.GetComponent<Melee_S>();
             _currentWeapon.Attack = weapon.Attack;
             _currentWeapon.Rate = weapon.Rate;
         }
@@ -253,8 +253,59 @@ public class WeaponManager_S : MonoBehaviour
     /// </summary>
     void Drop()
     {
+        GameObject droppedSelectedWeapon = Instantiate(_selectedWeapon, _selectedWeapon.transform.position, _selectedWeapon.transform.rotation); // instatntiation.
+        Destroy(droppedSelectedWeapon.GetComponent<Melee_S>()); // Melee_S script delete for error prevention. 
+
+        droppedSelectedWeapon.transform.localScale = droppedSelectedWeapon.transform.localScale * 1.7f; // size up.
+
+        StartCoroutine(DropAndBounce(droppedSelectedWeapon));
+
         _selectedWeapon.SetActive(false);
         _selectedWeapon = transform.Find("Knife").gameObject;
         _selectedWeapon.SetActive(true);
+    }
+
+
+    IEnumerator DropAndBounce(GameObject droppedSelectedWeapon)
+    {
+        float floorY = transform.root.GetChild(2).position.y + 0.3f; // floorY is Player object's position.y + 0.3f.
+
+        Vector3 velocity = new Vector3(0, -1f, 0); // first velocity.
+        float gravity = -9.8f;
+        float bounceDamping = 0.6f;
+        float horizontalDamping = 0.98f;
+
+        while (true)
+        {
+            droppedSelectedWeapon.transform.position += velocity * Time.deltaTime;
+
+            
+            if (droppedSelectedWeapon.transform.position.y <= floorY)
+            {
+                //bouncing.
+                droppedSelectedWeapon.transform.position = new Vector3(droppedSelectedWeapon.transform.position.x, floorY, droppedSelectedWeapon.transform.position.z);
+                velocity.y = -velocity.y * bounceDamping;
+
+                velocity.x *= horizontalDamping;
+                velocity.z *= horizontalDamping;
+
+                if (Mathf.Abs(velocity.y) < 0.1f)
+                {
+                    velocity.y = 0;
+                    break;
+                }
+            }
+            else
+            {
+                // gravity.
+                velocity.y += gravity * Time.deltaTime;
+            }
+
+            yield return null; // wait for next frame.
+        }
+
+        yield return new WaitForSeconds(1f);
+        Destroy(droppedSelectedWeapon);
+
     }
 }
