@@ -99,6 +99,7 @@ public class Melee_S : Weapon
                 // _weaponManager._selectedWeapon.GetComponent<Melee>().Use();
                 _animator.SetTrigger("setSwing");
                 _swingDelay = 0;
+                
                 for (int i = 0; i < rayCount; i++)
                 {
                     float currentAngle = -halfAngle + (i * (angle / (rayCount - 1)));
@@ -112,8 +113,7 @@ public class Melee_S : Weapon
                             Monster monster = hit.collider.GetComponent<Monster>();
                             if (monster != null)
                             {
-                                monster.TakedDamage(base.Attack);
-                                Debug.Log("적이 공격받았습니다: " + hit.collider.name);
+                                StartCoroutine(DelayedDamage(monster));
                             }
                         }
                     }
@@ -238,5 +238,13 @@ public class Melee_S : Weapon
             //Debug.Log("자를 레이어: " + other.gameObject.layer);
             Debug.LogWarning("왜 안돼?");
         }
+    }
+    IEnumerator DelayedDamage(Monster monster)
+    {
+        yield return new WaitForSeconds(0.8f); // 0.5초 지연
+
+        monster.TakedDamage(base.Attack);
+        Debug.Log("적이 공격받았습니다: " + monster.name);
+        monster.HitStart();
     }
 }
