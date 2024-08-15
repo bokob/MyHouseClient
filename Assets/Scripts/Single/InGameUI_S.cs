@@ -57,12 +57,18 @@ public class InGameUI_S : MonoBehaviour
 
     void Update()
     {
-       DisplayLivingTime();
-       DisplayHp();
-       DisplaySp();
-       DisplayWeaponInfo();
-       DisplayMonsterCount();
-       DisplayOut();
+        DisplayMonsterCount();
+        if (_status.Hp > 0)
+        {
+            DisplayLivingTime();
+            DisplayHp();
+            DisplaySp();
+            DisplayWeaponInfo();
+        }
+        else
+        {
+            DisplayOut();
+        }
     }
 
     public void DisplayLivingTime()
@@ -107,8 +113,8 @@ public class InGameUI_S : MonoBehaviour
 
     public void DisplayGunInfo()
     {
-        _currentBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun>().GetCurrentBullet().ToString();    // 현재 장정된 탄약
-        _totalBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun>().GetTotalBullet().ToString();         // 전체 탄약
+        _currentBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetCurrentBullet().ToString();    // 현재 장정된 탄약
+        _totalBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetTotalBullet().ToString();         // 전체 탄약
     }
 
     public void DisplayWeaponIcon(int iconIndex)

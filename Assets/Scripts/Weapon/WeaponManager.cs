@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Photon.Pun;
@@ -36,37 +35,34 @@ public class WeaponManager : MonoBehaviour
 
     void Update()
     {
-        if(transform.root.GetChild(2).gameObject.GetComponent<PhotonView>().IsMine&& !_playerInputs.aim && !_playerInputs.reload) // 조준하지 않고, 장전하지 않을 때 무기 교체 가능
+        if (GetComponent<PhotonView>().IsMine && !_playerInputs.aim && !_playerInputs.reload) // 조준하지 않고, 장전하지 않을 때 무기 교체 가능
             WeaponSwitching(); // 무기 교체
     }
 
-    /// <summary>
-    /// 역할에 따른 무기 초기화
-    /// </summary>
     public void InitRoleWeapon()
     {
+        if (PhotonNetwork.IsMasterClient) // 마스터 클라이언트에서만 실행
+        {
+            if (_playerStatus.Role == Define.Role.Houseowner) // 집주인
+            {
+                _selectedWeaponIdx = 1;
+                _playerStatus._weaponHolder = _playerStatus._weaponHolders[1];
+                _selectedWeapon = transform.GetChild(1).gameObject;
+                GetComponent<PhotonView>().RPC("SelectWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx); // 무기 초기화 시점에도 모든 클라이언트에 동기화
+            }
+        }
+        
         // 역할에 따른 첫 무기 설정
         if (_playerStatus.Role == Define.Role.Robber) // 강도
         {
             _selectedWeaponIdx = 0;
             _playerStatus._weaponHolder = _playerStatus._weaponHolders[0];
             _selectedWeapon = transform.GetChild(0).gameObject;
+            GetComponent<PhotonView>().RPC("SelectWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx); // 무기 초기화 시점에도 모든 클라이언트에 동기화
         }
-        else if (_playerStatus.Role == Define.Role.Houseowner) // 집주인
-        {
-            _selectedWeaponIdx = 1;
-            _playerStatus._weaponHolder = _playerStatus._weaponHolders[1];
-            _selectedWeapon = transform.GetChild(1).gameObject;
-        }
-        SelectWeapon();
-
-        Debug.Log("역할에 따른 무기 초기화 완료");
+        Debug.Log("역할에 따른 무기 매니저 초기화 완료");
     }
 
-
-    /// <summary>0
-    /// 무기 교체
-    /// </summary>
     void WeaponSwitching()
     {
         int previousSelectedWeapon = _selectedWeaponIdx;
@@ -86,30 +82,25 @@ public class WeaponManager : MonoBehaviour
                 _selectedWeaponIdx--;
         }
 
-        // if(Input.GetKeyDown(KeyCode.Alpha1)) // 근접 무기
-
-
-        if (previousSelectedWeapon != _selectedWeaponIdx) // 마우스 휠로 무기 인덱스 바귀면 교체
+        if (previousSelectedWeapon != _selectedWeaponIdx) // 마우스 휠로 무기 인덱스 바뀌면 교체
         {
-            if (_playerStatus.Role == Define.Role.Robber) 
+            if (_playerStatus.Role == Define.Role.Robber)
                 _selectedWeaponIdx = 0;
-            
-            SelectWeapon();
+
+            GetComponent<PhotonView>().RPC("SelectWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx); // 모든 플레이어에게 무기 변경 알림
         }
     }
 
-    /// <summary>
-    /// 무기 선택
-    /// </summary>
-    void SelectWeapon()
+    [PunRPC]
+    void SelectWeapon(int weaponIndex)
     {
-        Debug.LogWarning($"_selectedWeaponIdx({transform.root.GetChild(2).GetComponent<PlayerStatus>()._nickName}) :" + _selectedWeaponIdx);
-        _playerStatus.gameObject.GetComponent<PhotonView>().RPC("SetWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx);
-        
+        Debug.LogWarning($"_selectedWeaponIdx({transform.root.GetChild(2).GetComponent<PlayerStatus>()._nickName}) :" + weaponIndex);
+        _selectedWeaponIdx = weaponIndex;
+
         int idx = 0;
-        foreach(Transform weapon in transform)
+        foreach (Transform weapon in transform)
         {
-            if (idx == _selectedWeaponIdx)
+            if (idx == weaponIndex)
             {
                 weapon.gameObject.SetActive(true);
                 _selectedWeapon = weapon.gameObject; // 현재 고른 무기 참조
@@ -124,16 +115,17 @@ public class WeaponManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 선택된 무기 사용
-    /// </summary>
     public void UseSelectedWeapon()
     {
-        if(_selectedWeapon.tag == "Melee" && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
+        // 굳이 Input을 앞에 해준 이유가 역할이 변할 때, _selectedWeapon이 null이 되는 경우를 Update 돌다가 감지하기 때문이다.
+
+        if (_selectedWeapon == null) return;
+
+        if ((Input.GetMouseButton(0) || Input.GetMouseButton(1)) && _selectedWeapon.tag == "Melee")
         {
             _selectedWeapon.GetComponent<Melee>().Use();
         }
-        else if(_selectedWeapon.tag == "Gun")
+        else if (_selectedWeapon.tag == "Gun")
         {
             _selectedWeapon.GetComponent<Gun>().Use();
         }
@@ -143,7 +135,6 @@ public class WeaponManager : MonoBehaviour
         }
     }
 
-    // Check Hold Gun, To apply for Gun animation
     void IsHoldGun()
     {
         if (_selectedWeapon.tag == "Gun")
@@ -156,6 +147,20 @@ public class WeaponManager : MonoBehaviour
         }
     }
 
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            // 현재 선택된 무기 인덱스를 보내기
+            stream.SendNext(_selectedWeaponIdx);
+        }
+        else
+        {
+            // 클라이언트에서 받은 무기 인덱스를 반영
+            int receivedWeaponIndex = (int)stream.ReceiveNext();
+            GetComponent<PhotonView>().RPC("SelectWeapon", RpcTarget.AllBuffered, receivedWeaponIndex); // 받은 인덱스를 RPC로 처리
+        }
+    }
 
     /// <summary>
     /// 무기 줍기

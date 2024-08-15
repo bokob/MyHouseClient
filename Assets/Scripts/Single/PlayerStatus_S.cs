@@ -6,16 +6,16 @@ using UnityEngine.UI;
 
 public class PlayerStatus_S : MonoBehaviour
 {
-    #region ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½É·ï¿½Ä¡
+    #region ???? ?? ????
     [field: SerializeField] public Define.Role Role = Define.Role.None;
-    [field: SerializeField] public float Hp { get; set; } = 100;    // Ã¼ï¿½ï¿½
-    [field: SerializeField] public float Sp { get; set; } = 100;    // ï¿½ï¿½ï¿½×¹Ì³ï¿½
-    [field: SerializeField] public float MaxHp { get; private set; } = 100; // ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½
-    [field: SerializeField] public float MaxSp { get; private set; } = 100; // ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½
-    [field: SerializeField] public float Defence { get; private set; } = 1; // ï¿½ï¿½ï¿½ï¿½
+    [field: SerializeField] public float Hp { get; set; } = 100;    // ???
+    [field: SerializeField] public float Sp { get; set; } = 100;    // ??????
+    [field: SerializeField] public float MaxHp { get; private set; } = 100; // ??? ???
+    [field: SerializeField] public float MaxSp { get; private set; } = 100; // ??? ??????
+    [field: SerializeField] public float Defence { get; private set; } = 1; // ????
     #endregion
 
-    #region ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    #region ??????? ?? ????
     Animator _animator;
     List<Renderer> _renderers;
     #endregion
@@ -42,7 +42,7 @@ public class PlayerStatus_S : MonoBehaviour
 
         _weaponManager_S = transform.root.GetComponentInChildren<WeaponManager_S>();
 
-        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        // ???? ????????
         _renderers = new List<Renderer>();
         Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
         for (int i = 0; i < underTransforms.Length; i++)
@@ -51,7 +51,7 @@ public class PlayerStatus_S : MonoBehaviour
             if (renderer != null)
             {
                 _renderers.Add(renderer);
-                // if (renderer.material.color == null) Debug.Log("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½?");
+                // if (renderer.material.color == null) Debug.Log("?? ???? ???");
             }
         }
     }
@@ -72,15 +72,15 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
+    /// ???? ????
     /// </summary>
     public void InitRole()
     {
         /*
          TODO
-        È£ï¿½ï¿½Æ®ï¿½ï¿½, Houseownerï¿½ï¿½ï¿½ï¿½ ï¿½Ï°ï¿½, Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ Robber
+        ??????, Houseowner???? ???, ????????? Robber
 
-        ï¿½Ì±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Î¸ï¿½
+        ????? ?????¥è?
          */
         Role = Define.Role.Houseowner;
     }
@@ -88,21 +88,21 @@ public class PlayerStatus_S : MonoBehaviour
 
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô±ï¿½
+    /// ?????? ???
     /// </summary>
-    /// <param name="attack"> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½İ·ï¿½ </param>
+    /// <param name="attack"> ???? ????? </param>
     public void TakedDamage(int attack)
     {
-        if (Role == Define.Role.None) return; // ?‹œì²´ì¼ ê²½ìš° ì¢…ë£Œ
+        if (Role == Define.Role.None) return; // ???Ã¼ÀÏ °æ¿ì Á¾·á
 
-        // ?”¼?•´ê°? ?Œ?ˆ˜?¼ë©? ?šŒë³µë˜?Š” ?˜„?ƒ?´ ?¼?–´?‚˜ë¯?ë¡? ?”¼?•´?˜ ê°’ì„ 0?´?ƒ?œ¼ë¡? ?˜ê²Œë” ?„¤? •
+        // ???????? ??????????? ???º¹µÇ??? ????????? ????????????? ????????? °ªÀ» 0??????????? ???°Ô²û ??????
         float damage = Mathf.Max(0, attack);
         Hp -= damage;
         if (Hp > 0)
         {
             HitChangeMaterials();
-            Debug.Log(gameObject.name + "(?´)ê°? " + damage + " ë§Œí¼ ?”¼?•´ë¥? ?…?—ˆ?Œ!");
-            Debug.Log("?‚¨??? ì²´ë ¥: " + Hp);
+            Debug.Log(gameObject.name + "(???)?? " + damage + " ¸¸Å­ ???????? ?????????!");
+            Debug.Log("?????? Ã¼·Â: " + Hp);
         }
         else
         {
@@ -111,55 +111,55 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ 0.2ï¿½ï¿½Å­ È¸ï¿½ï¿½
+    /// ??? ????? 0.2??? ???
     /// </summary>
     public void Heal()
     {
-        // ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ Ã¼ï¿½Âºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        // ???? ????? ??? ??¨¬??? ???? ???? ??? ????
         if (Hp < MaxHp)
         {
-            // È¸ï¿½ï¿½ï¿½ï¿½
+            // ?????
             float healAmount = MaxHp * 0.2f;
 
-            // È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½Â°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            // ??????? ???? ??¡Æ??? ???? ??? ????? ???? ????? ????
             float healedAmount = Mathf.Clamp(Hp + healAmount, 0, MaxHp) - Hp;
 
-            Debug.Log("ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½" + Hp);
-            // Ã¼ï¿½ï¿½ È¸ï¿½ï¿½
+            Debug.Log("???? ???" + Hp);
+            // ??? ???
             Hp += healedAmount;
-            Debug.Log("Ã¼ï¿½ï¿½ï¿½ï¿½ " + healedAmount + "ï¿½ï¿½Å­ È¸ï¿½ï¿½!");
-            Debug.Log("ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½: " + Hp);
+            Debug.Log("????? " + healedAmount + "??? ???!");
+            Debug.Log("???? ???: " + Hp);
         }
         else
         {
-            Debug.Log("ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½. È¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½.");
+            Debug.Log("??? ???. ????? ??? ????.");
         }
     }
 
     /// <summary>
-    /// ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½
+    /// ??? ?????????? ???? ???
     /// </summary>
     public void SpUp()
     {
-        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        // ???? ???????? ??? ?????????? ???? ???? ??? ????
         if (Sp < MaxSp)
         {
-            // È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            // ??????? ???? ?????????? ???? ??? ???????? ???? ????? ????
             float healedAmount = Mathf.Clamp(Sp + MaxSp, 0, MaxHp) - Sp;
 
-            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½" + Sp);
-            // ï¿½ï¿½ï¿½×¹Ì³ï¿½ È¸ï¿½ï¿½
+            Debug.Log("???? ??????" + Sp);
+            // ?????? ???
             Sp += healedAmount;
-            Debug.Log("ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½! ï¿½ï¿½ï¿½ï¿½ Sp: " + Sp);
+            Debug.Log("???? ???! ???? Sp: " + Sp);
         }
         else
         {
-            Debug.Log("ï¿½Ö´ï¿½ Sp. È¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½.");
+            Debug.Log("??? Sp. ????? ??? ????.");
         }
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½×¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    /// ?????? ????????
     /// </summary>
     public void ChargeSp()
     {
@@ -168,7 +168,7 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½×¹Ì³ï¿½ ï¿½ï¿½ï¿½Ì±ï¿½
+    /// ?????? ?????
     /// </summary>
     public void DischargeSp()
     {
@@ -177,7 +177,7 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½×¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½
+    /// ??????, ?????? ????
     /// </summary>
     public void JumpSpDown()
     {
@@ -185,7 +185,7 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    /// ???? ????
     /// </summary>
     public void DefenceUp()
     {
@@ -193,18 +193,18 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿?
+    /// ????
     /// </summary>
     public void Dead()
     {
         if (Role != Define.Role.None && Hp <= 0)
         {
             _dead = true;
-            Role = Define.Role.None; // ?‹œì²?
+            Role = Define.Role.None; // ?????
             _animator.SetTrigger("setDie");
             StartCoroutine(DeadSinkCoroutine());
 
-            // ê²Œì„ ? •?‚°
+            // °ÔÀÓ ??????
             endUI.SetActive(true);
             score = GameManager_S._instance._score;
             StartCoroutine(FadeInRoutine());
@@ -213,7 +213,7 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    /// ???? ??????
     /// </summary>
     /// <returns></returns>
     IEnumerator DeadSinkCoroutine()
@@ -227,21 +227,21 @@ public class PlayerStatus_S : MonoBehaviour
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Material ï¿½Ó°ï¿½ ï¿½ï¿½È­
+    /// ???? ?????? Material ??? ???
     /// </summary>
     public void HitChangeMaterials()
     {
         for (int i = 0; i < _renderers.Count; i++)
         {
             _renderers[i].material.color = Color.red;
-            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.");
+            Debug.Log("???????.");
             //Debug.Log(_renderers[i].material.name);
         }
         StartCoroutine(ResetMaterialAfterDelay(1.7f));
     }
 
     /// <summary>
-    /// ï¿½ï¿½ï¿½ï¿½ ï¿½Ş°ï¿½ Material ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½
+    /// ???? ??? Material ???????? ????
     /// </summary>
     /// <param name="delay"></param>
     /// <returns></returns>
@@ -255,7 +255,7 @@ public class PlayerStatus_S : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        //// ï¿½Ú±ï¿½ ï¿½Ú½Å¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿? ï¿½ï¿½ï¿½ï¿½
+        //// ??? ?????? ???? ???? ????
         if (other.transform.root.name == gameObject.name) return;
 
         // if (other.tag == "Monster")
@@ -290,7 +290,7 @@ public class PlayerStatus_S : MonoBehaviour
         _animator.runtimeAnimatorController = animController;
         _animator.avatar = avatar;
 
-        // ï¿½Ö´Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½ ï¿½ï¿½Ã¼ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Ù°ï¿½ ï¿½Ñ¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        // ???????? ??? ?????? ????? ??? ??????
         _animator.enabled = false;
         _animator.enabled = true;
     }
@@ -301,22 +301,22 @@ public class PlayerStatus_S : MonoBehaviour
         _animator.SetBool("isHoldGun", isHoldGun);
     }
 
-    // ê²Œì„ ?˜¤ë²? ?™”ë©? ?„œ?„œ?ˆ ?‚˜????‚˜ê²? ?•˜ê¸?
+    // °ÔÀÓ ????? ????? ????????? ??????????? ?????
     private IEnumerator FadeInRoutine()
     {
         float elapsedTime = 1.0f;
         Color color = fadeImage.color;
-        color.a = 0.0f; // ?‹œ?‘ ?•Œ?ŒŒ ê°? (?™„? „?ˆ ?ˆ¬ëª?)
+        color.a = 0.0f; // ?????? ?????? ?? (????????? ?????)
 
         while (elapsedTime < fadeDuration)
         {
             elapsedTime += Time.deltaTime;
-            color.a = Mathf.Lerp(0.0f, 1.0f, elapsedTime / fadeDuration); // ?ï¿½íŒŒ ê°’ì„ 1?ï¿½ì„œ 0?ï¿½ë¡œ ?ï¿½ì„œ??ë³?ï¿??
+            color.a = Mathf.Lerp(0.0f, 1.0f, elapsedTime / fadeDuration); // ??ÆÄ °ªÀ» 1??¼­ 0??·Î ??¼­???????
             fadeImage.color = color;
             yield return null;
         }
 
-        color.a = 1.0f; // ìµœì¢… ?•Œ?ŒŒ ê°? (?™„? „?ˆ ë¶ˆíˆ¬ëª?)
+        color.a = 1.0f; // ÃÖÁ¾ ?????? ?? (????????? ºÒÅõ??)
         fadeImage.color = color;
     }
 }
