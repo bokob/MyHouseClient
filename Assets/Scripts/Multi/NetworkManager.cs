@@ -277,6 +277,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 PhotonView photonView = playerObject.GetComponent<PhotonView>();
                 if (photonView != null && photonView.Owner == otherPlayer)
                 {
+                    photonView.RPC("SmokeEffect", RpcTarget.All, playerObject.transform.position);
                     Destroy(playerObject.transform.parent.gameObject); // 오브젝트 제거
                     break;
                 }

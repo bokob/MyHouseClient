@@ -12278,6 +12278,8 @@ MonoBehaviour:
   _weaponHolders:
   - {fileID: 3800017426899195558}
   - {fileID: 6557047683722425448}
+  _smokeEffect: {fileID: 6813416509558619124, guid: 3b7f2c753d435d647a80f1f047a113e3,
+    type: 3}
 --- !u!114 &2267432755701943778
 MonoBehaviour:
   m_ObjectHideFlags: 0

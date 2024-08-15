@@ -11,6 +11,8 @@ public class SkyOverTime : MonoBehaviour
     int dateHour = 0;
     private float offsetX = 0.0f;
 
+    public GameObject _pointLight;
+
     void Start()
     {
         if (material == null)
@@ -18,10 +20,11 @@ public class SkyOverTime : MonoBehaviour
             Renderer objectRenderer = GetComponent<Renderer>();
             material = objectRenderer.material;
         }
+        Time();
         Season();
     }
-    
-    void Update()
+
+    void Time()
     {
         // Calling the current hour(int)
         dateHour = DateTime.Now.Hour;
@@ -96,8 +99,13 @@ public class SkyOverTime : MonoBehaviour
                 offsetX = 0.5f;
             }
         }
-    
+
         material.SetTextureOffset("_MainTex", new Vector2(offsetX, 0.0f));
+
+        if (offsetX == 0.9f) // If day, turn off _pointLight.
+        {
+            _pointLight.SetActive(false);
+        }
     }
 
     void Season()
