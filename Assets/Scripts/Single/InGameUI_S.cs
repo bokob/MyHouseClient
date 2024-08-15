@@ -57,12 +57,18 @@ public class InGameUI_S : MonoBehaviour
 
     void Update()
     {
-       DisplayLivingTime();
-       DisplayHp();
-       DisplaySp();
-       DisplayWeaponInfo();
-       DisplayMonsterCount();
-       DisplayOut();
+        DisplayMonsterCount();
+        if (_status.Hp > 0)
+        {
+            DisplayLivingTime();
+            DisplayHp();
+            DisplaySp();
+            DisplayWeaponInfo();
+        }
+        else
+        {
+            DisplayOut();
+        }
     }
 
     public void DisplayLivingTime()
@@ -94,8 +100,7 @@ public class InGameUI_S : MonoBehaviour
            if(!_crossHair.activeSelf) _crossHair.SetActive(true);
 
            DisplayWeaponIcon(1);
-           DisplayCurrentBullet();
-           DisplayTotalBullet();
+            DisplayGunInfo();
         }
         else // 근접 무기일 경우
         {
@@ -106,24 +111,15 @@ public class InGameUI_S : MonoBehaviour
         }
     }
 
-    public void DisplayCurrentBullet()
+    public void DisplayGunInfo()
     {
-        //_currentBullet.text =  _weaponManager._weaponList[1].GetComponent<Gun>().GetCurrentBullet().ToString();
-    }
-
-    public void DisplayTotalBullet()
-    {
-        //_totalBullet.text = _weaponManager._weaponList[1].GetComponent<Gun>().GetTotalBullet().ToString();
+        _currentBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetCurrentBullet().ToString();    // 현재 장정된 탄약
+        _totalBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetTotalBullet().ToString();         // 전체 탄약
     }
 
     public void DisplayWeaponIcon(int iconIndex)
     {
         _weaponIcon.texture = _weaponImages[iconIndex];
-    }
-
-    public void DisplayConnectedPlayers()
-    {
-
     }
 
     public void DisplayMonsterCount()

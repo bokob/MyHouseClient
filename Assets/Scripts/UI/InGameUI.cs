@@ -8,7 +8,9 @@ public class InGameUI : MonoBehaviour
 {
     [SerializeField] GameObject _player;
     [SerializeField] PlayerStatus _status;
-    //WeaponManager _weaponManager;
+    [SerializeField] WeaponManager _robberWeaponManager;
+    [SerializeField] WeaponManager _houseownerWeaponManager;
+    WeaponManager _weaponManager;
 
     //UI 변수들
 
@@ -48,10 +50,17 @@ public class InGameUI : MonoBehaviour
 
     void Update()
     {
-        DisplayLivingTime();
-        DisplayHp();
-        DisplaySp();
-        DisplayWeaponInfo();
+        if(_status.Hp > 0)
+        {
+            DisplayLivingTime();
+            DisplayHp();
+            DisplaySp();
+            DisplayWeaponInfo();
+        }
+        else
+        {
+            DisplayOut();
+        }
     }
 
     public void DisplayLivingTime()
@@ -75,35 +84,31 @@ public class InGameUI : MonoBehaviour
 
     public void DisplayWeaponInfo()
     {
-        //string weaponTag = _weaponManager._selectedWeapon.tag;
-        //Debug.Log("현재무기: " + weaponTag);
-        //if (weaponTag == "Gun") // 원거리 무기일 경우
-        //{
-        //    if (!_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(true);
-        //    if (!_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(true);
-        //    if (!_crossHair.activeSelf) _crossHair.SetActive(true);
+        _weaponManager = (_status.Role == Define.Role.Robber) ? _robberWeaponManager : _houseownerWeaponManager;
+        string weaponTag = _weaponManager._selectedWeapon.tag;
+        Debug.Log("현재무기: " + weaponTag);
+        if (weaponTag == "Gun") // 원거리 무기일 경우
+        {
+            if (!_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(true);
+            if (!_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(true);
+            if (!_crossHair.activeSelf) _crossHair.SetActive(true);
 
-        //    DisplayWeaponIcon(1);
-        //    DisplayCurrentBullet();
-        //    DisplayTotalBullet();
-        //}
-        //else // 근접 무기일 경우
-        //{
-        //    DisplayWeaponIcon(0);
-        //    if (_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(false);
-        //    if (_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(false);
-        //    if (_crossHair.activeSelf) _crossHair.SetActive(false);
-        //}
+            DisplayWeaponIcon(1);
+            DisplayGunInfo();
+        }
+        else // 근접 무기일 경우
+        {
+            DisplayWeaponIcon(0);
+            if (_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(false);
+            if (_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(false);
+            if (_crossHair.activeSelf) _crossHair.SetActive(false);
+        }
     }
 
-    public void DisplayCurrentBullet()
+    public void DisplayGunInfo()
     {
-        //_currentBullet.text =  _weaponManager._weaponList[1].GetComponent<Gun>().GetCurrentBullet().ToString();
-    }
-
-    public void DisplayTotalBullet()
-    {
-        //_totalBullet.text = _weaponManager._weaponList[1].GetComponent<Gun>().GetTotalBullet().ToString();
+        _currentBullet.text =  _weaponManager._selectedWeapon.GetComponent<Gun>().GetCurrentBullet().ToString();    // 현재 장정된 탄약
+        _totalBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun>().GetTotalBullet().ToString();         // 전체 탄약
     }
 
     public void DisplayWeaponIcon(int iconIndex)
@@ -118,7 +123,11 @@ public class InGameUI : MonoBehaviour
 
     public void DisplayOut()
     {
-        if (_status.Hp <= 0) gameObject.SetActive(false);
+        if (_status.Hp <= 0)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
     }
 }
 
