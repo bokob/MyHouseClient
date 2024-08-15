@@ -31,6 +31,8 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     public Transform _weaponHolder;
     public Transform[] _weaponHolders;
 
+    public GameObject _smokeEffect;
+
     //public string nickname;
 
     //public TextMeshPro nicknameText;
@@ -317,5 +319,11 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     {
         if (Role != Define.Role.Houseowner) return;
         _animator.SetBool("isHoldGun", isHoldGun);
+    }
+
+    [PunRPC]
+    void SmokeEffect(Vector3 position)
+    {
+        PhotonNetwork.Instantiate("SmokeParticlePrefab", position, Quaternion.identity);
     }
 }
