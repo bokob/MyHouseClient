@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class InGameUI_S : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class InGameUI_S : MonoBehaviour
 
     // 무기
     RawImage _weaponIcon;
-    public Texture2D[] _weaponImages = new Texture2D[2];
+    public List<Texture2D> _weaponImages = new List<Texture2D>();
     TextMeshProUGUI _currentBullet;
     TextMeshProUGUI _totalBullet;
     TextMeshProUGUI _currentMonster;
@@ -100,16 +101,17 @@ public class InGameUI_S : MonoBehaviour
            if(!_crossHair.activeSelf) _crossHair.SetActive(true);
 
            DisplayWeaponIcon(1);
-            DisplayGunInfo();
+           DisplayGunInfo();
         }
         else // 근접 무기일 경우
         {
-           DisplayWeaponIcon(0);
+           DisplayWeaponIcon(GetWeaponIconIndex(_weaponManager._selectedWeapon.name));
            if (_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(false);
            if (_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(false);
            if (_crossHair.activeSelf) _crossHair.SetActive(false);
         }
     }
+
 
     public void DisplayGunInfo()
     {
@@ -129,5 +131,14 @@ public class InGameUI_S : MonoBehaviour
     public void DisplayOut()
     {
         if(_status.Hp <= 0) gameObject.SetActive(false);
+    }
+
+    // 무기 이름으로 무기 아이콘 구하기
+    public int GetWeaponIconIndex(string weaponName)
+    {
+        int index = _weaponImages.Select((element, index) => new { element, index })
+                        .FirstOrDefault(p => p.element.name == weaponName)
+                        ?.index ?? 0;
+        return index;
     }
 }
