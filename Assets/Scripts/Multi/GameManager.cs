@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 using static Define;
 
@@ -17,7 +18,11 @@ public class GameManager : MonoBehaviour
     public Transform[] _spawnPoints;
     public GameObject _localPlayer;
     public TextMeshProUGUI _playerCount;
-    // Start is called before the first frame update
+
+    // 아이템 소환 관련
+    public GameObject[] _itemPrefabs;
+    public float _itemSpawnRange = 20.0f;
+    public Vector3 spawnCenter;
 
     private void Awake()
     {
@@ -39,6 +44,12 @@ public class GameManager : MonoBehaviour
     {
         // 계속 확인하는 것은 부하가 심하니까 NetworkManager에 있는 것을 확인하는 식으로 하자.
         _playerCount.text = PhotonNetwork.CountOfPlayers.ToString();
+
+        if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.T))
+        {
+            SpawnItem();
+        }
+
     }
 
     private void OnDestroy()
@@ -89,5 +100,25 @@ public class GameManager : MonoBehaviour
         {
             OnMasterClientKilled(killer);
         }
+    }
+
+    [PunRPC]
+    void SpawnItem()
+    {
+        Vector3 randomPosition = GetRandomPosition(spawnCenter, _itemSpawnRange);
+        PhotonNetwork.Instantiate(_itemPrefabs[UnityEngine.Random.Range(0, _itemPrefabs.Length)].name, randomPosition, Quaternion.identity);
+    }
+
+    Vector3 GetRandomPosition(Vector3 center, float range)
+    {
+        Vector3 randomDirection = Random.insideUnitSphere * range;
+        randomDirection += center;
+
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(randomDirection, out hit, range, NavMesh.AllAreas))
+        {
+            return hit.position;
+        }
+        return center;
     }
 }

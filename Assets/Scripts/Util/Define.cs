@@ -10,20 +10,6 @@ public class Define
         Houseowner,
         Robber
     }
-    public enum Type
-    {
-        Melee,
-        Range,
-    }
-
-    public enum Item
-    {
-        None,
-        Heart,
-        Energy,
-        Weapon,
-    }
-
     public enum MonsterState
     {
         None,
@@ -38,5 +24,30 @@ public class Define
         None,
         Quater,
         Third,
+    }
+    public enum Type
+    {
+        Melee,
+        Range,
+    }
+
+    public enum Item
+    {
+        None,
+        Status,
+        Weapon,
+    }
+
+    public enum StatusItem
+    {
+        Heart,
+        Energy,
+    }
+
+    public enum WeaponItem
+    {
+        Axe,
+        Bat,
+        HockeyStick,
     }
 }
