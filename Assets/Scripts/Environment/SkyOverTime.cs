@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SkyOverTime : MonoBehaviour
 {
@@ -104,6 +105,8 @@ public class SkyOverTime : MonoBehaviour
 
         if (offsetX == 0.9f) // If day, turn off _pointLight.
         {
+            if (SceneManager.GetActiveScene().name == "TitleScene") return;
+
             _pointLight.SetActive(false);
         }
     }

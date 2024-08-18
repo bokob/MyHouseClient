@@ -31,6 +31,10 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
 
     public Transform _weaponHolder;
     public Transform[] _weaponHolders;
+    WeaponManager _weaponManager_S;
+    public GameObject nearMeleeObject;
+    private string meleeItemName;
+    public bool _isPickUp = false;
 
     public GameObject _smokeEffect;
 
@@ -309,6 +313,14 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         for (int i = 0; i < _renderers.Count; i++)
             _renderers[i].material.color = Color.white;
     }
+
+    public void GetMeleeItem()
+    {
+        meleeItemName = nearMeleeObject.name;
+        _weaponManager_S.PickUpWeapon(meleeItemName);
+        //Destroy(nearMeleeObject);
+    }
+
 
     public void ChangeIsHoldGun(bool isHoldGun)
     {
