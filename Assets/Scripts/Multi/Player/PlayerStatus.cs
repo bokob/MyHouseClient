@@ -13,18 +13,18 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     public CameraController _cameraController;
     public InGameUI _inGameUI;
 
-    #region »óÅÂ ¹× ´É·ÂÄ¡, ÀÌ¸§ µî
+    #region ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½É·ï¿½Ä¡, ï¿½Ì¸ï¿½ ï¿½ï¿½
     public bool _isLocalPlayer;
     public string _nickName;
     [field: SerializeField] public Define.Role Role = Define.Role.None;
-    [field: SerializeField] public float Hp { get; set; } = 100;    // Ã¼·Â
-    [field: SerializeField] public float Sp { get; set; } = 100;    // ½ºÅ×¹Ì³ª
-    [field: SerializeField] public float MaxHp { get; private set; } = 100; // ÃÖ´ë Ã¼·Â
-    [field: SerializeField] public float MaxSp { get; private set; } = 100; // ÃÖ´ë ½ºÅ×¹Ì³ª
-    [field: SerializeField] public float Defence { get; private set; } = 1; // ¹æ¾î·Â
+    [field: SerializeField] public float Hp { get; set; } = 100;    // Ã¼ï¿½ï¿½
+    [field: SerializeField] public float Sp { get; set; } = 100;    // ï¿½ï¿½ï¿½×¹Ì³ï¿½
+    [field: SerializeField] public float MaxHp { get; private set; } = 100; // ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½
+    [field: SerializeField] public float MaxSp { get; private set; } = 100; // ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½
+    [field: SerializeField] public float Defence { get; private set; } = 1; // ï¿½ï¿½ï¿½ï¿½
     #endregion
 
-    #region ¾Ö´Ï¸ÞÀÌ¼Ç ¹× ÇÇÇØ
+    #region ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     public Animator _animator;
     List<Renderer> _renderers;
     #endregion
@@ -49,10 +49,10 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         //TPWeaponHolder.gameObject.SetActive(false);
 
         _isLocalPlayer = true;
-        _playerMove.enabled = true;         // PlayerMove È°¼ºÈ­
+        _playerMove.enabled = true;         // PlayerMove È°ï¿½ï¿½È­
         _cameraController.gameObject.transform.parent.gameObject.SetActive(true);
         _inGameUI.gameObject.SetActive(true);
-        transform.GetChild(0).gameObject.GetComponent<FadeObjectBlockingObject>().enabled = true; // °­µµ Ãþº° Åõ¸íÈ­ È°¼ºÈ­
+        transform.GetChild(0).gameObject.GetComponent<FadeObjectBlockingObject>().enabled = true; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­ È°ï¿½ï¿½È­
     }
 
     [PunRPC]
@@ -62,10 +62,10 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void SetRole(Define.Role role) // ¿ªÇÒ ÁöÁ¤
+    public void SetRole(Define.Role role) // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     {
-        // ¿ªÇÒÀ» Á÷Á¢ ÇÒ´ç
-        Debug.Log($"³» ¿ªÇÒ({_nickName}): " + Role);
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò´ï¿½
+        Debug.Log($"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½({_nickName}): " + Role);
 
         Role = role;
 
@@ -76,7 +76,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     }
 
     /// <summary>
-    /// »ç¸Á
+    /// ï¿½ï¿½ï¿½
     /// </summary>
     [PunRPC]
     public void Dead()
@@ -84,14 +84,15 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         if (Role != Define.Role.None && Hp <= 0)
         {
             _animator.SetTrigger("setDie");
-            Role = Define.Role.None; // ½ÃÃ¼
-            StartCoroutine(DeadSinkCoroutine());
+            Role = Define.Role.None; // ï¿½ï¿½Ã¼
+            // StartCoroutine(DeadSinkCoroutine());
+            StartCoroutine(TombCoroutine());
         }
     }
 
     void Awake()
     {
-        // ·»´õ °¡Á®¿À±â
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         _renderers = new List<Renderer>();
         Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
         for (int i = 0; i < underTransforms.Length; i++)
@@ -100,7 +101,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
             if (renderer != null)
             {
                 _renderers.Add(renderer);
-                // if (renderer.material.color == null) Debug.Log("¿Ö »öÀÌ ³Î?");
+                // if (renderer.material.color == null) Debug.Log("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½?");
             }
         }
     }
@@ -114,21 +115,27 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         {
             _isPickUp = true;
             GetMeleeItem();
+        if(Input.GetKeyDown(KeyCode.Y))
+        {
+            _animator.SetTrigger("setDie");
+            Role = Define.Role.None; // ï¿½ï¿½Ã¼
+            // StartCoroutine(DeadSinkCoroutine());
+            StartCoroutine(TombCoroutine());
         }
     }
 
     /// <summary>
-    /// µ¥¹ÌÁö ÀÔ±â
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô±ï¿½
     /// </summary>
-    /// <param name="attack"> °¡ÇÒ °ø°Ý·Â </param>
+    /// <param name="attack"> ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ý·ï¿½ </param>
     [PunRPC]
     public void TakedDamage(int attack, PhotonMessageInfo info)
     {
-        // ÇÇÇØ°¡ À½¼ö¶ó¸é È¸º¹µÇ´Â Çö»óÀÌ ÀÏ¾î³ª¹Ç·Î ÇÇÇØÀÇ °ªÀ» 0ÀÌ»óÀ¸·Î µÇ°Ô²û ¼³Á¤
+        // ï¿½ï¿½ï¿½Ø°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï¾î³ªï¿½Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 0ï¿½Ì»ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç°Ô²ï¿½ ï¿½ï¿½ï¿½ï¿½
         float damage = Mathf.Max(0, attack - Defence);
         Hp -= damage;
-        Debug.Log(gameObject.name + "(ÀÌ)°¡ " + damage + " ¸¸Å­ ÇÇÇØ¸¦ ÀÔ¾úÀ½!");
-        Debug.Log("³²Àº Ã¼·Â: " + Hp);
+        Debug.Log(gameObject.name + "(ï¿½ï¿½)ï¿½ï¿½ " + damage + " ï¿½ï¿½Å­ ï¿½ï¿½ï¿½Ø¸ï¿½ ï¿½Ô¾ï¿½ï¿½ï¿½!");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½: " + Hp);
 
         if(Hp <= 0)
         {
@@ -142,57 +149,57 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     }
 
 
-    #region Ã¼·Â ¹× ½ºÅ×¹Ì³ª °ü·Ã
+    #region Ã¼ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// <summary>
-    /// ÃÖ´ë Ã¼·ÂÀÇ 0.2¸¸Å­ È¸º¹
+    /// ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ 0.2ï¿½ï¿½Å­ È¸ï¿½ï¿½
     /// </summary>
     public void Heal()
     {
-        // ÇöÀç Ã¼·ÂÀÌ ÃÖ´ë Ã¼·Âº¸´Ù ÀÛÀ» ¶§¸¸ È¸º¹ Àû¿ë
+        // ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ Ã¼ï¿½Âºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (Hp < MaxHp)
         {
-            // È¸º¹·®
+            // È¸ï¿½ï¿½ï¿½ï¿½
             float healAmount = MaxHp * 0.2f;
 
-            // È¸º¹·®°ú ÇöÀç Ã¼·Â°úÀÇ ÇÕÀÌ ÃÖ´ë Ã¼·ÂÀ» ³ÑÁö ¾Êµµ·Ï Á¶Àý
+            // È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½Â°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             float healedAmount = Mathf.Clamp(Hp + healAmount, 0, MaxHp) - Hp;
 
-            Debug.Log("ÀÌÀü Ã¼·Â" + Hp);
-            // Ã¼·Â È¸º¹
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½" + Hp);
+            // Ã¼ï¿½ï¿½ È¸ï¿½ï¿½
             Hp += healedAmount;
-            Debug.Log("Ã¼·ÂÀ» " + healedAmount + "¸¸Å­ È¸º¹!");
-            Debug.Log("ÇöÀç Ã¼·Â: " + Hp);
+            Debug.Log("Ã¼ï¿½ï¿½ï¿½ï¿½ " + healedAmount + "ï¿½ï¿½Å­ È¸ï¿½ï¿½!");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½: " + Hp);
         }
         else
         {
-            Debug.Log("ÃÖ´ë Ã¼·Â. È¸º¹ÇÒ ÇÊ¿ä ¾øÀ½.");
+            Debug.Log("ï¿½Ö´ï¿½ Ã¼ï¿½ï¿½. È¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½.");
         }
     }
 
     /// <summary>
-    /// ÃÖ´ë ½ºÅ×¹Ì³ª±îÁö ÀüºÎ È¸º¹
+    /// ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½
     /// </summary>
     public void SpUp()
     {
-        // ÇöÀç ½ºÅ×¹Ì³ª°¡ ÃÖ´ë ½ºÅ×¹Ì³ªº¸´Ù ÀÛÀ» ¶§¸¸ È¸º¹ Àû¿ë
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (Sp < MaxSp)
         {
-            // È¸º¹·®°ú ÇöÀç ½ºÅ×¹Ì³ª¿ÍÀÇ ÇÕÀÌ ÃÖ´ë ½ºÅ×¹Ì³ª¸¦ ³ÑÁö ¾Êµµ·Ï Á¶Àý
+            // È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             float healedAmount = Mathf.Clamp(Sp + MaxSp, 0, MaxHp) - Sp;
 
-            Debug.Log("ÀÌÀü ½ºÅ×¹Ì³ª" + Sp);
-            // ½ºÅ×¹Ì³ª È¸º¹
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½×¹Ì³ï¿½" + Sp);
+            // ï¿½ï¿½ï¿½×¹Ì³ï¿½ È¸ï¿½ï¿½
             Sp += healedAmount;
-            Debug.Log("ÀüºÎ È¸º¹! ÇöÀç Sp: " + Sp);
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½! ï¿½ï¿½ï¿½ï¿½ Sp: " + Sp);
         }
         else
         {
-            Debug.Log("ÃÖ´ë Sp. È¸º¹ÇÒ ÇÊ¿ä ¾øÀ½.");
+            Debug.Log("ï¿½Ö´ï¿½ Sp. È¸ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ ï¿½ï¿½ï¿½ï¿½.");
         }
     }
 
     /// <summary>
-    /// ½ºÅ×¹Ì³ª Â÷¿À¸£±â
+    /// ï¿½ï¿½ï¿½×¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void ChargeSp()
     {
@@ -201,7 +208,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     }
 
     /// <summary>
-    /// ½ºÅ×¹Ì³ª ±ðÀÌ±â
+    /// ï¿½ï¿½ï¿½×¹Ì³ï¿½ ï¿½ï¿½ï¿½Ì±ï¿½
     /// </summary>
     public void DischargeSp()
     {
@@ -210,12 +217,12 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     }
 
     /// <summary>
-    /// Á¡ÇÁ½Ã, ½ºÅ×¹Ì³ª °¨¼Ò
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½×¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void JumpSpDown() => Sp -= 3;
 
     /// <summary>
-    /// ¹æ¾î·Â Áõ°¡
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void DefenceUp()
     {
@@ -225,90 +232,106 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
 
 
     /// <summary>
-    /// ÁýÁÖÀÎÀ¸·Î º¯½Å
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     [PunRPC]
     public void TransformIntoRobber()
     {
-        transform.GetChild(0).gameObject.SetActive(true); // °­µµ È°¼ºÈ­
-        transform.GetChild(1).gameObject.SetActive(false);  // ÁýÁÖÀÎ ºñÈ°¼ºÈ­
+        transform.GetChild(0).gameObject.SetActive(true); // ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
+        transform.GetChild(1).gameObject.SetActive(false);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
 
-        Debug.Log("ÇöÀç »óÅÂ: " + Role);
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: " + Role);
 
-        _cameraController.gameObject.GetComponent<CameraController>().SetRobberView(); // °­µµ ½ÃÁ¡À¸·Î ¼³Á¤
+        _cameraController.gameObject.GetComponent<CameraController>().SetRobberView(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(ÀÌ)°¡ °­µµ·Î º¯½Å ¿Ï·á");
+        Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½");
     }
 
 
     /// <summary>
-    /// ÁýÁÖÀÎÀ¸·Î º¯½Å
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     [PunRPC]
     public void TransformIntoHouseowner()
     {
-        transform.GetChild(0).gameObject.SetActive(false); // °­µµ ºñÈ°¼ºÈ­
-        transform.GetChild(1).gameObject.SetActive(true);  // ÁýÁÖÀÎ È°¼ºÈ­
+        transform.GetChild(0).gameObject.SetActive(false); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
+        transform.GetChild(1).gameObject.SetActive(true);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
 
-        _inGameUI.gameObject.transform.GetChild(4).gameObject.SetActive(true); // Á¶ÁØÁ¡ È°¼ºÈ­
+        _inGameUI.gameObject.transform.GetChild(4).gameObject.SetActive(true); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
 
-        transform.GetChild(0).gameObject.GetComponent<FadeObjectBlockingObject>().enabled = false; // °­µµ Ãþº° Åõ¸íÈ­ ºñÈ°¼ºÈ­
+        transform.GetChild(0).gameObject.GetComponent<FadeObjectBlockingObject>().enabled = false; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­ ï¿½ï¿½È°ï¿½ï¿½È­
 
-        Debug.Log($"ÇöÀç »óÅÂ({transform.root.GetChild(2).GetComponent<PlayerStatus>()._nickName}): " + Role);
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½({transform.root.GetChild(2).GetComponent<PlayerStatus>()._nickName}): " + Role);
 
-        _cameraController.gameObject.GetComponent<CameraController>().SetHouseownerView(); // ÁýÁÖÀÎ ½ÃÁ¡À¸·Î ¼³Á¤
+        _cameraController.gameObject.GetComponent<CameraController>().SetHouseownerView(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(ÀÌ)°¡ ÁýÁÖÀÎÀ¸·Î º¯½Å ¿Ï·á");
+        Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½");
     }
 
     /// <summary>
-    /// ½ÃÃ¼ ¹Ù´ÚÀ¸·Î °¡¶ó¾É±â
+    /// ï¿½ï¿½Ã¼ ï¿½Ù´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½É±ï¿½
     /// </summary>
     /// <returns></returns>
-    IEnumerator DeadSinkCoroutine()
+    // IEnumerator DeadSinkCoroutine()
+    // {
+    //     GetComponent<CharacterController>().enabled = false;
+    //     GetComponent<PlayerInput>().enabled = false;
+    //     yield return new WaitForSeconds(3f);
+    //     while (transform.position.y > -5f)
+    //     {
+    //         transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
+    //         yield return null;
+    //     }
+    //     // Destroy(gameObject);
+
+    //     if(GetComponent<PhotonView>().IsMine)
+    //     {
+    //         Application.Quit();
+    //     }
+
+    //     //Application.Quit(); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    //     Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
+    // }
+
+    IEnumerator TombCoroutine()
     {
         GetComponent<CharacterController>().enabled = false;
         GetComponent<PlayerInput>().enabled = false;
+        yield return new WaitForSeconds(2f);
+        transform.GetChild(0).gameObject.SetActive(false); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
+        transform.GetChild(1).gameObject.SetActive(false);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
+        transform.GetChild(3).gameObject.SetActive(true); // Tombstone Active
         yield return new WaitForSeconds(3f);
-        while (transform.position.y > -5f)
-        {
-            transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
-            yield return null;
-        }
-        // Destroy(gameObject);
-
         if(GetComponent<PhotonView>().IsMine)
         {
             Application.Quit();
         }
-
-        //Application.Quit(); // °ÔÀÓ Á¾·á
-        Debug.Log("°ÔÀÓ °­Á¦ Á¾·á");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
     }
 
     /// <summary>
-    /// ÇÇÇØ ¹ÞÀ¸¸é Material ºÓ°Ô º¯È­
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Material ï¿½Ó°ï¿½ ï¿½ï¿½È­
     /// </summary>
     [PunRPC]
     public void HitChangeMaterials()
     {
-        // ÅÂ±×°¡ ¹«±â ¶Ç´Â ¸ó½ºÅÍ
+        // ï¿½Â±×°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½
 
         for (int i = 0; i < _renderers.Count; i++)
         {
             _renderers[i].material.color = Color.red;
-            Debug.Log("»öº¯ÇÑ´Ù.");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.");
             Debug.Log(_renderers[i].material.name);
         }
 
         StartCoroutine(ResetMaterialAfterDelay(1.7f));
 
-        //Debug.Log($"ÇÃ·¹ÀÌ¾î°¡ {other.transform.root.name}¿¡°Ô °ø°Ý ¹ÞÀ½!");
-        Debug.Log("°ø°Ý¹ÞÀº ÃøÀÇ Ã¼·Â:" + Hp);
+        //Debug.Log($"ï¿½Ã·ï¿½ï¿½Ì¾î°¡ {other.transform.root.name}ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½!");
+        Debug.Log("ï¿½ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã¼ï¿½ï¿½:" + Hp);
     }
 
     /// <summary>
-    /// ÇÇÇØ ¹Þ°í Material ¿ø·¡´ë·Î º¹±¸
+    /// ï¿½ï¿½ï¿½ï¿½ ï¿½Þ°ï¿½ Material ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     /// <param name="delay"></param>
     /// <returns></returns>

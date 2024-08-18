@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
 
@@ -11,13 +12,13 @@ public class InGameUI_S : MonoBehaviour
     PlayerStatus_S _status;
     public WeaponManager_S _weaponManager;
 
-    //UI 변수들
+    //UI �??��?��
 
-    // 시간
+    // ?���?
     TextMeshProUGUI _timeSecond;
     float _timer;
 
-    // 스테이터스
+    // ?��?��?��?��?��
     Slider _hpBar;
     Slider _spBar;
 
@@ -28,9 +29,9 @@ public class InGameUI_S : MonoBehaviour
     TextMeshProUGUI _totalBullet;
     TextMeshProUGUI _currentMonster;
 
-    // 조준선
+    // 조�???��
     GameObject _crossHair;
-
+    GameObject _exitMenu;
 
     void Start()
     {
@@ -38,22 +39,24 @@ public class InGameUI_S : MonoBehaviour
        _status = _player.GetComponent<PlayerStatus_S>();
        //_weaponManager = _player.GetComponent<WeaponManager>();
 
-       // 시간 표시할 곳
+       // ?���? ?��?��?�� �?
        _timeSecond = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
-       // Hp, Sp 표시할 곳
+       // Hp, Sp ?��?��?�� �?
        _hpBar = transform.GetChild(1).GetComponent<Slider>();
        _spBar = transform.GetChild(2).GetComponent<Slider>();
 
-       // 무기 정보 표시할 곳
+       // 무기 ?���? ?��?��?�� �?
        _weaponIcon = transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
        _currentBullet = transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
        _totalBullet = transform.GetChild(3).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
 
-       // 조준선 UI
+       // 조�???�� UI
        _crossHair = transform.GetChild(5).gameObject;
 
-       // 현재 유령의 수
+       // ?��?�� ?��?��?�� ?��
        _currentMonster = transform.GetChild(4).GetChild(1).GetComponent<TextMeshProUGUI>();
+
+       _exitMenu = transform.GetChild(6).gameObject;
     }
 
     void Update()
@@ -65,6 +68,7 @@ public class InGameUI_S : MonoBehaviour
             DisplayHp();
             DisplaySp();
             DisplayWeaponInfo();
+            DisplayExitMenu();
         }
         else
         {
@@ -74,7 +78,7 @@ public class InGameUI_S : MonoBehaviour
 
     public void DisplayLivingTime()
     {
-        // 체력이 0이면 멈추기
+        // 체력?�� 0?���? 멈추�?
 
         _timer += Time.deltaTime;
         _timeSecond.text = ((int)_timer).ToString();
@@ -93,8 +97,8 @@ public class InGameUI_S : MonoBehaviour
     public void DisplayWeaponInfo()
     {
         string weaponTag = _weaponManager._selectedWeapon.tag;
-        Debug.Log("현재무기: " + weaponTag);
-        if (weaponTag == "Gun") // 원거리 무기일 경우
+        Debug.Log("?��?��무기: " + weaponTag);
+        if (weaponTag == "Gun") // ?��거리 무기?�� 경우
         {
            if(!_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(true);
            if(!_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(true);
@@ -103,7 +107,7 @@ public class InGameUI_S : MonoBehaviour
            DisplayWeaponIcon(1);
            DisplayGunInfo();
         }
-        else // 근접 무기일 경우
+        else // 근접 무기?�� 경우
         {
            DisplayWeaponIcon(GetWeaponIconIndex(_weaponManager._selectedWeapon.name));
            if (_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(false);
@@ -115,8 +119,8 @@ public class InGameUI_S : MonoBehaviour
 
     public void DisplayGunInfo()
     {
-        _currentBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetCurrentBullet().ToString();    // 현재 장정된 탄약
-        _totalBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetTotalBullet().ToString();         // 전체 탄약
+        _currentBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetCurrentBullet().ToString();    // ?��?�� ?��?��?�� ?��?��
+        _totalBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetTotalBullet().ToString();         // ?���? ?��?��
     }
 
     public void DisplayWeaponIcon(int iconIndex)
@@ -140,5 +144,27 @@ public class InGameUI_S : MonoBehaviour
                         .FirstOrDefault(p => p.element.name == weaponName)
                         ?.index ?? 0;
         return index;
+    public void DisplayExitMenu()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape) && _exitMenu.activeSelf == false)
+        {
+            _exitMenu.SetActive(true);
+        }
+        else if(Input.GetKeyDown(KeyCode.Escape) && _exitMenu.activeSelf == true)
+        {
+            _exitMenu.SetActive(false);
+        }
+        if(Input.GetKeyDown(KeyCode.Return) && _exitMenu.activeSelf == true)
+        {
+            SceneManager.LoadScene("TitleScene");
+        }
+    }
+    public void ExitToTitle()
+    {
+        SceneManager.LoadScene("TitleScene");
+    }
+    public void HideExitMenu()
+    {
+        _exitMenu.SetActive(false);
     }
 }
