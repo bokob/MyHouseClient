@@ -47,6 +47,7 @@ public class WeaponManager : MonoBehaviour
             {
                 _selectedWeaponIdx = 1;
                 _playerStatus._weaponHolder = _playerStatus._weaponHolders[1];
+                _playerStatus._weaponManager = _playerStatus._weaponHolder.GetComponent<WeaponManager>();
                 _selectedWeapon = transform.GetChild(1).gameObject;
                 GetComponent<PhotonView>().RPC("SelectWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx); // 무기 초기화 시점에도 모든 클라이언트에 동기화
             }
@@ -57,6 +58,7 @@ public class WeaponManager : MonoBehaviour
         {
             _selectedWeaponIdx = 0;
             _playerStatus._weaponHolder = _playerStatus._weaponHolders[0];
+            _playerStatus._weaponManager = _playerStatus._weaponHolder.GetComponent<WeaponManager>();
             _selectedWeapon = transform.GetChild(0).gameObject;
             GetComponent<PhotonView>().RPC("SelectWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx); // 무기 초기화 시점에도 모든 클라이언트에 동기화
         }

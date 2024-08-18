@@ -20,9 +20,10 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI _playerCount;
 
     // 아이템 소환 관련
-    public GameObject[] _itemPrefabs;
+    public GameObject _itemCylinder;
     public float _itemSpawnRange = 20.0f;
     public Vector3 spawnCenter;
+    public Transform _itemSpawnTestPosition;
 
     private void Awake()
     {
@@ -106,7 +107,7 @@ public class GameManager : MonoBehaviour
     void SpawnItem()
     {
         Vector3 randomPosition = GetRandomPosition(spawnCenter, _itemSpawnRange);
-        PhotonNetwork.Instantiate(_itemPrefabs[UnityEngine.Random.Range(0, _itemPrefabs.Length)].name, randomPosition, Quaternion.identity);
+        PhotonNetwork.Instantiate(_itemCylinder.name, _itemSpawnTestPosition.position, Quaternion.identity);
     }
 
     Vector3 GetRandomPosition(Vector3 center, float range)

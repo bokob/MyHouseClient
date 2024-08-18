@@ -31,7 +31,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
 
     public Transform _weaponHolder;
     public Transform[] _weaponHolders;
-    WeaponManager _weaponManager_S;
+    public WeaponManager _weaponManager;
     public GameObject nearMeleeObject;
     private string meleeItemName;
     public bool _isPickUp = false;
@@ -109,6 +109,12 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     {
         //if (!IsLocalPlayer) return;
         //Dead();
+
+        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null && _weaponManager._selectedWeapon.tag != "Gun")
+        {
+            _isPickUp = true;
+            GetMeleeItem();
+        }
     }
 
     /// <summary>
@@ -317,7 +323,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     public void GetMeleeItem()
     {
         meleeItemName = nearMeleeObject.name;
-        _weaponManager_S.PickUpWeapon(meleeItemName);
+        _weaponManager.PickUpWeapon(meleeItemName);
         //Destroy(nearMeleeObject);
     }
 

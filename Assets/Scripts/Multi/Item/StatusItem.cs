@@ -48,7 +48,6 @@ public class StatusItem : Item
 
         if (_itemCylinder == null) Debug.LogWarning("아이템 실린더 널");
 
-
         if (!_itemCylinder._usedItem)
             TakeStatusItem(other);
     }
