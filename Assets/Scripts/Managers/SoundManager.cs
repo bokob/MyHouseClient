@@ -1,19 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SoundManager : MonoBehaviour
 {
-    // 0 == MainMenu bgm / 1 == Game Scene bgm
     public static SoundManager instance = null;
     public AudioSource bgmSource;
-    public AudioSource sfxSource;
     public AudioClip[] bgmClips;
-    public AudioClip[] sfxClips;
 
-    void Awake() 
+    void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
@@ -22,32 +20,55 @@ public class SoundManager : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
-    public void PlayBGM(int index)
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (index < bgmClips.Length)
+        StopBGM(scene, mode);
+        PlayBGM();
+    }
+
+    public void PlayBGM()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+
+        if (sceneName == "TitleScene")
         {
-            bgmSource.clip = bgmClips[index];
+            bgmSource.clip = bgmClips[0];
+        }
+        else if (sceneName == "SinglePlayScene")
+        {
+            bgmSource.clip = bgmClips[1];
+        }
+        else if (sceneName == "MultiPlayScene")
+        {
+            bgmSource.clip = bgmClips[2];
+        }
+
+        if (bgmSource.clip != null)
+        {
             bgmSource.Play();
             bgmSource.loop = true;
         }
     }
-    public void StopBGM()
-    {
-        bgmSource.Stop();
-    }
 
-    public void PlaySFX(int index)
+    public void StopBGM(Scene scene, LoadSceneMode mode)
     {
-        if (index < sfxClips.Length)
+        if (bgmSource != null && bgmSource.isPlaying)
         {
-            sfxSource.PlayOneShot(sfxClips[index]);
+            bgmSource.Stop();
         }
     }
 
     public void SetVolume(float volume)
     {
         bgmSource.volume = volume;
-        sfxSource.volume = volume;
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }
