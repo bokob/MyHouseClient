@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class InGameUI_S : MonoBehaviour
@@ -10,13 +11,13 @@ public class InGameUI_S : MonoBehaviour
     PlayerStatus_S _status;
     public WeaponManager_S _weaponManager;
 
-    //UI ë³€ìˆ˜ë“¤
+    //UI ë³??ˆ˜?“¤
 
-    // ì‹œê°„
+    // ?‹œê°?
     TextMeshProUGUI _timeSecond;
     float _timer;
 
-    // ìŠ¤í…Œì´í„°ìŠ¤
+    // ?Š¤?…Œ?´?„°?Š¤
     Slider _hpBar;
     Slider _spBar;
 
@@ -27,9 +28,9 @@ public class InGameUI_S : MonoBehaviour
     TextMeshProUGUI _totalBullet;
     TextMeshProUGUI _currentMonster;
 
-    // ì¡°ì¤€ì„ 
+    // ì¡°ì???„ 
     GameObject _crossHair;
-
+    GameObject _exitMenu;
 
     void Start()
     {
@@ -37,22 +38,24 @@ public class InGameUI_S : MonoBehaviour
        _status = _player.GetComponent<PlayerStatus_S>();
        //_weaponManager = _player.GetComponent<WeaponManager>();
 
-       // ì‹œê°„ í‘œì‹œí•  ê³³
+       // ?‹œê°? ?‘œ?‹œ?•  ê³?
        _timeSecond = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
-       // Hp, Sp í‘œì‹œí•  ê³³
+       // Hp, Sp ?‘œ?‹œ?•  ê³?
        _hpBar = transform.GetChild(1).GetComponent<Slider>();
        _spBar = transform.GetChild(2).GetComponent<Slider>();
 
-       // ë¬´ê¸° ì •ë³´ í‘œì‹œí•  ê³³
+       // ë¬´ê¸° ? •ë³? ?‘œ?‹œ?•  ê³?
        _weaponIcon = transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
        _currentBullet = transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
        _totalBullet = transform.GetChild(3).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
 
-       // ì¡°ì¤€ì„  UI
+       // ì¡°ì???„  UI
        _crossHair = transform.GetChild(5).gameObject;
 
-       // í˜„ì¬ ìœ ë ¹ì˜ ìˆ˜
+       // ?˜„?¬ ?œ ? ¹?˜ ?ˆ˜
        _currentMonster = transform.GetChild(4).GetChild(1).GetComponent<TextMeshProUGUI>();
+
+       _exitMenu = transform.GetChild(6).gameObject;
     }
 
     void Update()
@@ -64,6 +67,7 @@ public class InGameUI_S : MonoBehaviour
             DisplayHp();
             DisplaySp();
             DisplayWeaponInfo();
+            DisplayExitMenu();
         }
         else
         {
@@ -73,7 +77,7 @@ public class InGameUI_S : MonoBehaviour
 
     public void DisplayLivingTime()
     {
-        // ì²´ë ¥ì´ 0ì´ë©´ ë©ˆì¶”ê¸°
+        // ì²´ë ¥?´ 0?´ë©? ë©ˆì¶”ê¸?
 
         _timer += Time.deltaTime;
         _timeSecond.text = ((int)_timer).ToString();
@@ -92,8 +96,8 @@ public class InGameUI_S : MonoBehaviour
     public void DisplayWeaponInfo()
     {
         string weaponTag = _weaponManager._selectedWeapon.tag;
-        Debug.Log("í˜„ì¬ë¬´ê¸°: " + weaponTag);
-        if (weaponTag == "Gun") // ì›ê±°ë¦¬ ë¬´ê¸°ì¼ ê²½ìš°
+        Debug.Log("?˜„?¬ë¬´ê¸°: " + weaponTag);
+        if (weaponTag == "Gun") // ?›ê±°ë¦¬ ë¬´ê¸°?¼ ê²½ìš°
         {
            if(!_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(true);
            if(!_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(true);
@@ -102,7 +106,7 @@ public class InGameUI_S : MonoBehaviour
            DisplayWeaponIcon(1);
             DisplayGunInfo();
         }
-        else // ê·¼ì ‘ ë¬´ê¸°ì¼ ê²½ìš°
+        else // ê·¼ì ‘ ë¬´ê¸°?¼ ê²½ìš°
         {
            DisplayWeaponIcon(0);
            if (_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(false);
@@ -113,8 +117,8 @@ public class InGameUI_S : MonoBehaviour
 
     public void DisplayGunInfo()
     {
-        _currentBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetCurrentBullet().ToString();    // í˜„ì¬ ì¥ì •ëœ íƒ„ì•½
-        _totalBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetTotalBullet().ToString();         // ì „ì²´ íƒ„ì•½
+        _currentBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetCurrentBullet().ToString();    // ?˜„?¬ ?¥? •?œ ?ƒ„?•½
+        _totalBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetTotalBullet().ToString();         // ? „ì²? ?ƒ„?•½
     }
 
     public void DisplayWeaponIcon(int iconIndex)
@@ -129,5 +133,28 @@ public class InGameUI_S : MonoBehaviour
     public void DisplayOut()
     {
         if(_status.Hp <= 0) gameObject.SetActive(false);
+    }
+    public void DisplayExitMenu()
+    {
+        if(Input.GetKeyDown(KeyCode.Escape) && _exitMenu.activeSelf == false)
+        {
+            _exitMenu.SetActive(true);
+        }
+        else if(Input.GetKeyDown(KeyCode.Escape) && _exitMenu.activeSelf == true)
+        {
+            _exitMenu.SetActive(false);
+        }
+        if(Input.GetKeyDown(KeyCode.Return) && _exitMenu.activeSelf == true)
+        {
+            SceneManager.LoadScene("TitleScene");
+        }
+    }
+    public void ExitToTitle()
+    {
+        SceneManager.LoadScene("TitleScene");
+    }
+    public void HideExitMenu()
+    {
+        _exitMenu.SetActive(false);
     }
 }
