@@ -81,7 +81,8 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         {
             _animator.SetTrigger("setDie");
             Role = Define.Role.None; // 시체
-            StartCoroutine(DeadSinkCoroutine());
+            // StartCoroutine(DeadSinkCoroutine());
+            StartCoroutine(TombCoroutine());
         }
     }
 
@@ -105,6 +106,13 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     {
         //if (!IsLocalPlayer) return;
         //Dead();
+        if(Input.GetKeyDown(KeyCode.Y))
+        {
+            _animator.SetTrigger("setDie");
+            Role = Define.Role.None; // 시체
+            // StartCoroutine(DeadSinkCoroutine());
+            StartCoroutine(TombCoroutine());
+        }
     }
 
     /// <summary>
@@ -255,24 +263,40 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     /// 시체 바닥으로 가라앉기
     /// </summary>
     /// <returns></returns>
-    IEnumerator DeadSinkCoroutine()
+    // IEnumerator DeadSinkCoroutine()
+    // {
+    //     GetComponent<CharacterController>().enabled = false;
+    //     GetComponent<PlayerInput>().enabled = false;
+    //     yield return new WaitForSeconds(3f);
+    //     while (transform.position.y > -5f)
+    //     {
+    //         transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
+    //         yield return null;
+    //     }
+    //     // Destroy(gameObject);
+
+    //     if(GetComponent<PhotonView>().IsMine)
+    //     {
+    //         Application.Quit();
+    //     }
+
+    //     //Application.Quit(); // 게임 종료
+    //     Debug.Log("게임 강제 종료");
+    // }
+
+    IEnumerator TombCoroutine()
     {
         GetComponent<CharacterController>().enabled = false;
         GetComponent<PlayerInput>().enabled = false;
+        yield return new WaitForSeconds(2f);
+        transform.GetChild(0).gameObject.SetActive(false); // 강도 비활성화
+        transform.GetChild(1).gameObject.SetActive(false);  // 집주인 비활성화
+        transform.GetChild(3).gameObject.SetActive(true); // Tombstone Active
         yield return new WaitForSeconds(3f);
-        while (transform.position.y > -5f)
-        {
-            transform.Translate(Vector3.down * 0.1f * Time.deltaTime);
-            yield return null;
-        }
-        // Destroy(gameObject);
-
         if(GetComponent<PhotonView>().IsMine)
         {
             Application.Quit();
         }
-
-        //Application.Quit(); // 게임 종료
         Debug.Log("게임 강제 종료");
     }
 
