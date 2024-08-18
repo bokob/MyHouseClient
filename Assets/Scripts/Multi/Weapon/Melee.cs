@@ -178,7 +178,6 @@ public class Melee : Weapon
         {
             otherPlayerStatus.gameObject.GetComponent<PhotonView>().RPC("TakedDamage", RpcTarget.All, base.Attack);
             otherPlayerStatus.gameObject.GetComponent<PhotonView>().RPC("HitChangeMaterials", RpcTarget.All);
-
         }
     }
 

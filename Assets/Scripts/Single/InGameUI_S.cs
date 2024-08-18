@@ -12,13 +12,14 @@ public class InGameUI_S : MonoBehaviour
     PlayerStatus_S _status;
     public WeaponManager_S _weaponManager;
 
-    //UI �??��?��
+    bool _isDead = false;
 
-    // ?���?
+    #region UI 관련
+    // 생존시간
     TextMeshProUGUI _timeSecond;
     float _timer;
 
-    // ?��?��?��?��?��
+    // Hp, Sp
     Slider _hpBar;
     Slider _spBar;
 
@@ -29,76 +30,110 @@ public class InGameUI_S : MonoBehaviour
     TextMeshProUGUI _totalBullet;
     TextMeshProUGUI _currentMonster;
 
-    // 조�???��
+    // 조준점
     GameObject _crossHair;
+
+    // 종료 메뉴
     GameObject _exitMenu;
+
+    [Header("EndUI")]
+    int score = 0;
+    [SerializeField] float _endTime = 6f;
+    [SerializeField] float _fadeDuration = 4.0f;
+    [SerializeField] GameObject _endUI;
+    [SerializeField] Image _fadeImageInPanel;
+    [SerializeField] TextMeshProUGUI _killGhostText;
+    [SerializeField] TextMeshProUGUI _quitText;
+
+    #endregion
+
 
     void Start()
     {
        _player = GameObject.Find("Player");
        _status = _player.GetComponent<PlayerStatus_S>();
-       //_weaponManager = _player.GetComponent<WeaponManager>();
 
-       // ?���? ?��?��?�� �?
-       _timeSecond = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
-       // Hp, Sp ?��?��?�� �?
-       _hpBar = transform.GetChild(1).GetComponent<Slider>();
-       _spBar = transform.GetChild(2).GetComponent<Slider>();
+        InitUI();
+    }
 
-       // 무기 ?���? ?��?��?�� �?
-       _weaponIcon = transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
-       _currentBullet = transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
-       _totalBullet = transform.GetChild(3).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
+    void InitUI()
+    {
+        // 생존 시간
+        _timeSecond = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
 
-       // 조�???�� UI
-       _crossHair = transform.GetChild(5).gameObject;
+        // Hp, Sp 바
+        _hpBar = transform.GetChild(1).GetComponent<Slider>();
+        _spBar = transform.GetChild(2).GetComponent<Slider>();
 
-       // ?��?�� ?��?��?�� ?��
-       _currentMonster = transform.GetChild(4).GetChild(1).GetComponent<TextMeshProUGUI>();
+        // 무기 정보 표시
+        _weaponIcon = transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
+        _currentBullet = transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
+        _totalBullet = transform.GetChild(3).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
+        
+        // 조준점
+        _crossHair = transform.GetChild(5).gameObject;
 
-       _exitMenu = transform.GetChild(6).gameObject;
+        // 몬스터 수
+        _currentMonster = transform.GetChild(4).GetChild(1).GetComponent<TextMeshProUGUI>();
+        
+        // 종료 메뉴
+        _exitMenu = transform.GetChild(6).gameObject;
     }
 
     void Update()
     {
-        DisplayMonsterCount();
-        if (_status.Hp > 0)
+        AliveUI();
+        JustNowDeadUI();
+        CountQuitGame();
+    }
+
+    void AliveUI()
+    {
+        if (_status.Hp > 0 && !_isDead)
         {
+            DisplayMonsterCount();
+            DisplayExitMenu();
             DisplayLivingTime();
             DisplayHp();
             DisplaySp();
             DisplayWeaponInfo();
-            DisplayExitMenu();
         }
-        else
+    }
+
+    void JustNowDeadUI()
+    {
+        if (_status.Hp <= 0 && !_isDead)
         {
-            DisplayOut();
+            _isDead = true;
+            DisableUI();
+            StartCoroutine(ShowDeadScreen());
+        }
+    }
+
+    void CountQuitGame()
+    {
+        if (_status.Hp <= 0 && _isDead)
+        {
+            _endTime -= Time.deltaTime;
+            _quitText.text = Mathf.FloorToInt(_endTime) + " seconds to quit.";
         }
     }
 
     public void DisplayLivingTime()
     {
-        // 체력?�� 0?���? 멈추�?
-
         _timer += Time.deltaTime;
         _timeSecond.text = ((int)_timer).ToString();
     }
 
-    public void DisplayHp()
-    {
-        _hpBar.value = _status.Hp / 100;
-    }
+    public void DisplayHp() => _hpBar.value = _status.Hp / 100;
 
-    public void DisplaySp()
-    {
-        _spBar.value = _status.Sp / 100;
-    }
+    public void DisplaySp() => _spBar.value = _status.Sp / 100;
 
     public void DisplayWeaponInfo()
     {
         string weaponTag = _weaponManager._selectedWeapon.tag;
-        Debug.Log("?��?��무기: " + weaponTag);
-        if (weaponTag == "Gun") // ?��거리 무기?�� 경우
+        Debug.Log("현재 무기: " + weaponTag);
+        if (weaponTag == "Gun") // 원거리 무기인 경우
         {
            if(!_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(true);
            if(!_totalBullet.gameObject.activeSelf) _totalBullet.gameObject.SetActive(true);
@@ -107,7 +142,7 @@ public class InGameUI_S : MonoBehaviour
            DisplayWeaponIcon(1);
            DisplayGunInfo();
         }
-        else // 근접 무기?�� 경우
+        else // 근접 무기인 경우
         {
            DisplayWeaponIcon(GetWeaponIconIndex(_weaponManager._selectedWeapon.name));
            if (_currentBullet.gameObject.activeSelf) _currentBullet.gameObject.SetActive(false);
@@ -123,18 +158,19 @@ public class InGameUI_S : MonoBehaviour
         _totalBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun_S>().GetTotalBullet().ToString();         // ?���? ?��?��
     }
 
-    public void DisplayWeaponIcon(int iconIndex)
-    {
-        _weaponIcon.texture = _weaponImages[iconIndex];
-    }
+    public void DisplayWeaponIcon(int iconIndex) => _weaponIcon.texture = _weaponImages[iconIndex];
 
-    public void DisplayMonsterCount()
+    public void DisplayMonsterCount() => _currentMonster.text = GameManager_S._instance._monsterCount.ToString();
+    public void DisableUI()
     {
-        _currentMonster.text = GameManager_S._instance._monsterCount.ToString();
-    }
-    public void DisplayOut()
-    {
-        if(_status.Hp <= 0) gameObject.SetActive(false);
+        if (_status.Hp <= 0)
+        {
+            for(int i=0; i<transform.childCount; i++)
+            {
+                if (i == transform.childCount - 1) break;
+                transform.GetChild(i).gameObject.SetActive(false);
+            }
+        }
     }
 
     // 무기 이름으로 무기 아이콘 구하기
@@ -144,27 +180,43 @@ public class InGameUI_S : MonoBehaviour
                         .FirstOrDefault(p => p.element.name == weaponName)
                         ?.index ?? 0;
         return index;
+    }
+
     public void DisplayExitMenu()
     {
-        if(Input.GetKeyDown(KeyCode.Escape) && _exitMenu.activeSelf == false)
-        {
-            _exitMenu.SetActive(true);
-        }
-        else if(Input.GetKeyDown(KeyCode.Escape) && _exitMenu.activeSelf == true)
+        if (Input.GetKeyDown(KeyCode.Escape) && _exitMenu.activeSelf)
         {
             _exitMenu.SetActive(false);
         }
-        if(Input.GetKeyDown(KeyCode.Return) && _exitMenu.activeSelf == true)
+        else if (Input.GetKeyDown(KeyCode.Escape) && !_exitMenu.activeSelf)
         {
-            SceneManager.LoadScene("TitleScene");
+            _exitMenu.SetActive(true);
         }
     }
-    public void ExitToTitle()
+
+    // 게임 종료 스크린 보여주기
+    IEnumerator ShowDeadScreen()
     {
-        SceneManager.LoadScene("TitleScene");
+        _endUI.SetActive(true);
+        score = GameManager_S._instance._score; // 점수 지정
+        _killGhostText.text = "Killed Ghost : " + score.ToString();
+
+        float elapsedTime = 1.0f;
+        Color color = _fadeImageInPanel.color;
+        color.a = 0.0f; // 투명
+
+        // 알파값 0에서 1로 증가
+        while (elapsedTime < _fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            color.a = Mathf.Lerp(0.0f, 1.0f, elapsedTime / _fadeDuration);
+            _fadeImageInPanel.color = color;
+            yield return null;
+        }
+
+        color.a = 1.0f; // 불투명
+        _fadeImageInPanel.color = color;
     }
-    public void HideExitMenu()
-    {
-        _exitMenu.SetActive(false);
-    }
+
+    public void ExitToTitle() =>  SceneManager.LoadScene("TitleScene");
 }

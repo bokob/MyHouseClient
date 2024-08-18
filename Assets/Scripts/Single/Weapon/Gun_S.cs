@@ -45,7 +45,7 @@ public class Gun_S : Weapon
     PlayerInputs _playerInputs;
     Animator _animator;
     public RigBuilder _rigBuilder; // IK 활성/비활성화를 조절하기 위해 접근
-    CameraController_S _cameraController;
+    CameraController _cameraController;
     public TextMeshProUGUI _bulletCount;
     public TextMeshProUGUI _totalbulletCount;
     #endregion
@@ -62,7 +62,7 @@ public class Gun_S : Weapon
         
         _animator = base.Master.GetChild(0).gameObject.GetComponent<Animator>();
         //rigBuilder = transform.root.GetChild(0).GetComponent<RigBuilder>();
-        _cameraController = Camera.main.GetComponent<CameraController_S>();
+        _cameraController = Camera.main.GetComponent<CameraController>();
 
         Attack = 50;
 

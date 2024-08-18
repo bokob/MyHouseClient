@@ -12,11 +12,11 @@ namespace SlimUI.ModernMenu{
 		}
 
 		public virtual void Awake(){
-			OnSkinUI();
+			//OnSkinUI();
 		}
 
 		public virtual void Update(){
-			OnSkinUI();
+			//OnSkinUI();
 		}
 	}
 }

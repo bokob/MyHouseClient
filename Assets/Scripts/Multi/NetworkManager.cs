@@ -38,7 +38,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     List<Player> _cachePlayerList = new List<Player>(); // 방 정보 모아둘 리스트
     public GameObject _startBtn;
 
-    // 채팅 관련
+    [Header("채팅")]
     public GameObject _chatListUI;
     public GameObject _chatListItemUI;
     public TMP_InputField _chatInput; // 채팅 입력창
@@ -306,7 +306,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             if (i < _cachePlayerList.Count)
             {
                 _roomPlayers[i].SetActive(true);
-                _roomPlayers[i].transform.GetChild(0).GetComponent<TextMeshPro>().text = PhotonNetwork.PlayerList[i].NickName;
+                _roomPlayers[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = PhotonNetwork.PlayerList[i].NickName;
                 Debug.Log(_cachePlayerList[i].NickName + "의 UI 활성화");
             }
             else
@@ -430,6 +430,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         GameObject chatManager = Instantiate(_chatListItemUI, _chatListUI.transform);
         chatManager.GetComponent<ChatMessage>().SetText(msg);
+        _chatListUI.transform.parent.parent.GetComponent<ScrollRect>().verticalNormalizedPosition = 0f; // 스크롤 바 최하단으로 설정 (자동 스크롤)
     }
     #endregion
 

@@ -117,7 +117,7 @@ namespace SlimUI.ModernMenu{
 			firstMenu.SetActive(true);
 			mainMenu.SetActive(true);
 
-			SetThemeColors();
+			//SetThemeColors();
 		}
 
         /// <summary>

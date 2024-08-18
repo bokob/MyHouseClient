@@ -20,14 +20,6 @@ public class PlayerStatus_S : MonoBehaviour
     List<Renderer> _renderers;
     #endregion
 
-    [Header("EndUI")]
-    public int score = 0;
-    public float endTime = 6f;
-    public float fadeDuration = 4.0f;
-    public GameObject endUI;
-    public Image fadeImage;
-    public TextMeshProUGUI endText;
-    public TextMeshProUGUI quitText;
     bool _isDead = false;
     public bool _isPickUp = false;
 
@@ -39,7 +31,6 @@ public class PlayerStatus_S : MonoBehaviour
     {
         _animator = transform.GetChild(0).gameObject.GetComponent<Animator>();
         InitRole();
-        endUI.SetActive(false);
 
         _weaponManager_S = transform.root.GetComponentInChildren<WeaponManager_S>();
 
@@ -59,12 +50,6 @@ public class PlayerStatus_S : MonoBehaviour
 
     void Update()
     {
-        if(_isDead)
-        {
-            endTime -= Time.deltaTime;
-            quitText.text = Mathf.FloorToInt(endTime) + " seconds to quit.";
-        }
-
         if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null && _weaponManager_S._selectedWeapon.tag != "Gun")
         {
             _isPickUp = true;
@@ -204,12 +189,6 @@ public class PlayerStatus_S : MonoBehaviour
             Role = Define.Role.None; // 시체
             _animator.SetTrigger("setDie");
             StartCoroutine(DeadSinkCoroutine());
-
-            // 게임 종료 UI 나타남
-            endUI.SetActive(true);
-            score = GameManager_S._instance._score;
-            StartCoroutine(FadeInRoutine());
-            endText.text = "Killed Ghost : " + score.ToString();
         }
     }
 
@@ -284,24 +263,5 @@ public class PlayerStatus_S : MonoBehaviour
     {
         if (Role != Define.Role.Houseowner) return;
         _animator.SetBool("isHoldGun", isHoldGun);
-    }
-
-    // 게임 ????? ????? ????????? ??????????? ?????
-    private IEnumerator FadeInRoutine()
-    {
-        float elapsedTime = 1.0f;
-        Color color = fadeImage.color;
-        color.a = 0.0f; // ?????? ?????? ?? (????????? ?????)
-
-        while (elapsedTime < fadeDuration)
-        {
-            elapsedTime += Time.deltaTime;
-            color.a = Mathf.Lerp(0.0f, 1.0f, elapsedTime / fadeDuration); // ??파 값을 1??서 0??로 ??서???????
-            fadeImage.color = color;
-            yield return null;
-        }
-
-        color.a = 1.0f; // 최종 ?????? ?? (????????? 불투??)
-        fadeImage.color = color;
     }
 }

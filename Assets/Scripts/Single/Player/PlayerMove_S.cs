@@ -43,7 +43,7 @@ public class PlayerMove_S : MonoBehaviour
     PlayerInput _playerInput;
 #endif
 
-    [SerializeField] CameraController_S _mainCamera;
+    [SerializeField] CameraController _mainCamera;
 
     // 애니메이션 관련
     Animator _animator;

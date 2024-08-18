@@ -12222,7 +12222,6 @@ Transform:
   - {fileID: 7590700388980646656}
   - {fileID: 5992478000958616307}
   - {fileID: 2681211414610034083}
-  - {fileID: 2874127526784637811}
   m_Father: {fileID: 92126774998445019}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &3122337412778112179
@@ -13434,16 +13433,8 @@ MonoBehaviour:
   _cameraAngleOverride: 0
   _lockCameraPosition: 0
   View: 0
-  _notOptionalRenderring:
-    serializedVersion: 2
-    m_Bits: 2048
   _input: {fileID: 339527213678310029}
   _sensitivity: 1
-  mainCamera: {fileID: 2032695330483795685}
-  player: {fileID: 3553760118849809345}
-  rayDistance: 100
-  raysPerAxis: 10
-  maxRenderDistance: 10
 --- !u!1 &4623513775821022771
 GameObject:
   m_ObjectHideFlags: 0

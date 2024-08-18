@@ -115,12 +115,13 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         {
             _isPickUp = true;
             GetMeleeItem();
-        if(Input.GetKeyDown(KeyCode.Y))
-        {
-            _animator.SetTrigger("setDie");
-            Role = Define.Role.None; // ��ü
-            // StartCoroutine(DeadSinkCoroutine());
-            StartCoroutine(TombCoroutine());
+            if (Input.GetKeyDown(KeyCode.Y))
+            {
+                _animator.SetTrigger("setDie");
+                Role = Define.Role.None; // ��ü
+                                         // StartCoroutine(DeadSinkCoroutine());
+                StartCoroutine(TombCoroutine());
+            }
         }
     }
 
@@ -137,7 +138,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         Debug.Log(gameObject.name + "(��)�� " + damage + " ��ŭ ���ظ� �Ծ���!");
         Debug.Log("���� ü��: " + Hp);
 
-        if(Hp <= 0)
+        if (Hp <= 0)
         {
             Player killer = info.Sender;
 
@@ -302,7 +303,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         transform.GetChild(1).gameObject.SetActive(false);  // ������ ��Ȱ��ȭ
         transform.GetChild(3).gameObject.SetActive(true); // Tombstone Active
         yield return new WaitForSeconds(3f);
-        if(GetComponent<PhotonView>().IsMine)
+        if (GetComponent<PhotonView>().IsMine)
         {
             Application.Quit();
         }
