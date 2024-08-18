@@ -19,7 +19,7 @@ public class ItemCylinder_S : MonoBehaviour
     [Tooltip("아이템 실린더에서 관리할 아이템 관련")]
     public Define.Item _spawnItemType = Define.Item.None;
     public GameObject _spawnItemObject;
-    public Item_S _spawnItem;
+    public Item _spawnItem;
 
     void Start()
     {
@@ -35,11 +35,11 @@ public class ItemCylinder_S : MonoBehaviour
         _spawnItemObject = spawnItemObjectParent.transform.GetChild(childIdx).gameObject;
 
         // 스크립트 보유하고 있지 않으면, 스크립트 추가
-        if (_spawnItemType == Define.Item.Status && _spawnItemObject.GetComponent<StatusItem_S>() == null)
+        if (_spawnItemType == Define.Item.Status && _spawnItemObject.GetComponent<StatusItem>() == null)
             _spawnItemObject.AddComponent<StatusItem_S>();
-        else if (_spawnItemType == Define.Item.Weapon && _spawnItemObject.GetComponent<WeaponItem_S>() == null)
+        else if (_spawnItemType == Define.Item.Weapon && _spawnItemObject.GetComponent<WeaponItem>() == null)
             _spawnItemObject.AddComponent<WeaponItem_S>();
-        _spawnItem = _spawnItemObject.GetComponent<Item_S>();
+        _spawnItem = _spawnItemObject.GetComponent<Item>();
 
         _spawnItemObject.SetActive(true);
 

@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponItem_S : Item_S
+public class WeaponItem_S : Item
 {
     public Define.WeaponItem _weaponName;
+
+    ItemCylinder_S _itemCylinder; // 아이템 소환될 곳
     void Start()
     {
         _itemType = Define.Item.Weapon;
+        _itemCylinder = transform.parent.parent.GetComponent<ItemCylinder_S>();
         base.InitItem();
     }
 

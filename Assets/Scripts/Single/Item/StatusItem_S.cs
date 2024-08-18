@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StatusItem_S : Item_S
+public class StatusItem_S : Item
 {
     public Define.StatusItem _statusName;
+
+    ItemCylinder_S _itemCylinder; // 아이템 소환될 곳
     void Start()
     {
         _itemType = Define.Item.Status;
+        _itemCylinder = transform.parent.parent.GetComponent<ItemCylinder_S>();
         base.InitItem();
     }
 
