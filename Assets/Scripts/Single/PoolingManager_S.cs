@@ -7,6 +7,8 @@ using UnityEngine.Pool;
 public class PoolingManager_S : MonoBehaviour
 {
     public static PoolingManager_S _instance;
+    public float _rayDistance = 7f;
+    public LayerMask _floorLayerMask;
     
     [SerializeField]
     private GameObject _monsterPrefab;
@@ -63,7 +65,11 @@ public class PoolingManager_S : MonoBehaviour
     private void CreateMonsterAtSpawnPoint(int spawnPointIndex)
     {
         Vector3 randomPosition = _waveSpawnPoints[spawnPointIndex].position + Random.insideUnitSphere * 7f;
-        randomPosition.y = 0; // Fixed position.y value to 0 when creating Ghost.
+
+        if (Physics.Raycast(randomPosition, Vector3.down, out RaycastHit hit, _rayDistance, _floorLayerMask))
+        {
+            randomPosition.y = hit.point.y; // Fixed position.y value to floor.y when creating Ghost.
+        }
 
         Monster monster = Instantiate(_monsterPrefab, randomPosition, Quaternion.identity, _waveSpawnPoints[spawnPointIndex]).GetComponent<Monster>();
         if (monster != null)
