@@ -88,10 +88,10 @@ public class GameManager : MonoBehaviour
         photonView.RPC("SetRole", RpcTarget.AllBuffered, role);
         // ----------------------
 
+        if (PhotonNetwork.IsMasterClient) 
+            photonView.RPC("TransformIntoHouseowner", RpcTarget.AllBuffered);
         if (status.Role == Define.Role.Robber)
             photonView.RPC("TransformIntoRobber", RpcTarget.AllBuffered);
-        else if (status.Role == Define.Role.Houseowner) 
-            photonView.RPC("TransformIntoHouseowner", RpcTarget.AllBuffered);
     }
 
     // 마스터 클라이언트의 죽음을 처리하는 함수
@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // 플레이어의 죽음을 처리하는 함수
+    // 일반 클라이언트가 마스터 클라이언트의 죽음을 처리하는 함수
     public void OnPlayerKilled(Player killedPlayer, Player killer)
     {
         if (killedPlayer == PhotonNetwork.MasterClient) // 살해당한 플레이어가 집주인이면
