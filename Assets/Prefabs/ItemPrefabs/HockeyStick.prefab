@@ -4959,7 +4959,6 @@ GameObject:
   - component: {fileID: 9144411089294723690}
   - component: {fileID: 8507465871051106660}
   - component: {fileID: 6605540208459320215}
-  - component: {fileID: 1737307994458041220}
   m_Layer: 0
   m_Name: HockeyStick
   m_TagString: Untagged
@@ -5033,25 +5032,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 2
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &1737307994458041220
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7749433085433375262}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7737222cd68a9b44e9ed0a3d75db00fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _floatHeight: 0.5
-  _floatSpeed: 1
-  _rotateSpeed: 30
-  _floatScale: 0.1
-  _collider: {fileID: 0}
-  itemType: 0
-  _pickupRange: 0
 --- !u!1001 &7121355627178073723
 PrefabInstance:
   m_ObjectHideFlags: 0
