@@ -21,6 +21,15 @@ public class WeaponManager : MonoBehaviour
     public GameObject _selectedWeapon;
     public bool _isHoldGun;
 
+
+    // 무기 아이템 관련
+    public GameObject nearMeleeObject;
+    public string meleeItemName;
+    public bool _isPickUp = false; // 사거리 내에서 그 무기 주웠는지 안주웠는지 판단
+    public bool _isUsePickUpWeapon = false; // 주운 무기를 사용하고 있는지 판단
+
+
+
     void Awake()
     {
         _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
@@ -28,15 +37,21 @@ public class WeaponManager : MonoBehaviour
         InitRoleWeapon();
     }
 
-    void Start()
-    {
-        //InitRoleWeapon();
-    }
-
     void Update()
     {
         if (GetComponent<PhotonView>().IsMine && !_playerInputs.aim && !_playerInputs.reload) // 조준하지 않고, 장전하지 않을 때 무기 교체 가능
             WeaponSwitching(); // 무기 교체
+
+
+        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null)
+        {
+            _isPickUp = true;
+            meleeItemName = nearMeleeObject.name;
+            PickUpWeapon(meleeItemName);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+            DropWeapon();
     }
 
     public void InitRoleWeapon()
@@ -56,17 +71,21 @@ public class WeaponManager : MonoBehaviour
         // 역할에 따른 첫 무기 설정
         if (_playerStatus.Role == Define.Role.Robber) // 강도
         {
-            _selectedWeaponIdx = 0;
             _playerStatus._weaponHolder = _playerStatus._weaponHolders[0];
             _playerStatus._weaponManager = _playerStatus._weaponHolder.GetComponent<WeaponManager>();
             _selectedWeapon = transform.GetChild(0).gameObject;
-            GetComponent<PhotonView>().RPC("SelectWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx); // 무기 초기화 시점에도 모든 클라이언트에 동기화
+            /* 
+             강도는 무기 초기화 하면 안 됨, 왜냐하면 뒤늦게 접속한 클라이언트 때문에 전부 초기화 됨
+             그렇다고 무기 스위칭을 해당 객체만 하게끔하면, 무기 교체가 안됨
+            */
         }
         Debug.Log("역할에 따른 무기 매니저 초기화 완료");
     }
 
     void WeaponSwitching()
     {
+        if (_playerStatus.Role == Define.Role.Robber && _isUsePickUpWeapon) return;
+
         int previousSelectedWeapon = _selectedWeaponIdx;
 
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
@@ -86,13 +105,14 @@ public class WeaponManager : MonoBehaviour
 
         if (previousSelectedWeapon != _selectedWeaponIdx) // 마우스 휠로 무기 인덱스 바뀌면 교체
         {
-            if (_playerStatus.Role == Define.Role.Robber)
+            if (_playerStatus.Role == Define.Role.Robber && !_isUsePickUpWeapon)
                 _selectedWeaponIdx = 0;
 
             GetComponent<PhotonView>().RPC("SelectWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx); // 모든 플레이어에게 무기 변경 알림
         }
     }
 
+    // 무기 선택(해당 무기 활성화)
     [PunRPC]
     void SelectWeapon(int weaponIndex)
     {
@@ -119,10 +139,9 @@ public class WeaponManager : MonoBehaviour
 
     public void UseSelectedWeapon()
     {
-        // 굳이 Input을 앞에 해준 이유가 역할이 변할 때, _selectedWeapon이 null이 되는 경우를 Update 돌다가 감지하기 때문이다.
-
         if (_selectedWeapon == null) return;
 
+        // 굳이 Input을 앞에 해준 이유가 역할이 변할 때, _selectedWeapon이 null이 되는 경우를 Update 돌다가 감지하기 때문이다.
         if ((Input.GetMouseButton(0) || Input.GetMouseButton(1)) && _selectedWeapon.tag == "Melee")
         {
             _selectedWeapon.GetComponent<Melee>().Use();
@@ -140,9 +159,7 @@ public class WeaponManager : MonoBehaviour
         else if (_selectedWeapon.tag == "Melee")
             _isHoldGun = false;
         else
-        {
             Debug.Log("This weapon has none tag");
-        }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -166,32 +183,8 @@ public class WeaponManager : MonoBehaviour
     public void PickUpWeapon(string meleeName)
     {
         Transform newMelee = transform.Find(meleeName);
-
-        if (_isHoldGun)
-        {
-
-        }
-        else
-        {
-            _selectedWeapon.SetActive(false);
-            _selectedWeapon = newMelee.gameObject;
-            newMelee.gameObject.SetActive(true);
-        }
-
-
-        WeaponData weapon = GameManager._instance.GetWeaponStatusByName(meleeName);
-        if (weapon != null)
-        {
-            Debug.Log($"Picked up {weapon.Name}. Attack: {weapon.Attack}, Rate: {weapon.Rate}");
-            Melee _currentWeapon = _selectedWeapon.GetComponent<Melee>();
-            _currentWeapon.Attack = weapon.Attack;
-            _currentWeapon.Rate = weapon.Rate;
-            _currentWeapon.Range = weapon.Range;
-        }
-        else
-        {
-            Debug.LogWarning("Weapon not found!");
-        }
+        _selectedWeaponIdx = newMelee.GetSiblingIndex(); // 교체할 무기가 몇 번째 자식인지
+        GetComponent<PhotonView>().RPC("SelectWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx);
     }
 
     /// <summary>
@@ -199,23 +192,17 @@ public class WeaponManager : MonoBehaviour
     /// </summary>
     void DropWeapon()
     {
-        GameObject droppedSelectedWeapon = Instantiate(_selectedWeapon, _selectedWeapon.transform.position, _selectedWeapon.transform.rotation); // instatntiation.
-        Destroy(droppedSelectedWeapon.GetComponent<Melee>()); // Melee_S script delete for error prevention. 
+        if (_selectedWeapon.tag == "Gun") return;
+        GameObject droppedSelectedWeapon = PhotonNetwork.Instantiate(_selectedWeapon.name, _selectedWeapon.transform.position, _selectedWeapon.transform.rotation); // instatntiation.
+        Destroy(droppedSelectedWeapon.GetComponent<Melee>()); // Melee script delete for error prevention. 
 
         droppedSelectedWeapon.transform.localScale = droppedSelectedWeapon.transform.localScale * 1.7f; // size up.
 
         StartCoroutine(DropAndBounce(droppedSelectedWeapon));
 
-        _selectedWeapon.SetActive(false);
-        _selectedWeapon = transform.Find("Knife").gameObject;
-        _selectedWeapon.SetActive(true);
-        WeaponData weapon = GameManager_S._instance.GetWeaponStatusByName("Knife");
-        Melee _currentWeapon = _selectedWeapon.GetComponent<Melee>();
-        _currentWeapon.Attack = weapon.Attack;
-        _currentWeapon.Rate = weapon.Rate;
-        _currentWeapon.Range = weapon.Range;
+        _selectedWeaponIdx = 0;
+        GetComponent<PhotonView>().RPC("SelectWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx); // 모든 플레이어에게 무기 변경 알림
     }
-
 
     IEnumerator DropAndBounce(GameObject droppedSelectedWeapon)
     {

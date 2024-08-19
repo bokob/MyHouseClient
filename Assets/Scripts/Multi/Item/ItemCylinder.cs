@@ -66,10 +66,12 @@ public class ItemCylinder : MonoBehaviour
         }
     }
 
+    [PunRPC]
     public void HideSpawnItem()
     {
         _usedItem = true;
-        _spawnItem.gameObject.SetActive(false);
+        if(_spawnItem.gameObject!=null)
+            _spawnItem.gameObject.SetActive(false);
         _timerHolder.SetActive(true);
     }
 

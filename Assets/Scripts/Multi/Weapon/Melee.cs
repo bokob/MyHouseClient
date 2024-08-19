@@ -34,13 +34,7 @@ public class Melee : Weapon
 
     private void Awake()
     {
-        
-    }
-
-
-    void Start()
-    {
-        base.Type = Define.Type.Melee;
+        InitWeapon();
 
         _playerMove = transform.root.GetChild(2).GetComponent<PlayerMove>();
         _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
@@ -55,17 +49,34 @@ public class Melee : Weapon
         else if (_playerStatus.Role == Define.Role.None)
             Debug.Log("왜 None이야?");
 
+    }
+
+    void InitWeapon()
+    {
+        base.Type = Define.Type.Melee;
+
         _meleeArea = gameObject.GetComponent<BoxCollider>();
         _trailEffet = gameObject.GetComponentInChildren<TrailRenderer>();
 
-        // TODO
-        /*
-         * 무기 능력치를 엑셀이나 json을 이용해 관리 예정
-         * 따로 읽어와서 그 값들을 세팅해줘야 함
-         * 현재 임시로 테스트를 위해 하드코딩 함
-        */
-        if (gameObject.tag == "Melee")
-            base.Attack = 50;
+        // 무기 스탯 초기화
+        WeaponData weapon = GameManager._instance.GetWeaponStatusByName(transform.name);
+        if (weapon != null)
+        {
+            Debug.Log($"Weapon Name: {weapon.Name}. Attack: {weapon.Attack}, Rate: {weapon.Rate}");
+            Attack = weapon.Attack;
+            Rate = weapon.Rate;
+            Range = weapon.Range;
+        }
+        else
+        {
+            Debug.LogWarning("Weapon not found!");
+        }
+    }
+
+
+    void Start()
+    {
+        
 
     }
 

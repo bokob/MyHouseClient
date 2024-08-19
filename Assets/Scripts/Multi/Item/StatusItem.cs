@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,7 +30,7 @@ public class StatusItem : Item
         if (status == null || base._itemType != Define.Item.Status) return;
 
         //StartCoroutine(_itemCylinder.FadeOutAndRespawn());
-        _itemCylinder.HideSpawnItem();
+        _itemCylinder.GetComponent<PhotonView>().RPC("HideSpawnItem", RpcTarget.AllBuffered);
         if (_statusName == Define.StatusItem.Heart)
         {
             status.Heal();

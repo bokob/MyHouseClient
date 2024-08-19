@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class WeaponItem : Item
 {
@@ -27,35 +28,37 @@ public class WeaponItem : Item
         PlayerStatus status = other.GetComponent<PlayerStatus>();
         if (status == null || base._itemType != Define.Item.Weapon) return;
 
-        _itemCylinder.HideSpawnItem();
+        _itemCylinder.GetComponent<PhotonView>().RPC("HideSpawnItem", RpcTarget.AllBuffered);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("아이템이 사정거리 안에 입장");
 
-        PlayerStatus status = other.GetComponent<PlayerStatus>();
-        if(status != null)
-            status.nearMeleeObject = gameObject;
+        WeaponManager playerWeaponManager = other.GetComponent<PlayerStatus>()._weaponHolder.GetComponent<WeaponManager>();
+        if(playerWeaponManager != null)
+            playerWeaponManager.nearMeleeObject = gameObject;
     }
 
     private void OnTriggerStay(Collider other)
     {
         Debug.Log("아이템이 사정거리 안에 존재");
-        PlayerStatus status = other.GetComponent<PlayerStatus>();
+        WeaponManager playerWeaponManager = other.GetComponent<PlayerStatus>()._weaponHolder.GetComponent<WeaponManager>();
         // 플레이어가 있고, 근처 근접 무기 탐색에 성공했고, 아이템 줍기 버튼을 눌렀고, 아이템 쿨타임 아닐 때
-        if (status != null && status.nearMeleeObject != null && status._isPickUp && !_itemCylinder._usedItem)
+        if (playerWeaponManager != null && playerWeaponManager.nearMeleeObject != null && playerWeaponManager._isPickUp && !_itemCylinder._usedItem)
+        {
             TakeWeaponItem(other);
-        status._isPickUp = false;
+            playerWeaponManager._isUsePickUpWeapon = true;
+        }
+        playerWeaponManager._isPickUp = false;
     }
 
     private void OnTriggerExit(Collider other)
     {
         Debug.Log("아이템이 사정거리 벗어남");
-        PlayerStatus status = other.GetComponent<PlayerStatus>();
+        WeaponManager playerWeaponManager = other.GetComponent<PlayerStatus>()._weaponHolder.GetComponent<WeaponManager>();
+        if (playerWeaponManager == null) return;
 
-        if (status == null) return;
-
-        status.nearMeleeObject = null;
+        playerWeaponManager.nearMeleeObject = null;
     }
 }

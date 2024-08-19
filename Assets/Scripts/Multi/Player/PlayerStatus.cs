@@ -32,9 +32,6 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     public Transform _weaponHolder;
     public Transform[] _weaponHolders;
     public WeaponManager _weaponManager;
-    public GameObject nearMeleeObject;
-    private string meleeItemName;
-    public bool _isPickUp = false;
 
     public GameObject _smokeEffect;
 
@@ -108,20 +105,6 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     {
         //if (!IsLocalPlayer) return;
         //Dead();
-
-        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null && _weaponManager._selectedWeapon.tag != "Gun")
-        {
-            _isPickUp = true;
-            GetMeleeItem();
-
-            // 무덤 테스트 코드
-            if (Input.GetKeyDown(KeyCode.Y))
-            {
-                _animator.SetTrigger("setDie");
-                Role = Define.Role.None;
-                StartCoroutine(TombCoroutine());
-            }
-        }
     }
 
     /// <summary>
@@ -232,7 +215,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
 
 
     /// <summary>
-    /// 집주인으로 변신
+    /// 강도로 변신
     /// </summary>
     [PunRPC]
     public void TransformIntoRobber()
@@ -273,11 +256,11 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         SmokeEffect(transform.position);
         GetComponent<CharacterController>().enabled = false;
         GetComponent<PlayerInput>().enabled = false;
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1.5f);
         transform.GetChild(0).gameObject.SetActive(false); // 강도 비활성화
         transform.GetChild(1).gameObject.SetActive(false);  // 집주인 비활성화
         transform.GetChild(3).gameObject.SetActive(true); // Tombstone Active
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2f);
         if (GetComponent<PhotonView>().IsMine)
         {
             Application.Quit();
@@ -318,14 +301,6 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         for (int i = 0; i < _renderers.Count; i++)
             _renderers[i].material.color = Color.white;
     }
-
-    public void GetMeleeItem()
-    {
-        meleeItemName = nearMeleeObject.name;
-        _weaponManager.PickUpWeapon(meleeItemName);
-        //Destroy(nearMeleeObject);
-    }
-
 
     public void ChangeIsHoldGun(bool isHoldGun)
     {
