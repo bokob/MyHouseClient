@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Photon.Pun;
 
 public class ItemCylinder : MonoBehaviour
 {
@@ -21,18 +22,15 @@ public class ItemCylinder : MonoBehaviour
     public GameObject _spawnItemObject;
     public Item _spawnItem;
 
-    void Start()
+    public void InitSpawnItem(int _spawnItemTypeNum, int childIdxNum)
     {
-        InitSpawnItem();
-    }
+        DisableItemType();
+        _usedItem = false;
 
-    void InitSpawnItem()
-    {
         // 스폰할 아이템
-        _spawnItemType = (Define.Item)UnityEngine.Random.Range(1, 3);
+        _spawnItemType = (Define.Item)_spawnItemTypeNum;
         GameObject spawnItemObjectParent = transform.GetChild((int)_spawnItemType).gameObject;
-        int childIdx = UnityEngine.Random.Range(0, spawnItemObjectParent.transform.childCount);
-        _spawnItemObject = spawnItemObjectParent.transform.GetChild(childIdx).gameObject;
+        _spawnItemObject = spawnItemObjectParent.transform.GetChild(childIdxNum).gameObject;
 
         // 스크립트 보유하고 있지 않으면, 스크립트 추가
         if (_spawnItemType == Define.Item.Status && _spawnItemObject.GetComponent<StatusItem>() == null)
@@ -62,8 +60,8 @@ public class ItemCylinder : MonoBehaviour
             _itemTimer.text = Mathf.FloorToInt(_respawnTime).ToString();
             if (_respawnTime <= 0)
             {
-                _usedItem = false;
-                InitSpawnItem();
+                // 마스터 클라이언트에게 아이템 소환 요청
+                GameManager._instance.gameObject.GetComponent<PhotonView>().RPC("ReceiveRequestToSpawnItemRPC", RpcTarget.MasterClient, int.Parse(gameObject.name));
             }
         }
     }
@@ -78,5 +76,20 @@ public class ItemCylinder : MonoBehaviour
     public void SetRespawnTime()
     {
         _respawnTime = _respawnTimeSetValue;
+    }
+
+    // 아이템 소환 전 활성화 되어 있는 아이템 비활성화 처리
+    public void DisableItemType()
+    {
+        Transform statusItem = transform.GetChild(1);
+        Transform weaponItem = transform.GetChild(2);
+        foreach(Transform item in statusItem)
+        {
+            item.gameObject.SetActive(false);
+        }
+        foreach (Transform item in weaponItem)
+        {
+            item.gameObject.SetActive(false);
+        }
     }
 }

@@ -37,7 +37,7 @@ public class PoolingManager_S : MonoBehaviour
             for (int j = 0; j < 2; j++)
             {
                 CreateMonsterAtSpawnPoint(i);
-        }
+            }
         }
 
         StartCoroutine(SpawnGhostsOverTime());

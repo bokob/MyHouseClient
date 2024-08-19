@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5537294780971070261}
-  - component: {fileID: 2198039876383390028}
   m_Layer: 7
   m_Name: Energy
   m_TagString: Untagged
@@ -33,24 +32,6 @@ Transform:
   - {fileID: 1566607851941618983}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
---- !u!114 &2198039876383390028
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 723971258256229503}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4ac5d466938a0a4fb550f7233f5b757, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  floatHeight: 0.5
-  floatSpeed: 1
-  rotateSpeed: 30
-  floatScale: 0.1
-  itemType: 1
-  pickupRange: 0
 --- !u!1001 &1312532075624792780
 PrefabInstance:
   m_ObjectHideFlags: 0

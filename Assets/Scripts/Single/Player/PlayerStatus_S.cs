@@ -249,16 +249,6 @@ public class PlayerStatus_S : MonoBehaviour
         //Destroy(nearMeleeObject);
     }
 
-    public void SetRoleAnimator(RuntimeAnimatorController animController, Avatar avatar)
-    {
-        _animator.runtimeAnimatorController = animController;
-        _animator.avatar = avatar;
-
-        // ???????? ??? ?????? ????? ??? ??????
-        _animator.enabled = false;
-        _animator.enabled = true;
-    }
-
     public void ChangeIsHoldGun(bool isHoldGun)
     {
         if (Role != Define.Role.Houseowner) return;

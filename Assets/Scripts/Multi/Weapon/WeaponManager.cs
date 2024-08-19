@@ -131,10 +131,6 @@ public class WeaponManager : MonoBehaviour
         {
             _selectedWeapon.GetComponent<Gun>().Use();
         }
-        else
-        {
-            Debug.Log("This weapon has none tag");
-        }
     }
 
     void IsHoldGun()
@@ -183,11 +179,11 @@ public class WeaponManager : MonoBehaviour
         }
 
 
-        WeaponData weapon = GameManager_S._instance.GetWeaponStatusByName(meleeName);
+        WeaponData weapon = GameManager._instance.GetWeaponStatusByName(meleeName);
         if (weapon != null)
         {
             Debug.Log($"Picked up {weapon.Name}. Attack: {weapon.Attack}, Rate: {weapon.Rate}");
-            Melee_S _currentWeapon = _selectedWeapon.GetComponent<Melee_S>();
+            Melee _currentWeapon = _selectedWeapon.GetComponent<Melee>();
             _currentWeapon.Attack = weapon.Attack;
             _currentWeapon.Rate = weapon.Rate;
             _currentWeapon.Range = weapon.Range;
@@ -204,7 +200,7 @@ public class WeaponManager : MonoBehaviour
     void DropWeapon()
     {
         GameObject droppedSelectedWeapon = Instantiate(_selectedWeapon, _selectedWeapon.transform.position, _selectedWeapon.transform.rotation); // instatntiation.
-        Destroy(droppedSelectedWeapon.GetComponent<Melee_S>()); // Melee_S script delete for error prevention. 
+        Destroy(droppedSelectedWeapon.GetComponent<Melee>()); // Melee_S script delete for error prevention. 
 
         droppedSelectedWeapon.transform.localScale = droppedSelectedWeapon.transform.localScale * 1.7f; // size up.
 
@@ -214,7 +210,7 @@ public class WeaponManager : MonoBehaviour
         _selectedWeapon = transform.Find("Knife").gameObject;
         _selectedWeapon.SetActive(true);
         WeaponData weapon = GameManager_S._instance.GetWeaponStatusByName("Knife");
-        Melee_S _currentWeapon = _selectedWeapon.GetComponent<Melee_S>();
+        Melee _currentWeapon = _selectedWeapon.GetComponent<Melee>();
         _currentWeapon.Attack = weapon.Attack;
         _currentWeapon.Rate = weapon.Rate;
         _currentWeapon.Range = weapon.Range;

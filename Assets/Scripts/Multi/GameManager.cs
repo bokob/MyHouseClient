@@ -1,7 +1,10 @@
+using Newtonsoft.Json;
 using Photon.Pun;
 using Photon.Realtime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -20,25 +23,25 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI _playerCount;
 
     // 아이템 소환 관련
-    public GameObject _itemCylinder;
+    public List<ItemCylinder> _itemCylinders = new List<ItemCylinder>();
     public float _itemSpawnRange = 20.0f;
     public Vector3 spawnCenter;
     public Transform _itemSpawnTestPosition;
+
+    [Header("Weapon Status")]
+    public List<WeaponData> weaponStatusList;
 
     private void Awake()
     {
         if (_instance == null)
         {
             _instance = this;
+            LoadWeaponData();
         }
         else
         {
             Destroy(gameObject);
         }
-    }
-
-    void Start()
-    {
     }
 
     void Update()
@@ -48,9 +51,17 @@ public class GameManager : MonoBehaviour
 
         if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.T))
         {
-            SpawnItem();
-        }
+            for(int i=0; i<_itemCylinders.Count; i++)
+            {
 
+                int randomItemType = UnityEngine.Random.Range(1, 3);
+                GameObject spawnItemObjectParent = _itemCylinders[i].gameObject.transform.GetChild(randomItemType).gameObject;
+                int randomItemIdx = UnityEngine.Random.Range(0, spawnItemObjectParent.transform.childCount);
+
+
+                GetComponent<PhotonView>().RPC("SetSpawnItemRPC", RpcTarget.AllBuffered, i, randomItemType, randomItemIdx);
+            }
+        }
     }
 
     private void OnDestroy()
@@ -103,16 +114,37 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //[PunRPC]
+    //void SpawnItem()
+    //{
+    //    Vector3 randomPosition = GetRandomPosition(spawnCenter, _itemSpawnRange);
+    //    PhotonNetwork.Instantiate(_itemCylinder.name, _itemSpawnTestPosition.position, Quaternion.identity);
+    //}
+
+
     [PunRPC]
-    void SpawnItem()
+    void SetSpawnItemRPC(int itemCylinderIdx, int itemType, int itemIdx) // 아이템 실린더 번호, 아이템 타입, 무슨 아이템인지
     {
-        Vector3 randomPosition = GetRandomPosition(spawnCenter, _itemSpawnRange);
-        PhotonNetwork.Instantiate(_itemCylinder.name, _itemSpawnTestPosition.position, Quaternion.identity);
+        //int randomItemType = UnityEngine.Random.Range(1, 3);
+        //GameObject spawnItemObjectParent = _itemCylinders[itemCylinderIdx].gameObject.transform.GetChild(randomItemType).gameObject;
+        //int randomItemIdx = UnityEngine.Random.Range(0, spawnItemObjectParent.transform.childCount);
+
+        _itemCylinders[itemCylinderIdx].GetComponent<ItemCylinder>().InitSpawnItem(itemType, itemIdx);
+    }
+
+    [PunRPC]
+    void ReceiveRequestToSpawnItemRPC(int itemCylinderIdx) // 아이템 소환 요청 수신
+    {
+        int randomItemType = UnityEngine.Random.Range(1, 3);
+        GameObject spawnItemObjectParent = _itemCylinders[itemCylinderIdx].gameObject.transform.GetChild(randomItemType).gameObject;
+        int randomItemIdx = UnityEngine.Random.Range(0, spawnItemObjectParent.transform.childCount);
+
+        GetComponent<PhotonView>().RPC("SetSpawnItemRPC", RpcTarget.AllBuffered, itemCylinderIdx, randomItemType, randomItemIdx);
     }
 
     Vector3 GetRandomPosition(Vector3 center, float range)
     {
-        Vector3 randomDirection = Random.insideUnitSphere * range;
+        Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * range;
         randomDirection += center;
 
         NavMeshHit hit;
@@ -121,5 +153,46 @@ public class GameManager : MonoBehaviour
             return hit.position;
         }
         return center;
+    }
+
+    // 무기 정보 로드
+    void LoadWeaponData()
+    {
+        string filePath = "WeaponData";
+        try
+        {
+            string jsonContent = Resources.Load<TextAsset>(filePath).ToString();
+            weaponStatusList = JsonConvert.DeserializeObject<List<WeaponData>>(jsonContent);
+
+            if (weaponStatusList != null)
+            {
+                Debug.Log("Weapon data loaded successfully.");
+
+                if (weaponStatusList.Count == 0)
+                {
+                    Debug.LogWarning("Weapon list is empty.");
+                }
+                else
+                {
+                    foreach (var weaponStatus in weaponStatusList)
+                    {
+                        Debug.Log($"Weapon: {weaponStatus.Name}, Type: {weaponStatus.Type}, {(int)weaponStatus.Type}, Attack: {weaponStatus.Attack}, Rate: {weaponStatus.Rate}");
+                    }
+                }
+            }
+        }
+        catch (JsonException ex)
+        {
+            Debug.LogError($"JSON parsing error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to load weapon data: {ex.Message}");
+        }
+    }
+
+    public WeaponData GetWeaponStatusByName(string weaponName)
+    {
+        return weaponStatusList.Find(weapon => weapon.Name == weaponName);
     }
 }

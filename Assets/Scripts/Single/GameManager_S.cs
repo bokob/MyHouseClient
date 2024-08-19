@@ -5,16 +5,6 @@ using UnityEngine;
 using System.IO;
 using Newtonsoft.Json;
 
-// 
-public class WeaponData
-{
-    public string Name;
-    public Define.Type Type;
-    public int Attack;
-    public float Rate;
-    public float Range;
-}
-
 public class GameManager_S : MonoBehaviour
 {    
     public static GameManager_S _instance;
@@ -35,45 +25,36 @@ public class GameManager_S : MonoBehaviour
     // 무기 정보 로드
     void LoadWeaponData()
     {
-        string filePath = Path.Combine(Application.dataPath, "Scripts/Single/Weapon/weapondata.json");
-
-        if (File.Exists(filePath))
+        string filePath = "WeaponData";
+        try
         {
-            try
+            string jsonContent = Resources.Load<TextAsset>(filePath).ToString();
+            weaponStatusList = JsonConvert.DeserializeObject<List<WeaponData>>(jsonContent);
+
+            if (weaponStatusList != null)
             {
-                string jsonContent = File.ReadAllText(filePath);
-                weaponStatusList = JsonConvert.DeserializeObject<List<WeaponData>>(jsonContent);
+                Debug.Log("Weapon data loaded successfully.");
 
-                if (weaponStatusList != null)
+                if (weaponStatusList.Count == 0)
                 {
-                    Debug.Log("Weapon data loaded successfully.");
-
-                    // ???? ????? ??
-                    if (weaponStatusList.Count == 0)
+                    Debug.LogWarning("Weapon list is empty.");
+                }
+                else
+                {
+                    foreach (var weaponStatus in weaponStatusList)
                     {
-                        Debug.LogWarning("Weapon list is empty.");
-                    }
-                    else
-                    {
-                        foreach (var weaponStatus in weaponStatusList)
-                        {
-                            Debug.Log($"Weapon: {weaponStatus.Name}, Attack: {weaponStatus.Attack}, Rate: {weaponStatus.Rate}");
-                        }
+                        Debug.Log($"Weapon: {weaponStatus.Name}, Type: {weaponStatus.Type}, {(int)weaponStatus.Type}, Attack: {weaponStatus.Attack}, Rate: {weaponStatus.Rate}");
                     }
                 }
             }
-            catch (JsonException ex)
-            {
-                Debug.LogError($"JSON parsing error: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Failed to load weapon data: {ex.Message}");
-            }
         }
-        else
+        catch (JsonException ex)
         {
-            Debug.LogError("Weapon data file not found.");
+            Debug.LogError($"JSON parsing error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Failed to load weapon data: {ex.Message}");
         }
     }
 
