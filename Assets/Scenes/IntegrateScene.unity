@@ -644,9 +644,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerMove: {fileID: 0}
   _cameraController: {fileID: 0}
+  _inGameUI: {fileID: 0}
   _isLocalPlayer: 0
   _nickName: 
-  Role: 0
+  <Role>k__BackingField: 0
   <Hp>k__BackingField: 100
   <Sp>k__BackingField: 100
   <MaxHp>k__BackingField: 100
@@ -655,6 +656,8 @@ MonoBehaviour:
   _animator: {fileID: 0}
   _weaponHolder: {fileID: 0}
   _weaponHolders: []
+  _weaponManager: {fileID: 0}
+  _smokeEffect: {fileID: 0}
 --- !u!54 &28806560
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3021,9 +3024,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d20be9d1d93c8a4f98cc96ebfd7dcd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _player: {fileID: 0}
+  _robberWeaponManager: {fileID: 0}
+  _houseownerWeaponManager: {fileID: 0}
+  _weaponManager: {fileID: 0}
+  _weaponManagerS: {fileID: 0}
+  _timeSecond: {fileID: 0}
+  _hpBar: {fileID: 0}
+  _spBar: {fileID: 0}
   _weaponImages:
   - {fileID: 2800000, guid: 9ca5afea04666da4e930736809573295, type: 3}
   - {fileID: 2800000, guid: 553a29b2870f12545a5d8107b3038391, type: 3}
+  _crossHair: {fileID: 0}
+  _endTime: 6
+  _fadeDuration: 4
+  _gameOverScreen: {fileID: 0}
+  _fadeImageInGameOverScreen: {fileID: 0}
+  _quitTimer: {fileID: 0}
+  _killGhostText: {fileID: 0}
+  _rightUpImages: []
+  _rightUpText: {fileID: 0}
 --- !u!114 &342222920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16344,9 +16364,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerMove: {fileID: 0}
   _cameraController: {fileID: 0}
+  _inGameUI: {fileID: 0}
   _isLocalPlayer: 0
   _nickName: 
-  Role: 0
+  <Role>k__BackingField: 0
   <Hp>k__BackingField: 100
   <Sp>k__BackingField: 100
   <MaxHp>k__BackingField: 100
@@ -16355,6 +16376,8 @@ MonoBehaviour:
   _animator: {fileID: 0}
   _weaponHolder: {fileID: 0}
   _weaponHolders: []
+  _weaponManager: {fileID: 0}
+  _smokeEffect: {fileID: 0}
 --- !u!54 &1633967773
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17155,9 +17178,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerMove: {fileID: 0}
   _cameraController: {fileID: 0}
+  _inGameUI: {fileID: 0}
   _isLocalPlayer: 0
   _nickName: 
-  Role: 0
+  <Role>k__BackingField: 0
   <Hp>k__BackingField: 100
   <Sp>k__BackingField: 100
   <MaxHp>k__BackingField: 100
@@ -17166,6 +17190,8 @@ MonoBehaviour:
   _animator: {fileID: 0}
   _weaponHolder: {fileID: 0}
   _weaponHolders: []
+  _weaponManager: {fileID: 0}
+  _smokeEffect: {fileID: 0}
 --- !u!54 &1668663001
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -18253,6 +18279,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70379a188f2860f4db2740ba3850eb0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _pointLight: {fileID: 0}
 --- !u!4 &1737129029 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400010, guid: d0223f77114284b47a0e8b317e71e4dc,
@@ -20148,11 +20175,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bgmSource: {fileID: 1986005406}
-  sfxSource: {fileID: 0}
   bgmClips:
   - {fileID: 8300000, guid: 8abfe2758266e6746a0a1dddf9619764, type: 3}
   - {fileID: 8300000, guid: 7fb9516fcc3ee0e4aab5e30e231bc035, type: 3}
-  sfxClips: []
 --- !u!4 &1986005408
 Transform:
   m_ObjectHideFlags: 0
@@ -22019,6 +22044,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70379a188f2860f4db2740ba3850eb0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _pointLight: {fileID: 0}
 --- !u!4 &2123967309 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400010, guid: d0223f77114284b47a0e8b317e71e4dc,
@@ -22183,10 +22209,25 @@ PrefabInstance:
       propertyPath: _sliceMask.m_Bits
       value: 65536
       objectReference: {fileID: 0}
+    - target: {fileID: 991737299038061478, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1059168806145802997, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 1250753676191748611, guid: 06ae9215121e7664aa589981daed690d,
         type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1458939516809014834, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1503000966875596429, guid: 06ae9215121e7664aa589981daed690d,
         type: 3}
@@ -22203,6 +22244,41 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 2061517080169912548, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2094827754599722475, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2294358993255760239, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2603725838200515023, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 3531995156298350539, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4073775035217562537, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252430196236712758, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 5701201760511210623, guid: 06ae9215121e7664aa589981daed690d,
         type: 3}
       propertyPath: _landingAudioClip
@@ -22218,10 +22294,20 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7222053273065995405, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 7323974387594366461, guid: 06ae9215121e7664aa589981daed690d,
         type: 3}
       propertyPath: sceneViewId
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 9000910341719139050, guid: 06ae9215121e7664aa589981daed690d,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 9002483722234610334, guid: 06ae9215121e7664aa589981daed690d,
         type: 3}
