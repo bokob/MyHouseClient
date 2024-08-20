@@ -46,9 +46,6 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        // 계속 확인하는 것은 부하가 심하니까 NetworkManager에 있는 것을 확인하는 식으로 하자.
-        _playerCount.text = PhotonNetwork.CountOfPlayers.ToString();
-
         if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.T))
         {
             for(int i=0; i<_itemCylinders.Count; i++)
@@ -125,10 +122,6 @@ public class GameManager : MonoBehaviour
     [PunRPC]
     void SetSpawnItemRPC(int itemCylinderIdx, int itemType, int itemIdx) // 아이템 실린더 번호, 아이템 타입, 무슨 아이템인지
     {
-        //int randomItemType = UnityEngine.Random.Range(1, 3);
-        //GameObject spawnItemObjectParent = _itemCylinders[itemCylinderIdx].gameObject.transform.GetChild(randomItemType).gameObject;
-        //int randomItemIdx = UnityEngine.Random.Range(0, spawnItemObjectParent.transform.childCount);
-
         _itemCylinders[itemCylinderIdx].GetComponent<ItemCylinder>().InitSpawnItem(itemType, itemIdx);
     }
 

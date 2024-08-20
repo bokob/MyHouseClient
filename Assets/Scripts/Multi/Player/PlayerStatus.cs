@@ -311,6 +311,6 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
     [PunRPC]
     void SmokeEffect(Vector3 position)
     {
-        PhotonNetwork.Instantiate("SmokeParticlePrefab", position, Quaternion.identity);
+        GameObject smoke = PhotonNetwork.Instantiate("SmokeParticlePrefab", position, Quaternion.identity);
     }
 }

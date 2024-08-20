@@ -19,22 +19,23 @@ public class WeaponManager : MonoBehaviour
     [Header("현재 무기 관련")]
     public int _selectedWeaponIdx = 0;
     public GameObject _selectedWeapon;
+    public GameObject _recentMelee; // the most recent Melee
     public bool _isHoldGun;
-
 
     // 무기 아이템 관련
     public GameObject nearMeleeObject;
     public string meleeItemName;
     public bool _isPickUp = false; // 사거리 내에서 그 무기 주웠는지 안주웠는지 판단
     public bool _isUsePickUpWeapon = false; // 주운 무기를 사용하고 있는지 판단
-
-
+    public int _pickUpWeaponIdx = 0;
 
     void Awake()
     {
         _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
         _playerStatus = transform.root.GetChild(2).GetComponent<PlayerStatus>();
         InitRoleWeapon();
+
+        _recentMelee = transform.GetChild(0).gameObject; // _recentMelee init
     }
 
     void Update()
@@ -50,7 +51,7 @@ public class WeaponManager : MonoBehaviour
             PickUpWeapon(meleeItemName);
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (GetComponent<PhotonView>().IsMine && Input.GetKeyDown(KeyCode.Q))
             DropWeapon();
     }
 
@@ -88,19 +89,17 @@ public class WeaponManager : MonoBehaviour
 
         int previousSelectedWeapon = _selectedWeaponIdx;
 
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
+        if (_selectedWeapon.tag == "Melee") // if now pick weapon tag is Melee
         {
-            if (_selectedWeaponIdx >= transform.childCount - 1)
-                _selectedWeaponIdx = 0;
-            else
-                _selectedWeaponIdx++;
+            _recentMelee = _selectedWeapon;
         }
-        if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f || Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
-            if (_selectedWeaponIdx <= 0)
-                _selectedWeaponIdx = transform.childCount - 1;
-            else
-                _selectedWeaponIdx--;
+            if (_selectedWeapon == _recentMelee)
+                _selectedWeaponIdx = 1;
+            else if (_selectedWeapon.tag == "Gun")
+                _selectedWeaponIdx = _recentMelee.transform.GetSiblingIndex();
         }
 
         if (previousSelectedWeapon != _selectedWeaponIdx) // 마우스 휠로 무기 인덱스 바뀌면 교체
@@ -128,6 +127,8 @@ public class WeaponManager : MonoBehaviour
                 _selectedWeapon = weapon.gameObject; // 현재 고른 무기 참조
                 IsHoldGun();
                 _playerStatus.ChangeIsHoldGun(_isHoldGun);
+
+                if (_playerStatus == null) Debug.LogError($"playerStatus가 널, {GetComponent<PhotonView>().ViewID}");
             }
             else
             {
@@ -184,6 +185,7 @@ public class WeaponManager : MonoBehaviour
     {
         Transform newMelee = transform.Find(meleeName);
         _selectedWeaponIdx = newMelee.GetSiblingIndex(); // 교체할 무기가 몇 번째 자식인지
+        _pickUpWeaponIdx =_selectedWeaponIdx;
         GetComponent<PhotonView>().RPC("SelectWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx);
     }
 
@@ -192,10 +194,9 @@ public class WeaponManager : MonoBehaviour
     /// </summary>
     void DropWeapon()
     {
-        if (_selectedWeapon.tag == "Gun") return;
-        GameObject droppedSelectedWeapon = PhotonNetwork.Instantiate(_selectedWeapon.name, _selectedWeapon.transform.position, _selectedWeapon.transform.rotation); // instatntiation.
-        Destroy(droppedSelectedWeapon.GetComponent<Melee>()); // Melee script delete for error prevention. 
+        if (_selectedWeapon.tag == "Gun" || _selectedWeaponIdx == 0) return;
 
+        GameObject droppedSelectedWeapon = PhotonNetwork.Instantiate(_selectedWeapon.name, _selectedWeapon.transform.position, _selectedWeapon.transform.rotation); // instatntiation. 
         droppedSelectedWeapon.transform.localScale = droppedSelectedWeapon.transform.localScale * 1.7f; // size up.
 
         StartCoroutine(DropAndBounce(droppedSelectedWeapon));
@@ -243,7 +244,6 @@ public class WeaponManager : MonoBehaviour
         }
 
         yield return new WaitForSeconds(1f);
-        Destroy(droppedSelectedWeapon);
-
+        PhotonNetwork.Destroy(droppedSelectedWeapon);
     }
 }

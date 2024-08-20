@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,9 @@ public class InGameUI : MonoBehaviour
     [SerializeField] WeaponManager _houseownerWeaponManager;
     WeaponManager _weaponManager;
 
-    //UI 변수들
+    #region UI 변수
+    // 접속 인원
+    [SerializeField] TextMeshProUGUI _connectedPeople;
 
     // 시간
     [SerializeField] TextMeshProUGUI _timeSecond;
@@ -31,28 +34,33 @@ public class InGameUI : MonoBehaviour
 
     // 조준선
     [SerializeField] GameObject _crossHair;
+    #endregion
 
     void Start()
     {
+        // 접속 인원
+        _connectedPeople = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
+
         // 시간 표시할 곳
-        _timeSecond = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
+        _timeSecond = transform.GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
         // Hp, Sp 표시할 곳
-        _hpBar = transform.GetChild(1).GetComponent<Slider>();
-        _spBar = transform.GetChild(2).GetComponent<Slider>();
+        _hpBar = transform.GetChild(2).GetComponent<Slider>();
+        _spBar = transform.GetChild(3).GetComponent<Slider>();
 
         // 무기 정보 표시할 곳
-        _weaponIcon = transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
-        _currentBullet = transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
-        _totalBullet = transform.GetChild(3).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
+        _weaponIcon = transform.GetChild(4).GetChild(0).GetComponent<RawImage>();
+        _currentBullet = transform.GetChild(4).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
+        _totalBullet = transform.GetChild(4).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
 
         // 조준선 UI
-        _crossHair = transform.GetChild(4).gameObject;
+        _crossHair = transform.GetChild(5).gameObject;
     }
 
     void Update()
     {
         if(_status.Hp > 0)
         {
+            DisplayConnectedPlayers();
             DisplayLivingTime();
             DisplayHp();
             DisplaySp();
@@ -108,10 +116,7 @@ public class InGameUI : MonoBehaviour
 
     public void DisplayWeaponIcon(int iconIndex) => _weaponIcon.texture = _weaponImages[iconIndex];
 
-    public void DisplayConnectedPlayers()
-    {
-
-    }
+    public void DisplayConnectedPlayers() => _connectedPeople.text = PhotonNetwork.CurrentRoom.PlayerCount.ToString();
 
     // 무기 이름으로 무기 아이콘 구하기
     public int GetWeaponIconIndex(string weaponName)
