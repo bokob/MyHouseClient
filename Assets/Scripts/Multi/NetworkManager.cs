@@ -12,12 +12,12 @@ using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
-    public static NetworkManager _instance;
+    public static NetworkManager _instance = null;
 
     public const string _gameStartedPropKey = "IsGameStarted";
     public bool _isGameStarted;
     public string _nickName;
-    public string _roomNameToJoin = "test"; // 참가할 방 이름 
+    public string _roomNameToJoin = "test"; // 참가할 방 이름
 
     [Header("DisconnectPanel")]
     public TMP_InputField _nickNameInput; // 닉네임 이름
@@ -38,7 +38,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     List<Player> _cachePlayerList = new List<Player>(); // 방 정보 모아둘 리스트
     public GameObject _startBtn;
 
-    // 채팅 관련
+    [Header("채팅")]
     public GameObject _chatListUI;
     public GameObject _chatListItemUI;
     public TMP_InputField _chatInput; // 채팅 입력창
@@ -256,7 +256,31 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     // 방에 입장했을 때, 안에 있던 모두에게 전달
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        if (_isGameStarted) return; // 게임 중이면 방 로직 실행 안 함
+        if (_isGameStarted)
+        {
+            GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
+            foreach (GameObject playerObject in playerObjects)
+            {
+                PhotonView photonView = playerObject.GetComponent<PhotonView>();
+                if (photonView != null && photonView.Owner.IsMasterClient) // 마스터 클라이언트
+                {
+                    // 강도로 되어 있다면 (가끔 RPC 문제로 인해 업데이트 안되는 경우)
+                    if (playerObject.GetComponent<PlayerStatus>().Role != Define.Role.Houseowner)
+                    {
+                        // 새 마스터 클라이언트에게 Houseowner 역할 부여
+                        photonView.RPC("SetRole", RpcTarget.AllBuffered, Define.Role.Houseowner);
+
+                        // 집주인 메시 및 애니메이션 전환 호출
+                        photonView.RPC("TransformIntoHouseowner", RpcTarget.AllBuffered);
+                        photonView.RPC("SetRoleAnimator", RpcTarget.AllBuffered);
+                    }
+
+                    break;
+                }
+            }
+
+            return; // 게임 중이면 방 로직 실행 안 함
+        }
 
         ChatRPC("<color=yellow>" + newPlayer.NickName + "님이 참가하셨습니다</color>");
         UpdateUserInRoomUI();
@@ -275,10 +299,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             foreach (GameObject playerObject in playerObjects)
             {
                 PhotonView photonView = playerObject.GetComponent<PhotonView>();
-                if (photonView != null && photonView.Owner == otherPlayer)
+                if (photonView != null && photonView.Owner == otherPlayer && photonView.IsMine) // 본인이고, 해당 플레이어라면 자기 자신 삭제하고 나감
                 {
                     photonView.RPC("SmokeEffect", RpcTarget.All, playerObject.transform.position);
-                    Destroy(playerObject.transform.parent.gameObject); // 오브젝트 제거
+                    PhotonNetwork.Destroy(playerObject.transform.parent.gameObject);
+                    //Destroy(playerObject.transform.parent.gameObject); // 오브젝트 제거
                     break;
                 }
             }
@@ -306,7 +331,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             if (i < _cachePlayerList.Count)
             {
                 _roomPlayers[i].SetActive(true);
-                _roomPlayers[i].transform.GetChild(0).GetComponent<TextMeshPro>().text = PhotonNetwork.PlayerList[i].NickName;
+                _roomPlayers[i].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = PhotonNetwork.PlayerList[i].NickName;
                 Debug.Log(_cachePlayerList[i].NickName + "의 UI 활성화");
             }
             else
@@ -366,7 +391,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             EmptyRoomTtl = 0    // 방이 비어 있을 때 즉시 삭제  
         }, null))
         {
-            //Debug.Log("방 참여 성공");
+            Debug.Log("방 참여 성공");
             UIMenuManager._instance.LobbyToRoomCamPos();
         }
         else
@@ -430,6 +455,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         GameObject chatManager = Instantiate(_chatListItemUI, _chatListUI.transform);
         chatManager.GetComponent<ChatMessage>().SetText(msg);
+        _chatListUI.transform.parent.parent.GetComponent<ScrollRect>().verticalNormalizedPosition = 0f; // 스크롤 바 최하단으로 설정 (자동 스크롤)
     }
     #endregion
 
@@ -537,20 +563,17 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             {
                 if (player.GetComponent<PlayerStatus>().Hp <= 0) return; // 죽으면 이전 집주인이 강도가 되어서 죽지 않고 서있는 문제 방지
 
-                // 나머지 플레이어들에게 Robber 역할 부여
-                player.GetComponent<PhotonView>().RPC("SetRole", RpcTarget.AllBuffered, Define.Role.Robber);
+                ///////////// 주석 남겨둘 것 ////////////// -> RPC 끼리 겹처서 뒤에 들어온 클라이언트에서 집주인이 강도로 가끔 되길래 주석처리 해놓은것
 
-                // 도둑 메시 및 애니메이션 전환 호출
-                player.GetComponent<PhotonView>().RPC("TransformIntoRobber", RpcTarget.AllBuffered);
-                player.GetComponent<PhotonView>().RPC("SetRoleAnimator", RpcTarget.AllBuffered);
-                // Debug.Log("다름: " + player._nickName + " | " + newMasterClient.NickName);
+                //// 나머지 플레이어들에게 Robber 역할 부여
+                //player.GetComponent<PhotonView>().RPC("SetRole", RpcTarget.AllBuffered, Define.Role.Robber);
+
+                //// 도둑 메시 및 애니메이션 전환 호출
+                //player.GetComponent<PhotonView>().RPC("TransformIntoRobber", RpcTarget.AllBuffered);
+                //player.GetComponent<PhotonView>().RPC("SetRoleAnimator", RpcTarget.AllBuffered);
+                //// Debug.Log("다름: " + player._nickName + " | " + newMasterClient.NickName);
             }
         }
     }
     #endregion
-
-    public int GetPlayerCount()
-    {
-        return _cachePlayerList.Count;
-    }
 }

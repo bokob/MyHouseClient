@@ -16,7 +16,8 @@ namespace SlimUI.ModernMenu{
 		protected override void OnSkinUI(){
 			base.OnSkinUI();
 
-			if(hasImage){
+			if (hasImage)
+			{
 				image = GetComponent<Image>();
 				image.color = themeController.currentColor;
 			}
