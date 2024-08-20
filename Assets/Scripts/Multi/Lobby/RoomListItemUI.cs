@@ -31,6 +31,9 @@ public class RoomListItemUI : MonoBehaviour
         _roomName = room.Name;
         _roomTitle.text = _roomName;                                  // 방 목록에 표시되는 방 이름
         _playerCount.text = "" + room.PlayerCount.ToString() + "/4";  // 방 목록에서 표시되는 해당 방의 플레이어 수
+
+        // 현재 인원 수에 따라 클릭 여부 설정
+        GetComponent<Button>().interactable = (room.PlayerCount != 4) ? true : false; 
     }
 
     public void OnJoinPressed()
