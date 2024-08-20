@@ -35,7 +35,7 @@ public class WeaponItem : Item
     {
         Debug.Log("아이템이 사정거리 안에 입장");
 
-        WeaponManager playerWeaponManager = other.GetComponent<PlayerStatus>()._weaponHolder.GetComponent<WeaponManager>();
+        WeaponManager playerWeaponManager = other.GetComponent<PlayerStatus>()._weaponManager;
         if(playerWeaponManager != null)
             playerWeaponManager.nearMeleeObject = gameObject;
     }
@@ -43,9 +43,12 @@ public class WeaponItem : Item
     private void OnTriggerStay(Collider other)
     {
         Debug.Log("아이템이 사정거리 안에 존재");
-        WeaponManager playerWeaponManager = other.GetComponent<PlayerStatus>()._weaponHolder.GetComponent<WeaponManager>();
+        WeaponManager playerWeaponManager = other.GetComponent<PlayerStatus>()._weaponManager;
+
+        if (playerWeaponManager == null) return;
+
         // 플레이어가 있고, 근처 근접 무기 탐색에 성공했고, 아이템 줍기 버튼을 눌렀고, 아이템 쿨타임 아닐 때
-        if (playerWeaponManager != null && playerWeaponManager.nearMeleeObject != null && playerWeaponManager._isPickUp && !_itemCylinder._usedItem)
+        if (playerWeaponManager.nearMeleeObject != null && playerWeaponManager._isPickUp && !_itemCylinder._usedItem)
         {
             TakeWeaponItem(other);
             playerWeaponManager._isUsePickUpWeapon = true;

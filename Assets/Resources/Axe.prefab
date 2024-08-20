@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3779028117136578238}
-  - component: {fileID: 4679304624627724072}
+  - component: {fileID: -585849634895208960}
   - component: {fileID: 2376937235016611605}
   - component: {fileID: -290884498965280604}
   m_Layer: 0
@@ -35,7 +35,7 @@ Transform:
   - {fileID: 9155431042886852713}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &4679304624627724072
+--- !u!54 &-585849634895208960
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -58,9 +58,9 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 122
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!135 &2376937235016611605
 SphereCollider:
@@ -171,7 +171,12 @@ PrefabInstance:
     - target: {fileID: 4787821508307244359, guid: 822bcce9cc62cc843925c7bc50a045af,
         type: 3}
       propertyPath: m_Convex
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4787821508307244359, guid: 822bcce9cc62cc843925c7bc50a045af,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

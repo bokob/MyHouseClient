@@ -70,7 +70,7 @@ public class ItemCylinder : MonoBehaviour
     public void HideSpawnItem()
     {
         _usedItem = true;
-        if(_spawnItem.gameObject!=null)
+        if(_spawnItem != null)
             _spawnItem.gameObject.SetActive(false);
         _timerHolder.SetActive(true);
     }

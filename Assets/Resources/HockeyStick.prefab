@@ -58,7 +58,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -113,6 +113,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 9144411089294723690}
     m_Modifications:
+    - target: {fileID: 701798497785894282, guid: b92035e16350369419276e27df2806bd,
+        type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 701798497785894282, guid: b92035e16350369419276e27df2806bd,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3645356138423562855, guid: b92035e16350369419276e27df2806bd,
         type: 3}
       propertyPath: m_Name
