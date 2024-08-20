@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,10 +11,6 @@ public class WeaponManager_S : MonoBehaviour
 
     [Tooltip("무기 전환 시 지연 시간을 설정")]
     public float _switchDelay = 1f;
-
-    [Header("무기 관련")]
-    [SerializeField] public GameObject _leftItemHand;           // 왼손에 있는 아이템 (자식: 탄창)
-    [SerializeField] public GameObject _rightItemHand;          // 오른손에 있는 아이템 (자식: 무기)
 
     [Header("현재 무기 관련")]
     public int _selectedWeaponIdx = 0;
@@ -36,6 +33,11 @@ public class WeaponManager_S : MonoBehaviour
 
     void Update()
     {
+        // 시체면 가만히 있게 하기
+        if (_playerStatus.Role == Define.Role.None) return;
+
+        UseSelectedWeapon();
+
         if (!_playerInputs.aim && !_playerInputs.reload) // 조준하지 않고, 장전하지 않을 때 무기 교체 가능
             WeaponSwitching(); // 무기 교체
 
@@ -50,16 +52,11 @@ public class WeaponManager_S : MonoBehaviour
     /// </summary>
     public void InitRoleWeapon()
     {
-        // 역할에 따른 첫 무기 설정
-        if (_playerStatus.Role == Define.Role.Robber) // 강도
-        {
-            _selectedWeaponIdx = 0;
-        }
-        else if (_playerStatus.Role == Define.Role.Houseowner) // 집주인
+        if (_playerStatus.Role == Define.Role.Houseowner) // 집주인
         {
             _selectedWeaponIdx = 1;
         }
-        SelectWeapon();
+        SelectWeapon(_selectedWeaponIdx);
 
         Debug.Log("역할에 따른 무기 초기화 완료");
     }
@@ -88,24 +85,29 @@ public class WeaponManager_S : MonoBehaviour
         {
             if (_playerStatus.Role == Define.Role.Robber) _selectedWeaponIdx = 0;
 
-            SelectWeapon();
+            SelectWeapon(_selectedWeaponIdx);
         }
     }
 
     /// <summary>
     /// 무기 선택
     /// </summary>
-    void SelectWeapon()
+    void SelectWeapon(int weaponIndex)
     {
+        Debug.LogWarning($"_selectedWeaponIdx({transform.root.GetChild(2).GetComponent<PlayerStatus_S>().name}) :" + weaponIndex);
+        _selectedWeaponIdx = weaponIndex;
+
         int idx = 0;
         foreach (Transform weapon in transform)
         {
-            if (idx == _selectedWeaponIdx)
+            if (idx == weaponIndex)
             {
                 weapon.gameObject.SetActive(true);
-                _selectedWeapon = weapon.gameObject; // ???? ???? ???? ????
+                _selectedWeapon = weapon.gameObject; // 현재 고른 무기 참조
                 IsHoldGun();
                 _playerStatus.ChangeIsHoldGun(_isHoldGun);
+
+                if (_playerStatus == null) Debug.LogError($"playerStatus가 널");
             }
             else
             {
@@ -154,8 +156,9 @@ public class WeaponManager_S : MonoBehaviour
     public void PickUpWeapon(string meleeName)
     {
         Transform newMelee = transform.Find(meleeName);
-        
-        if(_isHoldGun)
+        _selectedWeaponIdx = newMelee.GetSiblingIndex(); // 교체할 무기가 몇 번째 자식인지
+
+        if (_isHoldGun)
         {
 
         }        
@@ -164,21 +167,6 @@ public class WeaponManager_S : MonoBehaviour
             _selectedWeapon.SetActive(false);
             _selectedWeapon = newMelee.gameObject;
             newMelee.gameObject.SetActive(true);
-        }
-
-
-        WeaponData weapon = GameManager_S._instance.GetWeaponStatusByName(meleeName);
-        if (weapon != null)
-        {
-            Debug.Log($"Picked up {weapon.Name}. Attack: {weapon.Attack}, Rate: {weapon.Rate}");
-            Melee_S _currentWeapon = _selectedWeapon.GetComponent<Melee_S>();
-            _currentWeapon.Attack = weapon.Attack;
-            _currentWeapon.Rate = weapon.Rate;
-            _currentWeapon.Range = weapon.Range;
-        }
-        else
-        {
-            Debug.LogWarning("Weapon not found!");
         }
     }
 
@@ -204,7 +192,6 @@ public class WeaponManager_S : MonoBehaviour
         _currentWeapon.Range = weapon.Range;
     }
 
-
     IEnumerator DropAndBounce(GameObject droppedSelectedWeapon)
     {
         float floorY = transform.root.GetChild(2).position.y + 0.3f; // floorY is Player object's position.y + 0.3f.
@@ -218,7 +205,6 @@ public class WeaponManager_S : MonoBehaviour
         {
             droppedSelectedWeapon.transform.position += velocity * Time.deltaTime;
 
-            
             if (droppedSelectedWeapon.transform.position.y <= floorY)
             {
                 //bouncing.
@@ -245,6 +231,5 @@ public class WeaponManager_S : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
         Destroy(droppedSelectedWeapon);
-
     }
 }

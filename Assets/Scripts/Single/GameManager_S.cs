@@ -20,6 +20,8 @@ public class GameManager_S : MonoBehaviour
         _instance = this;
 
         LoadWeaponData();
+
+        Destroy(NetworkManager._instance); // 네트워크 매니저 삭제
     }
 
     // 무기 정보 로드

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Pool;
@@ -22,8 +21,8 @@ public class Monster : MonoBehaviour
     List<Renderer> _renderers; // 피해 입었을 때 렌더러 색 변환에 사용할 리스트
     List<Color> _originColors;
 
-    public float Hp { get; private set; } = 300f;                   // 체력
-    public int _attack { get; private set; } = 30;                   // 공격력
+    [field: SerializeField] public float Hp { get; private set; } = 300f;                   // 체력
+    [field: SerializeField] public int _attack { get; private set; } = 30;                   // 공격력
     #endregion
 
     #region 시야 관련

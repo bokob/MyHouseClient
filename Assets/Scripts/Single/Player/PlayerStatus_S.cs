@@ -4,18 +4,18 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerStatus_S : MonoBehaviour
+public class PlayerStatus_S : MonoBehaviour, IStatus
 {
-    #region ???? ?? ????
-    [field: SerializeField] public Define.Role Role = Define.Role.None;
+    #region 상태 및 능력치
+    [field: SerializeField] public Define.Role Role { get; set; } = Define.Role.None;
     [field: SerializeField] public float Hp { get; set; } = 100;    // ???
     [field: SerializeField] public float Sp { get; set; } = 100;    // ??????
-    [field: SerializeField] public float MaxHp { get; private set; } = 100; // ??? ???
-    [field: SerializeField] public float MaxSp { get; private set; } = 100; // ??? ??????
-    [field: SerializeField] public float Defence { get; private set; } = 1; // ????
+    [field: SerializeField] public float MaxHp { get; set; } = 100; // ??? ???
+    [field: SerializeField] public float MaxSp { get; set; } = 100; // ??? ??????
+    [field: SerializeField] public float Defence { get; set; } = 1; // ????
     #endregion
 
-    #region ??????? ?? ????
+    #region
     Animator _animator;
     List<Renderer> _renderers;
     #endregion

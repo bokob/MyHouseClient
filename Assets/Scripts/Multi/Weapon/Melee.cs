@@ -23,7 +23,7 @@ public class Melee : Weapon
     bool _isStabReady;  // 공격 준비
     float _stabDelay;   // 공격 딜레이
 
-    #region 절단 효과
+    #region 절단 효과 변수
     public LayerMask _sliceMask; // 자를 대상인 레이어 마스크
     public float _cutForce = 250f; // 자를 때 가해지는 힘
 
@@ -71,13 +71,6 @@ public class Melee : Weapon
         {
             Debug.LogWarning("Weapon not found!");
         }
-    }
-
-
-    void Start()
-    {
-        
-
     }
 
     void Update()
@@ -171,6 +164,7 @@ public class Melee : Weapon
         _trailEffet.enabled = state;
     }
 
+    #region 절단 기능
     // 칼이 트리거 안에 있을 때
     // _hasExited를 false로 설정
     void OnTriggerEnter(Collider other)
@@ -261,4 +255,5 @@ public class Melee : Weapon
             Debug.LogWarning("왜 안돼?");
         }
     }
+    #endregion
 }

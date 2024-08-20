@@ -12,10 +12,6 @@ public class WeaponManager : MonoBehaviour
     [Tooltip("무기 전환 시 지연 시간을 설정")]
     public float _switchDelay = 1f;
 
-    [Header("무기 관련")]
-    [SerializeField] public GameObject _leftItemHand;           // 왼손에 있는 아이템 (자식: 탄창)
-    [SerializeField] public GameObject _rightItemHand;          // 오른손에 있는 아이템 (자식: 무기)
-
     [Header("현재 무기 관련")]
     public int _selectedWeaponIdx = 0;
     public GameObject _selectedWeapon;
@@ -40,6 +36,11 @@ public class WeaponManager : MonoBehaviour
 
     void Update()
     {
+        // 시체면 가만히 있게 하기
+        if (_playerStatus.Role == Define.Role.None) return;
+
+        UseSelectedWeapon();
+
         if (GetComponent<PhotonView>().IsMine && !_playerInputs.aim && !_playerInputs.reload) // 조준하지 않고, 장전하지 않을 때 무기 교체 가능
             WeaponSwitching(); // 무기 교체
 

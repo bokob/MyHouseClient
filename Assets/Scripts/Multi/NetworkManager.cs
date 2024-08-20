@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 
 public class NetworkManager : MonoBehaviourPunCallbacks
 {
-    public static NetworkManager _instance;
+    public static NetworkManager _instance = null;
 
     public const string _gameStartedPropKey = "IsGameStarted";
     public bool _isGameStarted;

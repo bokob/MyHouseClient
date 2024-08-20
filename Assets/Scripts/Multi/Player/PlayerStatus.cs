@@ -1,5 +1,4 @@
 using Photon.Pun;
-using Photon.Pun.Demo.PunBasics;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,21 +6,21 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 
-public class PlayerStatus : MonoBehaviourPunCallbacks
+public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
 {
     public PlayerMove _playerMove;
     public CameraController _cameraController;
     public InGameUI _inGameUI;
 
-    #region 상태 및 능력치, 이름 등
+    #region 상태, 능력치 및 이름
     public bool _isLocalPlayer;
     public string _nickName;
-    [field: SerializeField] public Define.Role Role = Define.Role.None;
+    [field: SerializeField] public Define.Role Role { get; set; } = Define.Role.None;
     [field: SerializeField] public float Hp { get; set; } = 100;    // 체력
     [field: SerializeField] public float Sp { get; set; } = 100;    // 스테미나
-    [field: SerializeField] public float MaxHp { get; private set; } = 100; // 최대 체력
-    [field: SerializeField] public float MaxSp { get; private set; } = 100; // 최대 스테미나
-    [field: SerializeField] public float Defence { get; private set; } = 1; // 방어력
+    [field: SerializeField] public float MaxHp { get; set; } = 100; // 최대 체력
+    [field: SerializeField] public float MaxSp { get; set; } = 100; // 최대 스테미나
+    [field: SerializeField] public float Defence { get; set; } = 1; // 방어력
     #endregion
 
     #region 애니메이션 및 피해
@@ -256,16 +255,18 @@ public class PlayerStatus : MonoBehaviourPunCallbacks
         SmokeEffect(transform.position);
         GetComponent<CharacterController>().enabled = false;
         GetComponent<PlayerInput>().enabled = false;
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2f);
         transform.GetChild(0).gameObject.SetActive(false); // 강도 비활성화
         transform.GetChild(1).gameObject.SetActive(false);  // 집주인 비활성화
         transform.GetChild(3).gameObject.SetActive(true); // Tombstone Active
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
         if (GetComponent<PhotonView>().IsMine)
         {
-            Application.Quit();
+            Application.Quit(); // 빌드 후에 게임 꺼버리기
+            Time.timeScale = 0f;    // 엔진에서 테스트할 때 멈추게하기
+            Debug.Log("게임 강제 종료");
         }
-        Debug.Log("게임 강제 종료");
+        else Debug.Log("종료 안됨");
     }
 
     /// <summary>

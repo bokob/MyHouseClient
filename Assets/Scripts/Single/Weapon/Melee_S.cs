@@ -19,7 +19,7 @@ public class Melee_S : Weapon
     bool _isStabReady;  // 공격 준비
     float _stabDelay;   // 공격 딜레이
 
-    #region 절단 효과
+    #region 절단 효과 변수
     public LayerMask _sliceMask; // 자를 대상인 레이어 마스크
     public float _cutForce = 250f; // 자를 때 가해지는 힘
 
@@ -30,17 +30,37 @@ public class Melee_S : Weapon
 
     private void Awake()
     {
+        InitWeapon();
+    }
+
+    void InitWeapon()
+    {
         base.Type = Define.Type.Melee;
 
-        if (transform.root.childCount > 2)
+        _meleeArea = gameObject.GetComponent<BoxCollider>();
+        _trailEffet = gameObject.GetComponentInChildren<TrailRenderer>();
+
+        // 무기 스탯 초기화
+        WeaponData weapon = GameManager_S._instance.GetWeaponStatusByName(transform.name);
+        if (weapon != null)
         {
-            _playerMove = transform.root.GetChild(2).GetComponent<PlayerMove_S>();
-            _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
+            Debug.Log($"Weapon Name: {weapon.Name}. Attack: {weapon.Attack}, Rate: {weapon.Rate}");
+            Attack = weapon.Attack;
+            Rate = weapon.Rate;
+            Range = weapon.Range;
+        }
+        else
+        {
+            Debug.LogWarning("Weapon not found!");
         }
     }
 
+
     void Start()
     {
+        _playerMove = transform.root.GetChild(2).GetComponent<PlayerMove_S>();
+        _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
+
         if (transform.root.childCount > 2)
         {
             _animator = transform.root.GetChild(2).GetChild(0).GetComponent<Animator>();
@@ -165,23 +185,24 @@ public class Melee_S : Weapon
         _trailEffet.enabled = false;
     }
 
-    // 칼이 트리거 안에 있을 때
-    // 를 false로 설정
-    // void OnTriggerEnter(Collider other)
-    // {
-    //     _hasExited = false;
-    //     _entryPoint = other.ClosestPoint(transform.position);
+    #region 절단 기능
+    //칼이 트리거 안에 있을 때
+    // _hasExited를 false로 설정
+    void OnTriggerEnter(Collider other)
+     {
+         _hasExited = false;
+         _entryPoint = other.ClosestPoint(transform.position);
 
-    //     // 데미지 적용
+         // 데미지 적용
 
-    //     // 자기 자신에게 닿은 경우 무시
-    //     if (other.transform.root.name == gameObject.name) return;
+         // 자기 자신에게 닿은 경우 무시
+         if (other.transform.root.name == gameObject.name) return;
 
-    //     if (other.GetComponent<Monster>() != null)
-    //     {
-    //         other.GetComponent<Monster>().TakedDamage(Attack);
-    //     }
-    // }
+         if (other.GetComponent<Monster>() != null)
+         {
+             other.GetComponent<Monster>().TakedDamage(Attack);
+         }
+     }
 
     void OnTriggerStay(Collider other)
     {
@@ -246,12 +267,15 @@ public class Melee_S : Weapon
             Debug.LogWarning("왜 안돼?");
         }
     }
+    #endregion
+
+
     IEnumerator DelayedDamage(Monster monster)
     {
         yield return new WaitForSeconds(0.8f); // 0.5초 지연
 
         monster.TakedDamage(base.Attack);
-        Debug.Log("적이 공격받았습니다: " + monster.name);
+        Debug.LogError("적이 공격받았습니다: " + monster.name);
         monster.HitStart();
     }
 }
