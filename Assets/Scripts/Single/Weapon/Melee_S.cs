@@ -126,26 +126,28 @@ public class Melee_S : Weapon
                 // _weaponManager._selectedWeapon.GetComponent<Melee>().Use();
                 _animator.SetTrigger("setSwing");
                 _swingDelay = 0;
-                
-                for (int i = 0; i < rayCount; i++)
+                if(_isSwingReady == true)
                 {
-                    float currentAngle = -halfAngle + (i * (angle / (rayCount - 1)));
-                    Vector3 direction = Quaternion.Euler(0, currentAngle, 0) * transform.root.GetChild(2).forward;
-
-                    RaycastHit hit;
-                    if (Physics.Raycast(startPosition, direction, out hit, base.Range))
+                    for (int i = 0; i < rayCount; i++)
                     {
-                        if (hit.collider.CompareTag("Monster"))
+                        float currentAngle = -halfAngle + (i * (angle / (rayCount - 1)));
+                        Vector3 direction = Quaternion.Euler(0, currentAngle, 0) * transform.root.GetChild(2).forward;
+
+                        RaycastHit hit;
+                        if (Physics.Raycast(startPosition, direction, out hit, base.Range))
                         {
-                            Monster monster = hit.collider.GetComponent<Monster>();
-                            if (monster != null)
+                            if (hit.collider.CompareTag("Monster"))
                             {
-                                StartCoroutine(DelayedDamage(monster));
+                                Monster monster = hit.collider.GetComponent<Monster>();
+                                if (monster != null)
+                                {
+                                    StartCoroutine(DelayedDamage(monster));
+                                }
                             }
                         }
-                    }
 
-                    Debug.DrawRay(transform.root.GetChild(2).position, direction * base.Range, Color.red, 1.0f);
+                        Debug.DrawRay(transform.root.GetChild(2).position, direction * base.Range, Color.red, 1.0f);
+                    }
                 }
             }
             else if (_playerInputs.stab && _playerMove._grounded) // Âî¸£±â
