@@ -198,9 +198,9 @@ public class Melee_S : Weapon
          // 자기 자신에게 닿은 경우 무시
          if (other.transform.root.name == gameObject.name) return;
 
-         if (other.GetComponent<Monster>() != null)
+         if (other.GetComponent<IStatus>() != null)
          {
-             other.GetComponent<Monster>().TakedDamage(Attack);
+             other.GetComponent<IStatus>().TakedDamage(Attack);
          }
      }
 

@@ -175,14 +175,22 @@ public class Melee : Weapon
         // 데미지 적용
 
         // 자기 자신에게 닿은 경우 무시
-        if (other.transform.root.name == gameObject.name) return;
+        if (other.transform.root.name.Contains("Player") && other.transform.root.GetChild(2).GetComponent<PlayerStatus>() == _playerStatus)
+        {
+            return;
+        }
 
         PlayerStatus otherPlayerStatus = other.GetComponent<PlayerStatus>();
-
         if (otherPlayerStatus != null)
         {
             otherPlayerStatus.gameObject.GetComponent<PhotonView>().RPC("TakedDamage", RpcTarget.All, base.Attack);
             otherPlayerStatus.gameObject.GetComponent<PhotonView>().RPC("HitChangeMaterials", RpcTarget.All);
+        }
+
+        Monster monster = other.GetComponent<Monster>();
+        if(monster != null)
+        {
+            monster.GetComponent<IStatus>().TakedDamage(Attack);
         }
     }
 

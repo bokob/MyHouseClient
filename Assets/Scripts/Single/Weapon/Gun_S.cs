@@ -195,11 +195,11 @@ public class Gun_S : Weapon
             }
 
             // 몬스터가 맞은 경우
-            Monster monster = _hitTransform.GetComponent<Monster>();
-            if (monster != null)
+            IStatus other = _hitTransform.GetComponent<IStatus>();
+            if (other != null)
             {
-                monster.TakedDamage(Attack);
-                if(monster.Hp <= 0)
+                other.TakedDamage(Attack);
+                if(other.Hp <= 0)
                 {
                     GameManager_S._instance.Score++;
                     _totalBulletCount += 10;
