@@ -149,12 +149,12 @@ public class InGameUI : MonoBehaviour
 
     public void DisplayWeaponInfo()
     {
-        string weaponTag;
-        if (NetworkManager._instance == null) // 싱글
+        string weaponTag = null;
+        if (Define._sceneName == "SinglePlayScene") // 싱글
         {
             weaponTag = _weaponManagerS._selectedWeapon.tag;
         }
-        else // 멀티
+        else if(Define._sceneName == "MultiPlayScene") // 멀티
         {
             _weaponManager = (_status.Role == Define.Role.Robber) ? _robberWeaponManager : _houseownerWeaponManager;
             weaponTag = _weaponManager._selectedWeapon.tag;
@@ -173,11 +173,11 @@ public class InGameUI : MonoBehaviour
         else // 근접 무기인 경우
         {
 
-            if (NetworkManager._instance == null) // 싱글
+            if (Define._sceneName == "SinglePlayScene") // 싱글
             {
                 DisplayWeaponIcon(GetWeaponIconIndex(_weaponManagerS._selectedWeapon.name));
             }
-            else // 멀티
+            else if(Define._sceneName == "MultiPlayScene") // 멀티
             {
                 DisplayWeaponIcon(GetWeaponIconIndex(_weaponManager._selectedWeapon.name));
             }
@@ -190,12 +190,12 @@ public class InGameUI : MonoBehaviour
 
     public void DisplayGunInfo()
     {
-        if(NetworkManager._instance == null) // 싱글
+        if(Define._sceneName == "SinglePlayScene") // 싱글
         {
             _currentBullet.text = _weaponManagerS._selectedWeapon.GetComponent<Gun_S>().GetCurrentBullet().ToString();    // 현재 장정된 탄약
             _totalBullet.text = _weaponManagerS._selectedWeapon.GetComponent<Gun_S>().GetTotalBullet().ToString();         // 전체 탄약
         }
-        else // 멀티
+        else if(Define._sceneName == "MultiPlayScene") // 멀티
         {
             _currentBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun>().GetCurrentBullet().ToString();    // 현재 장정된 탄약
             _totalBullet.text = _weaponManager._selectedWeapon.GetComponent<Gun>().GetTotalBullet().ToString();         // 전체 탄약
@@ -207,9 +207,10 @@ public class InGameUI : MonoBehaviour
     // 우상단 패널
     public void DisplayRightUp() 
     {
-        _rightUpText.text = (NetworkManager._instance == null) ? GameManager_S._instance._monsterCount.ToString() : PhotonNetwork.CurrentRoom.PlayerCount.ToString();
-        _rightUpIcon.texture = (NetworkManager._instance == null) ? _rightUpImages[0] : _rightUpImages[1];
+        _rightUpText.text = (Define._sceneName == "SinglePlayScene") ? GameManager_S._instance._monsterCount.ToString() : PhotonNetwork.CurrentRoom.PlayerCount.ToString();
+        _rightUpIcon.texture = (Define._sceneName == "SinglePlayScene") ? _rightUpImages[0] : _rightUpImages[1];
     }
+
     // 무기 이름으로 무기 아이콘 구하기
     public int GetWeaponIconIndex(string weaponName)
     {
@@ -253,7 +254,7 @@ public class InGameUI : MonoBehaviour
     {
         _gameOverScreen.SetActive(true);
 
-        if (NetworkManager._instance == null)
+        if (SceneManager.GetActiveScene().name == "SinglePlayScene")
         {
             score = GameManager_S._instance._score; // 점수 지정
             _killGhostText.text = "Killed Ghost : " + score.ToString();
@@ -275,5 +276,20 @@ public class InGameUI : MonoBehaviour
         _fadeImageInGameOverScreen.color = color;
     }
 
-    public void ExitToTitle() => SceneManager.LoadScene("TitleScene");
+    public void ExitToTitle()
+    {
+        if (Define._sceneName == "MultiPlayScene")
+        {
+            NetworkManager._instance.Disconnect(); // 연결 종료
+        }
+
+        // 네트워크 ID 충돌 때문에 삭제 해줘야 함
+        Destroy(NetworkManager._instance.GetNetworkManagerGameObject());
+        NetworkManager._instance = null;
+        Debug.LogWarning("멀티씬 -> 타이틀씬, 네트워크 매니저 객체 삭제");
+
+        // 씬 전환
+        Define._sceneName = "TitleScene";
+        SceneManager.LoadScene("TitleScene");
+    }
 }

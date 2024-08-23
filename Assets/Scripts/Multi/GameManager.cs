@@ -33,6 +33,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        Define._sceneName = SceneManager.GetActiveScene().name;
+
         if (_instance == null)
         {
             _instance = this;

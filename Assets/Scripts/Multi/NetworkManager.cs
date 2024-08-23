@@ -55,15 +55,32 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     //[Header("게임 로직 관련")]
     //public List<GameObject> _playerPrefabListInRoom = new List<GameObject>();
 
-    #region 서버연결
+
     void Awake()
     {
-        if (_instance == null)
-            _instance = this;
-
-        DontDestroyOnLoad(_instance);
+        Init();
     }
 
+    void Init()
+    {
+        if (_instance == null)
+        {
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+        else if (_instance != this)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public GameObject GetNetworkManagerGameObject()
+    {
+        return gameObject;
+    }
+
+    #region 서버연결
     void Update()
     {
         if (!_isGameStarted)
@@ -137,7 +154,9 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public void Disconnect()
     {
         Debug.Log("게임 서버 연결 종료");
-        UIMenuManager._instance.responseLobby.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "Discconecting to Server...";
+
+        if(SceneManager.GetActiveScene().name == "TitleScene")
+            UIMenuManager._instance.responseLobby.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "Discconecting to Server...";
         PhotonNetwork.Disconnect();
     }
 
@@ -145,8 +164,11 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     public override void OnDisconnected(DisconnectCause cause) 
     {
         //Debug.Log("연결 종료 이유: " + cause.ToString());
-        UIMenuManager._instance.responseLobby.SetActive(false);
-        UIMenuManager._instance.LobbyToMainCamPos();
+        if(SceneManager.GetActiveScene().name == "TitleScene") 
+        { 
+            UIMenuManager._instance.responseLobby.SetActive(false);
+            UIMenuManager._instance.LobbyToMainCamPos();
+        }
     }
     #endregion
 
@@ -462,21 +484,18 @@ public class NetworkManager : MonoBehaviourPunCallbacks
 
     #region 게임 로직
 
-    private void Start()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
-
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         //Debug.Log("로드된 씬: " + scene.name);
 
+        //if (scene.name == "SinglePlayScene")
+        //    Destroy(gameObject);
+
 
         // 플레이어 소환
-
         if(scene.name == "MultiPlayScene")
             GameManager._instance.SapwnPlayer();
-}
+    }
 
     private void OnDestroy()
     {

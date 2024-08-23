@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using Newtonsoft.Json;
+using UnityEngine.SceneManagement;
 
 public class GameManager_S : MonoBehaviour
 {    
@@ -17,11 +18,11 @@ public class GameManager_S : MonoBehaviour
 
     void Awake()
     {
+        Define._sceneName = SceneManager.GetActiveScene().name;
+
         _instance = this;
 
         LoadWeaponData();
-
-        Destroy(NetworkManager._instance); // 네트워크 매니저 삭제
     }
 
     // 무기 정보 로드

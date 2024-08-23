@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class CameraController : MonoBehaviour
 {
@@ -39,7 +40,7 @@ public class CameraController : MonoBehaviour
 
     void LateUpdate()
     {
-        if (View == Define.View.Third)
+        if (SceneManager.GetActiveScene().name != "TitleScene" && View == Define.View.Third)
         {
             CameraRotation();
         }
@@ -96,6 +97,9 @@ public class CameraController : MonoBehaviour
         // clamp our rotations so our values are limited 360 degrees
         _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
         _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, _bottomClamp, _topClamp);
+
+        // 씬 전환 후에 오류 방지를 위한 구문, LateUpdate여서 게임 씬에서 파괴된 _cinemachineCameraTarget에 접근하려고 해서 문제되는 듯 하다
+        if (_cinemachineCameraTarget == null) return;
 
         // 시네마신 카메라가 목표를 따라감
         _cinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + _cameraAngleOverride, _cinemachineTargetYaw, 0.0f);
