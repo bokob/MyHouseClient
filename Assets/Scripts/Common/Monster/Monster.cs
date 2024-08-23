@@ -146,7 +146,9 @@ public class Monster : MonoBehaviour, IStatus
             Transform findTarget = rangeChecks[0].transform;
             Vector3 directionToTarget = (findTarget.position - transform.position).normalized;
 
-            if (Vector3.Angle(transform.forward, directionToTarget) < _angle / 2) // 플레이어로부터 부채꼴처럼 볼 수 있게
+            float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
+
+            if (angleToTarget < _angle / 2 || angleToTarget > 360 - (_angle / 2)) // 플레이어로부터 부채꼴처럼 볼 수 있게, 270도
             {
                 float distanceToTarget = Vector3.Distance(transform.position, findTarget.position);
 

@@ -7,14 +7,14 @@ using Photon.Pun;
 
 public class PlayerMove : MonoBehaviour
 {
-    public float _moveSpeed = 2.0f;      // ì›€ì§ì„ ì†ë„
-    public float _sprintSpeed = 5.335f;  // ë‹¬ë¦¬ê¸° ì†ë„
+    public float _moveSpeed = 3.5f;      // ¿òÁ÷ÀÓ ¼Óµµ
+    public float _sprintSpeed = 5.335f;  // ´Ş¸®±â ¼Óµµ
     float _speed;
 
     [Range(0.0f, 0.3f)]
-    public float _rotationSmoothTime = 0.12f;   // ì›€ì§ì„ ë°©í–¥ ì „í™˜
-    public float _speedChangeRate = 10.0f;      // ì†ë„ ê°€ì†
-    public float _sensitivity = 1f;             // ë¯¼ê°ë„
+    public float _rotationSmoothTime = 0.12f;   // ¿òÁ÷ÀÓ ¹æÇâ ÀüÈ¯
+    public float _speedChangeRate = 10.0f;      // ¼Óµµ °¡¼Ó
+    public float _sensitivity = 1f;             // ¹Î°¨µµ
     
     float _targetRotation = 0.0f;
     float _rotationVelocity;
@@ -26,15 +26,15 @@ public class PlayerMove : MonoBehaviour
     float _fallTimeoutDelta;
 
     [Space(10)]
-    public float _jumpHeight = 1.2f;        // ì í”„ ë†’ì´
-    public float _gravity = -15.0f;         // ìœ ë‹ˆí‹° ì—”ì§„ì—ì„œ ê¸°ë³¸ ì¤‘ë ¥: -9.81f
+    public float _jumpHeight = 1.2f;        // Á¡ÇÁ ³ôÀÌ
+    public float _gravity = -15.0f;         // À¯´ÏÆ¼ ¿£Áø¿¡¼­ ±âº» Áß·Â: -9.81f
     [Space(10)]
-    public float _jumpTimeout = 0.50f;      // ì í”„ ì¿¨íƒ€ì„
-    public float _fallTimeout = 0.15f;      // ë–¨ì–´ì§€ëŠ” ìƒíƒœë¡œ ì§„ì…í•˜ëŠ”ë° ê±¸ë¦¬ëŠ” ì‹œê°„
-    public bool _grounded = true;           // ì§€ë©´ì— ë‹¿ì•˜ëŠ”ì§€ ì—¬ë¶€
-    public float _groundedOffset = 0.14f;  // ë•…ì— ë‹¿ì„ ë•Œ ì²´í¬í•˜ëŠ” ì› yì¶• ìœ„ì¹˜
-    public float _groundedRadius = 0.28f;   // ìºë¦­í„° ì»¨íŠ¸ë¡¤ëŸ¬ì—ì„œ êµ¬ì²´ í˜•ì„±í•´ì„œ ì§€ë©´ì²´í¬í•  ë•Œ, êµ¬ì²´ ë°˜ì§€ë¦„
-    public LayerMask _groundLayers;         // ë•…ì— í•´ë‹¹í•˜ëŠ” ë ˆì´ì–´ ë§ˆìŠ¤í¬
+    public float _jumpTimeout = 0.50f;      // Á¡ÇÁ ÄğÅ¸ÀÓ
+    public float _fallTimeout = 0.15f;      // ¶³¾îÁö´Â »óÅÂ·Î ÁøÀÔÇÏ´Âµ¥ °É¸®´Â ½Ã°£
+    public bool _grounded = true;           // Áö¸é¿¡ ´ê¾Ò´ÂÁö ¿©ºÎ
+    public float _groundedOffset = 0.14f;  // ¶¥¿¡ ´êÀ» ¶§ Ã¼Å©ÇÏ´Â ¿ø yÃà À§Ä¡
+    public float _groundedRadius = 0.28f;   // Ä³¸¯ÅÍ ÄÁÆ®·Ñ·¯¿¡¼­ ±¸Ã¼ Çü¼ºÇØ¼­ Áö¸éÃ¼Å©ÇÒ ¶§, ±¸Ã¼ ¹İÁö¸§
+    public LayerMask _groundLayers;         // ¶¥¿¡ ÇØ´çÇÏ´Â ·¹ÀÌ¾î ¸¶½ºÅ©
 
     CharacterController _controller;
     public PlayerInputs _input;
@@ -47,7 +47,7 @@ public class PlayerMove : MonoBehaviour
 
     [SerializeField] CameraController _mainCamera;
 
-    // ì• ë‹ˆë©”ì´ì…˜ ê´€ë ¨
+    // ¾Ö´Ï¸ŞÀÌ¼Ç °ü·Ã
     Animator _animator;
     // animation IDs
     int _animIDSpeed;
@@ -58,8 +58,8 @@ public class PlayerMove : MonoBehaviour
     float _animationBlend;
     bool _hasAnimator;
 
-    public AudioClip _landingAudioClip;                     // ë°œì†Œë¦¬
-    [Range(0, 1)] public float _footstepAudioVolume = 0.5f; // ë°œì†Œë¦¬ í¬ê¸°
+    public AudioClip _landingAudioClip;                     // ¹ß¼Ò¸®
+    [Range(0, 1)] public float _footstepAudioVolume = 0.5f; // ¹ß¼Ò¸® Å©±â
 
     void Awake()
     {
@@ -113,7 +113,7 @@ public class PlayerMove : MonoBehaviour
         else if (_status.Role == Define.Role.Houseowner)
             _animator = transform.GetChild(1).gameObject.GetComponent<Animator>();
         else
-            Debug.Log("ì•„ì§ ì—­í• ì´ ì•ˆì •í•´ì¡ŒëŠ”ë°?");
+            Debug.Log("¾ÆÁ÷ ¿ªÇÒÀÌ ¾ÈÁ¤ÇØÁ³´Âµ¥?");
 
         _hasAnimator = (_animator != null) ? true : false;
 
@@ -126,12 +126,12 @@ public class PlayerMove : MonoBehaviour
     {
         //if (!IsLocalPlayer) return;
 
-        GroundedCheck();    // ì§€ë©´ì²´í¬
-        JumpAndGravity();   // ì í”„
-        Move();             // ì´ë™
+        GroundedCheck();    // Áö¸éÃ¼Å©
+        JumpAndGravity();   // Á¡ÇÁ
+        Move();             // ÀÌµ¿
     }
 
-    // ì• ë‹ˆë©”ì´ì…˜ íŒŒë¼ë¯¸í„° í•´ì‹œë¡œ ê´€ë¦¬
+    // ¾Ö´Ï¸ŞÀÌ¼Ç ÆÄ¶ó¹ÌÅÍ ÇØ½Ã·Î °ü¸®
     void AssignAnimationIDs()
     {
         _animIDSpeed = Animator.StringToHash("Speed");
@@ -141,21 +141,21 @@ public class PlayerMove : MonoBehaviour
         _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
     }
 
-    // ì´ë™
+    // ÀÌµ¿
     void Move()
     {
         // set target speed based on move speed, sprint speed and if sprint is pressed
         float targetSpeed = _input.sprint ? _sprintSpeed : _moveSpeed;
 
-        // spê°€ 0ì´ë©´ ê¸°ë³¸ ì´ë™ì†ë„
+        // sp°¡ 0ÀÌ¸é ±âº» ÀÌµ¿¼Óµµ
         if (_status.Sp == 0)
             targetSpeed = _moveSpeed;
 
-        // ì•ˆë‹¬ë¦¬ë©´ ìŠ¤í…Œë¯¸ë‚˜ íšŒë³µ
+        // ¾È´Ş¸®¸é ½ºÅ×¹Ì³ª È¸º¹
         if(!_input.sprint)
             _status.ChargeSp();
 
-        // ì›€ì§ì„ ì—†ìœ¼ë©´ 0 ë²¡í„°ë¡œ ì²˜ë¦¬
+        // ¿òÁ÷ÀÓ ¾øÀ¸¸é 0 º¤ÅÍ·Î Ã³¸®
         if (_input.move == Vector2.zero) targetSpeed = 0.0f;
 
         // a reference to the players current horizontal velocity
@@ -200,19 +200,19 @@ public class PlayerMove : MonoBehaviour
                 transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
 
-            // ë‹¬ë¦¬ê³  ìˆëŠ” ê²½ìš°ì— ìŠ¤í…Œë¯¸ë‚˜ ê°ì†Œ
+            // ´Ş¸®°í ÀÖ´Â °æ¿ì¿¡ ½ºÅ×¹Ì³ª °¨¼Ò
             if (_input.sprint)
                 _status.DischargeSp();
 
         }
         else
         {
-            //Debug.Log(OwnerClientId + "ê°€ ì›€ì§ì´ê³  ìˆì–´ìš”");
+            //Debug.Log(OwnerClientId + "°¡ ¿òÁ÷ÀÌ°í ÀÖ¾î¿ä");
         }
 
         Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
 
-        // í”Œë ˆì´ì–´ ì›€ì§ì´ê²Œ í•˜ê¸°
+        // ÇÃ·¹ÀÌ¾î ¿òÁ÷ÀÌ°Ô ÇÏ±â
         _controller.Move(targetDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
 
         // update animator if using character
@@ -223,29 +223,29 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    // ì§€ë©´ ì²´í¬
+    // Áö¸é Ã¼Å©
     void GroundedCheck()
     {
         // set sphere position, with offset
         Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - _groundedOffset, transform.position.z);
         _grounded = Physics.CheckSphere(spherePosition, _groundedRadius, _groundLayers, QueryTriggerInteraction.Ignore);
 
-        // "Grounded" ì• ë‹ˆë©”ì´ì…˜ íŒŒë¼ë¯¸í„° ë³€ê²½
+        // "Grounded" ¾Ö´Ï¸ŞÀÌ¼Ç ÆÄ¶ó¹ÌÅÍ º¯°æ
         if (_hasAnimator)
         {
             _animator.SetBool(_animIDGrounded, _grounded);
         }
     }
 
-    // ì í”„
+    // Á¡ÇÁ
     void JumpAndGravity()
     {
-        Debug.Log("ì í”„ í•¨ìˆ˜ ë‚´ìš© ì‹œì‘ ì „");
+        Debug.Log("Á¡ÇÁ ÇÔ¼ö ³»¿ë ½ÃÀÛ Àü");
 
-        // ë•…ì— ë‹¿ê³  ìŠ¤í…Œë¯¸ë‚˜ê°€ 0ë³´ë‹¤ ì»¤ì•¼ ì í”„
+        // ¶¥¿¡ ´ê°í ½ºÅ×¹Ì³ª°¡ 0º¸´Ù Ä¿¾ß Á¡ÇÁ
         if (_grounded && _status.Sp > 0)
         {
-            Debug.Log("ë•…ì— ë‹¿ì•˜ê³ , ìŠ¤í…Œë¯¸ë‚˜ê°€ 0 ì´ˆê³¼");
+            Debug.Log("¶¥¿¡ ´ê¾Ò°í, ½ºÅ×¹Ì³ª°¡ 0 ÃÊ°ú");
 
             // reset the fall timeout timer
             _fallTimeoutDelta = _fallTimeout;
@@ -261,11 +261,11 @@ public class PlayerMove : MonoBehaviour
             if (_verticalVelocity < 0.0f)
                 _verticalVelocity = -2f;
 
-            Debug.Log("ì í”„ í‚¤ ëˆ„ë¥´ê¸° ì§ì „");
+            Debug.Log("Á¡ÇÁ Å° ´©¸£±â Á÷Àü");
             // Jump
             if (_input.jump && _jumpTimeoutDelta <= 0.0f)
             {
-                Debug.Log("ì í”„ í‚¤ ëˆ„ë¥´ê³  ë‚œ í›„");
+                Debug.Log("Á¡ÇÁ Å° ´©¸£°í ³­ ÈÄ");
                 // the square root of H * -2 * G = how much velocity needed to reach desired height
                 _verticalVelocity = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
 
@@ -274,7 +274,7 @@ public class PlayerMove : MonoBehaviour
                 {
                     _animator.Play("JumpStart");
                     _animator.SetBool(_animIDJump, true);
-                    Debug.Log("ì í”„ ì‹œì‘ ì• ë‹ˆë©”ì´ì…˜");
+                    Debug.Log("Á¡ÇÁ ½ÃÀÛ ¾Ö´Ï¸ŞÀÌ¼Ç");
                 }
 
                 _status.JumpSpDown();
@@ -308,7 +308,7 @@ public class PlayerMove : MonoBehaviour
             _verticalVelocity += _gravity * Time.deltaTime;
     }
 
-    // ë°”ë‹¥ì— ë‹¿ëŠ” ë²”ìœ„ í™•ì¸ì„ ìœ„í•œ Gizmo
+    // ¹Ù´Ú¿¡ ´ê´Â ¹üÀ§ È®ÀÎÀ» À§ÇÑ Gizmo
     void OnDrawGizmosSelected()
     {
         Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
@@ -326,7 +326,7 @@ public class PlayerMove : MonoBehaviour
         _rotateOnMove = newRotateOnMove;
     }
 
-    // ë•…ì— ë‹¿ì„ ë•Œ ì°©ì§€ ì†Œë¦¬ ë‚˜ê²Œ í•˜ëŠ” ì• ë‹ˆë©”ì´ì…˜ ì´ë²¤íŠ¸
+    // ¶¥¿¡ ´êÀ» ¶§ ÂøÁö ¼Ò¸® ³ª°Ô ÇÏ´Â ¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ®
     void OnLand(AnimationEvent animationEvent)
     {
         if (_controller == null || _landingAudioClip == null)
