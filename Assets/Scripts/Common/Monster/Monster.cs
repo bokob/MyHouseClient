@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Pool;
@@ -58,6 +59,7 @@ public class Monster : MonoBehaviour, IStatus
     public Transform _target = null; // 목표
     #endregion
 
+    public bool _isTakingDamage = false; // 싱글 중복 타격 방지용
     public int _monsterCount = 0; // 유령 수
 
     void Awake()
@@ -364,7 +366,11 @@ public class Monster : MonoBehaviour, IStatus
 
     void OnTriggerEnter(Collider other)
     {
-        if (_state == Define.MonsterState.None) return;
+        if (_state == Define.MonsterState.None ) return;
+        if(SceneManager.GetActiveScene().name == "SinglePlayScene" )
+        {
+            return;
+        }
 
         // 태그가 무기 태그인 경우
         if (other.tag == "Melee" || other.tag == "Gun")
@@ -445,6 +451,7 @@ public class Monster : MonoBehaviour, IStatus
     {
         if (Hp > 0)
             {
+                
                 if (_state != Define.MonsterState.Hit)
                 {
                     ChangeState(Define.MonsterState.Hit);

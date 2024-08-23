@@ -42,6 +42,7 @@ public class WeaponItem_S : Item
 
     private void OnTriggerStay(Collider other)
     {
+        if(other.tag != "Player") return;
         Debug.Log("아이템이 사정거리 안에 존재");
         PlayerStatus_S status = other.GetComponent<PlayerStatus_S>();
         // 플레이어가 있고, 근처 근접 무기 탐색에 성공했고, 아이템 줍기 버튼을 눌렀고, 아이템 쿨타임 아닐 때

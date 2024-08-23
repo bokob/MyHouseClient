@@ -101,6 +101,8 @@ public class Melee_S : Weapon
         int rayCount = 10;
         float angle = 60f;  // 부채꼴 각도
         float halfAngle = angle / 2.0f;
+        Vector3 startPosition = transform.root.GetChild(2).position;
+        startPosition.y += 1.0f;
 
         if (_playerInputs == null)
             _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
@@ -120,14 +122,14 @@ public class Melee_S : Weapon
 
             if (_playerInputs.swing && _playerMove._grounded) // 휘두르기
             {
-                Vector3 startPosition = transform.root.GetChild(2).position;
-                startPosition.y += 1.0f;
                 Debug.Log("휘두르기");
                 // _weaponManager._selectedWeapon.GetComponent<Melee>().Use();
                 _animator.SetTrigger("setSwing");
-                _swingDelay = 0;
-                if(_isSwingReady == true)
+                
+                if(_isSwingReady == true && _isStabReady == true)
                 {
+                    _swingDelay = 0;
+                    HashSet<Monster> hitMonsters = new HashSet<Monster>();
                     for (int i = 0; i < rayCount; i++)
                     {
                         float currentAngle = -halfAngle + (i * (angle / (rayCount - 1)));
@@ -139,8 +141,9 @@ public class Melee_S : Weapon
                             if (hit.collider.CompareTag("Monster"))
                             {
                                 Monster monster = hit.collider.GetComponent<Monster>();
-                                if (monster != null)
+                                if (monster != null && !hitMonsters.Contains(monster))
                                 {
+                                    hitMonsters.Add(monster);
                                     StartCoroutine(DelayedDamage(monster));
                                 }
                             }
@@ -152,10 +155,38 @@ public class Melee_S : Weapon
             }
             else if (_playerInputs.stab && _playerMove._grounded) // 찌르기
             {
+                
                 Debug.Log("찌르기");
                 // _weaponManager._selectedWeapon.GetComponent<Melee>().Use();
                 _animator.SetTrigger("setStab");
                 _stabDelay = 0;
+
+                if(_isSwingReady == true && _isStabReady == true)
+                {
+                    _stabDelay = 0;
+                    HashSet<Monster> hitMonsters = new HashSet<Monster>();
+                    for (int i = 0; i < rayCount; i++)
+                    {
+                        float currentAngle = -halfAngle + (i * (angle / (rayCount - 1)));
+                        Vector3 direction = Quaternion.Euler(0, currentAngle / 2, 0) * transform.root.GetChild(2).forward;
+
+                        RaycastHit hit;
+                        if (Physics.Raycast(startPosition, direction, out hit, base.Range + 0.5f))
+                        {
+                            if (hit.collider.CompareTag("Monster"))
+                            {
+                                Monster monster = hit.collider.GetComponent<Monster>();
+                                if (monster != null && !hitMonsters.Contains(monster))
+                                {
+                                    hitMonsters.Add(monster);
+                                    StartCoroutine(DelayedDamage(monster));
+                                }
+                            }
+                        }
+
+                        Debug.DrawRay(transform.root.GetChild(2).position, direction * base.Range, Color.red, 1.0f);
+                    }
+                }
 
             }
             _playerInputs.swing = false;
@@ -195,10 +226,8 @@ public class Melee_S : Weapon
          _hasExited = false;
          _entryPoint = other.ClosestPoint(transform.position);
 
-         // 데미지 적용
-
          // 자기 자신에게 닿은 경우 무시
-         if (other.transform.root.name == gameObject.name) return;
+         if (other.tag == "Player") return;
 
          if (other.GetComponent<IStatus>() != null)
          {
@@ -275,9 +304,14 @@ public class Melee_S : Weapon
     IEnumerator DelayedDamage(Monster monster)
     {
         yield return new WaitForSeconds(0.8f); // 0.5초 지연
-
-        monster.TakedDamage(base.Attack);
-        Debug.LogError("적이 공격받았습니다: " + monster.name);
-        monster.HitStart();
+        if(monster._isTakingDamage == false)
+        {
+            monster.TakedDamage(base.Attack);
+            Debug.Log("적이 공격받았습니다: " + monster.name);
+            monster.HitStart();
+            monster._isTakingDamage = true;
+        }
+        yield return new WaitForSeconds(0.3f);
+        monster._isTakingDamage = false;
     }
 }
