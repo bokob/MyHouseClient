@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerMove_S : MonoBehaviour
 {
-    public float _moveSpeed = 2.0f;      // 움직임 속도
+    public float _moveSpeed = 3.5f;      // 움직임 속도
     public float _sprintSpeed = 5.335f;  // 달리기 속도
     float _speed;
 
