@@ -229,6 +229,11 @@ public class InGameUI : MonoBehaviour
         {
             _exitMenu.SetActive(true);
         }
+
+        if (_exitMenu.activeSelf && Input.GetKeyDown(KeyCode.Return))
+        {
+            ExitToTitle();
+        }
     }
 
     public void DisableUI()
