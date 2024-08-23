@@ -13,8 +13,8 @@ public class ItemCylinder : MonoBehaviour
     public bool _usedItem = false; // 아이템 사용되었는지(쿨타임)
 
     [Tooltip("아이템 재등장 시간 UI 관련")]
-    public GameObject _timerHolder;
-    public TextMeshPro _itemTimer;  // 아이템 재생성 시간 표시할 UI
+    //public GameObject _timerHolder;
+    //public TextMeshPro _itemTimer;  // 아이템 재생성 시간 표시할 UI
     public float _respawnTime;      // 아이템 실린더에 표시될 시간
 
     [Tooltip("아이템 실린더에서 관리할 아이템 관련")]
@@ -43,7 +43,7 @@ public class ItemCylinder : MonoBehaviour
 
         // 재생성 시간 UI 비활성화
         SetRespawnTime();
-        _timerHolder.SetActive(false);
+        //_timerHolder.SetActive(false);
     }
 
     void Update()
@@ -57,7 +57,7 @@ public class ItemCylinder : MonoBehaviour
         if (_usedItem)
         {
             _respawnTime -= Time.deltaTime;
-            _itemTimer.text = Mathf.FloorToInt(_respawnTime).ToString();
+            //_itemTimer.text = Mathf.FloorToInt(_respawnTime).ToString();
             if (_respawnTime <= 0)
             {
                 // 마스터 클라이언트에게 아이템 소환 요청
@@ -72,7 +72,7 @@ public class ItemCylinder : MonoBehaviour
         _usedItem = true;
         if(_spawnItem != null)
             _spawnItem.gameObject.SetActive(false);
-        _timerHolder.SetActive(true);
+        //_timerHolder.SetActive(true);
     }
 
     public void SetRespawnTime()
