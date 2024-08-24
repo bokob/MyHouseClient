@@ -176,7 +176,6 @@ public class Gun : Weapon
             // 무언가 맞았으면
             if (_hitTransform.GetComponent<BulletTarget>() != null)
             {
-                Debug.Log("엄준식");
                 GetComponent<PhotonView>().RPC("InstantiateVFX", RpcTarget.All, _hitVFX.name, _hitTransform.position, Quaternion.identity); // 탄착 지점 효과
 
                 GameObject GreenEffect = Instantiate(_vfxHitGreen, _mouseWorldPosition, Quaternion.identity);

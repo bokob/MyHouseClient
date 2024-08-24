@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Define
 {
+    public static string _sceneName = "TitleScene";
+
     public enum Role
     {
         None,

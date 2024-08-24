@@ -6,7 +6,7 @@ using UnityEngine.AI;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 
-public class Monster : MonoBehaviour
+public class Monster : MonoBehaviour, IStatus
 {
     [SerializeField]
     private IObjectPool<Monster> _managedPool;
@@ -22,7 +22,15 @@ public class Monster : MonoBehaviour
     List<Renderer> _renderers; // 피해 입었을 때 렌더러 색 변환에 사용할 리스트
     List<Color> _originColors;
 
-    [field: SerializeField] public float Hp { get; private set; } = 300f;                   // 체력
+
+    public Define.Role Role { get; set; }
+    [field: SerializeField] public float Hp { get; set; } = 300f;                   // 체력
+    public float Sp { get; set; }
+    public float MaxHp { get; set; }
+    public float MaxSp { get; set; }
+    public float Defence { get; set; }
+
+
     [field: SerializeField] public int _attack { get; private set; } = 30;                   // 공격력
     #endregion
 
@@ -423,13 +431,10 @@ public class Monster : MonoBehaviour
         // 피해가 음수라면 회복되는 현상이 일어나므로 피해의 값을 0이상으로 되게끔 설정
         float damage = Mathf.Max(0, attack);
         Hp -= damage;
-        if(Hp > 0)
-        {
-            HitChangeMaterials();
-            Debug.Log(gameObject.name + "(이)가 " + damage + " 만큼 피해를 입었음!");
-            Debug.Log("남은 체력: " + Hp);
-        }
-        else
+        HitChangeMaterials();
+        Debug.Log(gameObject.name + "(이)가 " + damage + " 만큼 피해를 입었음!");
+        Debug.Log("남은 체력: " + Hp);
+        if (Hp<=0)
         {
             Dead();
         }

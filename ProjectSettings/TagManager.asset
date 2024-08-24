@@ -25,16 +25,16 @@ TagManager:
   - FrozenChunks
   - 
   - NotOptionalRendering
+  - Floor
   - Wall
   - Roof
-  - 
   - 
   - Cutable
   - Breakable
   - Destructible
   - 
-  - 
-  - 
+  - NotMinimap
+  - Minimap
   - 
   - 
   - 

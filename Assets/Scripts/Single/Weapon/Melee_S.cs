@@ -221,21 +221,19 @@ public class Melee_S : Weapon
     #region 절단 기능
     //칼이 트리거 안에 있을 때
     // _hasExited를 false로 설정
-    // void OnTriggerEnter(Collider other)
-    //  {
-    //      _hasExited = false;
-    //      _entryPoint = other.ClosestPoint(transform.position);
+    void OnTriggerEnter(Collider other)
+     {
+         _hasExited = false;
+         _entryPoint = other.ClosestPoint(transform.position);
 
-    //      // 데미지 적용
+         // 자기 자신에게 닿은 경우 무시
+         if (other.tag == "Player") return;
 
-    //      // 자기 자신에게 닿은 경우 무시
-    //      if (other.tag == "Player") return;
-
-    //      if (other.GetComponent<Monster>() != null)
-    //      {
-    //          other.GetComponent<Monster>().TakedDamage(Attack);
-    //      }
-    //  }
+         if (other.GetComponent<IStatus>() != null)
+         {
+             other.GetComponent<IStatus>().TakedDamage(Attack);
+         }
+     }
 
     void OnTriggerStay(Collider other)
     {

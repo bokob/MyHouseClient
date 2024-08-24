@@ -304,10 +304,10 @@ namespace SlimUI.ModernMenu{
 			}
 		}
 
-        // ---------------------------------- 구분선 ---------------------------------------------------- 
-        #region 네트워크 관련 버튼
-        // MultiPlay 눌렀을 때 게임 서버 접속
-        public void OnPressedMultiPlay() => NetworkManager._instance.Connect();
+		// ---------------------------------- 구분선 ---------------------------------------------------- 
+		#region 네트워크 관련 버튼
+		// MultiPlay 눌렀을 때 게임 서버 접속
+		public void OnPressedMultiPlay() => NetworkManager._instance.Connect();
 
 		// Qick Start 눌렀을 때 방 접속, 없으면 만들게 됨
 		public void OnPressedQuickStart() => NetworkManager._instance.JoinRandomRoom();
