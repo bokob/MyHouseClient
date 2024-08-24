@@ -13172,7 +13172,7 @@ MonoBehaviour:
   _rotationSmoothTime: 0.12
   _speedChangeRate: 10
   _sensitivity: 1
-  _jumpHeight: 1.2
+  _jumpHeight: 1.5
   _gravity: -15
   _jumpTimeout: 0.5
   _fallTimeout: 0.15
@@ -13181,7 +13181,7 @@ MonoBehaviour:
   _groundedRadius: 0.28
   _groundLayers:
     serializedVersion: 2
-    m_Bits: 2049
+    m_Bits: 22529
   _input: {fileID: 0}
   _mainCamera: {fileID: 3439450309009642615}
   _landingAudioClip: {fileID: 0}
@@ -14067,7 +14067,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 2562815
+    m_Bits: 3615487
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: dfaa9389a23b72948a9356e683fd74e9, type: 2}
   m_TargetDisplay: 0
@@ -16721,7 +16721,6 @@ GameObject:
   - component: {fileID: 5581704992897636564}
   - component: {fileID: 6944045431907438263}
   - component: {fileID: 5834644060400649262}
-  - component: {fileID: 7662516425383728336}
   m_Layer: 0
   m_Name: Houseowner
   m_TagString: Untagged
@@ -16874,28 +16873,6 @@ MonoBehaviour:
     LayerIndex: 0
   - SynchronizeType: 1
     LayerIndex: 1
---- !u!114 &7662516425383728336
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6845438684881892623}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0f4bcfd6ee929f4ab4ddfc38e380ba6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LayerMask:
-    serializedVersion: 2
-    m_Bits: 2048
-  Target: {fileID: 2681211414610034083}
-  Camera: {fileID: 4797068789251298811}
-  FadedAlpha: 0.33
-  RetainShadows: 1
-  TargetPositionOffset: {x: 0, y: 1, z: 0}
-  FadeSpeed: 1
-  ObjectsBlockingView: []
 --- !u!1 &6936047978875127880
 GameObject:
   m_ObjectHideFlags: 0
@@ -17677,7 +17654,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LayerMask:
     serializedVersion: 2
-    m_Bits: 2048
+    m_Bits: 6144
   Target: {fileID: 2681211414610034083}
   Camera: {fileID: 2032695330483795685}
   FadedAlpha: 0.33
