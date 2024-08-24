@@ -1,4 +1,5 @@
 using Photon.Pun;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,10 @@ public class InGameUI : MonoBehaviour
     [SerializeField] TextMeshProUGUI _timeSecond;
     float _timer;
 
+    // 미니맵
+    [SerializeField]
+    GameObject _minimap;
+
     // 스테이터스
     [SerializeField] Slider _hpBar;
     [SerializeField] Slider _spBar;
@@ -42,7 +47,7 @@ public class InGameUI : MonoBehaviour
     GameObject _exitMenu;
 
     [Header("EndUI")]
-    int score = 0;
+    int _score = 0;
     [SerializeField] float _endTime = 6f;
     [SerializeField] float _fadeDuration = 4.0f;
     [SerializeField] GameObject _gameOverScreen;
@@ -65,29 +70,32 @@ public class InGameUI : MonoBehaviour
     void InitUI()
     {
         // 생존 시간
-        _timeSecond = transform.GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>();
+        _timeSecond = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+
+        // 미니맵
+        _minimap = transform.GetChild(1).gameObject;
 
         // Hp, Sp 바
-        _hpBar = transform.GetChild(1).GetComponent<Slider>();
-        _spBar = transform.GetChild(2).GetComponent<Slider>();
+        _hpBar = transform.GetChild(2).GetComponent<Slider>();
+        _spBar = transform.GetChild(3).GetComponent<Slider>();
 
         // 무기 정보
-        _weaponIcon = transform.GetChild(3).GetChild(0).GetComponent<RawImage>();
-        _currentBullet = transform.GetChild(3).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
-        _totalBullet = transform.GetChild(3).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
+        _weaponIcon = transform.GetChild(4).GetChild(0).GetComponent<RawImage>();
+        _currentBullet = transform.GetChild(4).GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>();
+        _totalBullet = transform.GetChild(4).GetChild(1).GetChild(1).GetComponent<TextMeshProUGUI>();
 
         // 조준선 UI
-        _crossHair = transform.GetChild(4).gameObject;
+        _crossHair = transform.GetChild(5).gameObject;
 
         // 우상단 표시
-        _rightUpIcon = transform.GetChild(5).GetChild(0).GetComponent<RawImage>();
-        _rightUpText = transform.GetChild(5).GetChild(1).GetComponent<TextMeshProUGUI>();
+        _rightUpIcon = transform.GetChild(6).GetChild(0).GetComponent<RawImage>();
+        _rightUpText = transform.GetChild(6).GetChild(1).GetComponent<TextMeshProUGUI>();
 
         // 게임 종료 메뉴
-        _exitMenu = transform.GetChild(6).gameObject;
+        _exitMenu = transform.GetChild(7).gameObject;
 
         // 죽은 화면
-        _gameOverScreen = transform.GetChild(7).gameObject;
+        _gameOverScreen = transform.GetChild(8).gameObject;
         _fadeImageInGameOverScreen = _gameOverScreen.GetComponent<Image>();
         _quitTimer = _gameOverScreen.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         _killGhostText = _gameOverScreen.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
@@ -136,11 +144,37 @@ public class InGameUI : MonoBehaviour
 
     public void DisplayLivingTime()
     {
+        //// 체력이 0이면 멈추기
+        //if (_status.Hp <= 0) return;
+
+        //_timer += Time.deltaTime;
+        //_timeSecond.text = ((int)_timer).ToString();
         // 체력이 0이면 멈추기
         if (_status.Hp <= 0) return;
 
         _timer += Time.deltaTime;
-        _timeSecond.text = ((int)_timer).ToString();
+
+        // TimeSpan을 사용하여 시간 계산
+        TimeSpan timeSpan = TimeSpan.FromSeconds(_timer);
+
+        // 시간에 따라 다른 형식으로 시간 표시
+        if (timeSpan.TotalHours >= 1)
+        {
+            _timeSecond.text = string.Format("{0:D2}:{1:D2}:{2:D2}",
+                                             (int)timeSpan.TotalHours,
+                                             timeSpan.Minutes,
+                                             timeSpan.Seconds);
+        }
+        else if (timeSpan.TotalMinutes >= 1)
+        {
+            _timeSecond.text = string.Format("{0:D2}:{1:D2}",
+                                             timeSpan.Minutes,
+                                             timeSpan.Seconds);
+        }
+        else
+        {
+            _timeSecond.text = ((int)_timer).ToString();
+        }
     }
 
     public void DisplayHp() => _hpBar.value = _status.Hp / 100;
@@ -256,8 +290,8 @@ public class InGameUI : MonoBehaviour
 
         if (SceneManager.GetActiveScene().name == "SinglePlayScene")
         {
-            score = GameManager_S._instance._score; // 점수 지정
-            _killGhostText.text = "Killed Ghost : " + score.ToString();
+            _score = GameManager_S._instance._score; // 점수 지정
+            _killGhostText.text = "Killed Ghost : " + _score.ToString();
         }
         float elapsedTime = 1.0f;
         Color color = _fadeImageInGameOverScreen.color;

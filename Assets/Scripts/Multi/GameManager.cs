@@ -29,7 +29,9 @@ public class GameManager : MonoBehaviour
     public Transform _itemSpawnTestPosition;
 
     [Header("Weapon Status")]
-    public List<WeaponData> weaponStatusList;
+    public List<WeaponData> weaponStatusList; // 무기 능력치 불러올 때 보관할 곳
+
+    bool startSpawnItem = false;
 
     private void Awake()
     {
@@ -48,18 +50,10 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (PhotonNetwork.IsMasterClient && Input.GetKeyDown(KeyCode.T))
+        if (PhotonNetwork.IsMasterClient && startSpawnItem == false)
         {
-            for(int i=0; i<_itemCylinders.Count; i++)
-            {
-
-                int randomItemType = UnityEngine.Random.Range(1, 3);
-                GameObject spawnItemObjectParent = _itemCylinders[i].gameObject.transform.GetChild(randomItemType).gameObject;
-                int randomItemIdx = UnityEngine.Random.Range(0, spawnItemObjectParent.transform.childCount);
-
-
-                GetComponent<PhotonView>().RPC("SetSpawnItemRPC", RpcTarget.AllBuffered, i, randomItemType, randomItemIdx);
-            }
+            SpawnItem();
+            startSpawnItem = true;
         }
     }
 
@@ -113,13 +107,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    //[PunRPC]
-    //void SpawnItem()
-    //{
-    //    Vector3 randomPosition = GetRandomPosition(spawnCenter, _itemSpawnRange);
-    //    PhotonNetwork.Instantiate(_itemCylinder.name, _itemSpawnTestPosition.position, Quaternion.identity);
-    //}
+    void SpawnItem()
+    {
+        for (int i = 0; i < _itemCylinders.Count; i++)
+        {
 
+            int randomItemType = UnityEngine.Random.Range(1, 3);
+            GameObject spawnItemObjectParent = _itemCylinders[i].gameObject.transform.GetChild(randomItemType).gameObject;
+            int randomItemIdx = UnityEngine.Random.Range(0, spawnItemObjectParent.transform.childCount);
+
+            GetComponent<PhotonView>().RPC("SetSpawnItemRPC", RpcTarget.AllBuffered, i, randomItemType, randomItemIdx);
+        }
+    }
 
     [PunRPC]
     void SetSpawnItemRPC(int itemCylinderIdx, int itemType, int itemIdx) // 아이템 실린더 번호, 아이템 타입, 무슨 아이템인지
