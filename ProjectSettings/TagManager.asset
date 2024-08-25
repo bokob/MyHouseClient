@@ -28,23 +28,23 @@ TagManager:
   - Floor
   - Wall
   - Roof
+  - Interior
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
   - 
   - Cutable
   - Breakable
   - Destructible
-  - 
   - NotMinimap
   - Minimap
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
   m_SortingLayers:
   - name: Default
     uniqueID: 0
