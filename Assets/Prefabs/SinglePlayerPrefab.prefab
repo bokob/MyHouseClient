@@ -189,6 +189,7 @@ MonoBehaviour:
   _quaterFollowCamera: {fileID: 8502604238216900121}
   _thirdFollowCamera: {fileID: 2541219127403234040}
   _aimCamera: {fileID: 6423840261822751500}
+  _minimapCamera: {fileID: 6286901012533120397}
   _cinemachineCameraTarget: {fileID: 921129266746752805}
   _topClamp: 70
   _bottomClamp: -30

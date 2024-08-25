@@ -11,6 +11,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] GameObject _quaterFollowCamera;
     [SerializeField] GameObject _thirdFollowCamera;
     [SerializeField] GameObject _aimCamera;
+    [SerializeField] GameObject _minimapCamera;
     public GameObject _cinemachineCameraTarget; // 카메라가 바라볼 목표물
     public float _topClamp = 70.0f;             // 카메라 위 제한 각도
     public float _bottomClamp = -30.0f;         // 카메라 아래 제한 각도
@@ -62,6 +63,7 @@ public class CameraController : MonoBehaviour
         _quaterFollowCamera.SetActive(false);
         _thirdFollowCamera.SetActive(true);
         _aimCamera.SetActive(true);
+        _minimapCamera.SetActive(false);
     }
 
     /// <summary>

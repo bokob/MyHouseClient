@@ -16,7 +16,7 @@ public class MinimapCameraPosition : MonoBehaviour
         minimapCamera = GetComponent<Camera>();
 
         // 플레이어
-        player = transform.root.GetChild(1).gameObject;
+        player = transform.root.GetChild(2).gameObject;
 
         // 미니맵 위치 설정
         target = transform;
@@ -36,7 +36,7 @@ public class MinimapCameraPosition : MonoBehaviour
             (transform.position.z));
 
         // 2층 렌더링 여부
-        if (player.transform.position.y > 10)
+        if (player.transform.position.y > 7)
         {
             minimapCamera.cullingMask |= (1 << secondFloorLayer);
         }
