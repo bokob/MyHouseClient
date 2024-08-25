@@ -32,13 +32,13 @@ TagManager:
   - Cutable
   - Breakable
   - Destructible
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Environment
+  - Interior
+  - 1stRoof
+  - 2stRoof
+  - SecondFloor
+  - Invisible
+  - Monster
   - 
   - 
   - 
