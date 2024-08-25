@@ -75,7 +75,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 473855
+    m_Bits: 2013330175
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -517,7 +517,7 @@ GameObject:
   m_Component:
   - component: {fileID: 972090256913207901}
   - component: {fileID: 819143802555025461}
-  m_Layer: 21
+  m_Layer: 31
   m_Name: MinimapIconHouseowner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -534,7 +534,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 2, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2417507099030465587}
@@ -580,8 +580,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: b3cfdcb8063d0d44a8c614ca3079e2c1, type: 3}
-  m_Color: {r: 1, g: 0.7248159, b: 0, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 867c6cc6525c9df47aa49d049b780c0c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2129,7 +2129,7 @@ MonoBehaviour:
   _aimSensitivity: 0.2
   _aimColliderLayerMask:
     serializedVersion: 2
-    m_Bits: 513
+    m_Bits: 3087071999
   _debugTransform: {fileID: 6680002008230289655}
   _pfBulletProjectile: {fileID: 0}
   _spawnBulletPosition: {fileID: 0}
@@ -13037,7 +13037,7 @@ GameObject:
   - component: {fileID: 5528367808994696563}
   - component: {fileID: 7292842702413911144}
   - component: {fileID: 8157750911699047083}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -15351,11 +15351,11 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 10
+  orthographic size: 42
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 2562815
+    m_Bits: 3087022847
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: dfaa9389a23b72948a9356e683fd74e9, type: 2}
   m_TargetDisplay: 0
@@ -15426,7 +15426,8 @@ MonoBehaviour:
   x: 1
   y: 0
   z: 1
-  target: {fileID: 4521055773537853184}
+  player: {fileID: 0}
+  secondFloorLayer: 0
 --- !u!1 &6423840261822751500
 GameObject:
   m_ObjectHideFlags: 0
@@ -16319,7 +16320,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 25, y: 30}
-  m_SizeDelta: {x: 300, y: 250}
+  m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &3123174824619911541
 CanvasRenderer:
