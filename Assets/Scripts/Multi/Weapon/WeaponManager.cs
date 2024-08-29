@@ -45,7 +45,7 @@ public class WeaponManager : MonoBehaviour
             WeaponSwitching(); // 무기 교체
 
 
-        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null)
+        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null && !_playerInputs.reload)
         {
             _isPickUp = true;
             meleeItemName = nearMeleeObject.name;
