@@ -64,7 +64,7 @@ public class Gun : Weapon
         //rigBuilder = transform.root.GetChild(0).GetComponent<RigBuilder>();
         _cameraController = Camera.main.GetComponent<CameraController>();
 
-        Attack = 50;
+        Attack = 20;
     }
 
     void HitRayCheck()
