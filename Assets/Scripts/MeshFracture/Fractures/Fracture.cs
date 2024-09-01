@@ -7,10 +7,11 @@ namespace Project.Scripts.Fractures
 {
     public static class Fracture
     {
+        // 오브젝트를 조각으로 분해하는 전체적인 과정 담당
         public static ChunkGraphManager FractureGameObject(GameObject gameObject, Anchor anchor, int seed, int totalChunks,Material insideMaterial, Material outsideMaterial, float jointBreakForce, float density)
         {
             // Translate all meshes to one world mesh
-            var mesh = GetWorldMesh(gameObject);
+            var mesh = GetWorldMesh(gameObject); // 전체 메시 얻기
             
             NvBlastExtUnity.setSeed(seed);
 
@@ -23,11 +24,12 @@ namespace Project.Scripts.Fractures
                 (int) mesh.GetIndexCount(0)
             );
 
+            // 메시를 조각으로 나눔
             var meshes = FractureMeshesInNvblast(totalChunks, nvMesh);
 
             // Build chunks gameobjects
-            var chunkMass = mesh.Volume() * density / totalChunks;
-            var chunks = BuildChunks(insideMaterial, outsideMaterial, meshes, chunkMass);
+            var chunkMass = mesh.Volume() * density / totalChunks;                        // 조각이 얼마나 차지할지 설정
+            var chunks = BuildChunks(insideMaterial, outsideMaterial, meshes, chunkMass); // 매터리얼 설정
             
             // Connect blocks that are touching with fixed joints
             foreach (var chunk in chunks)
@@ -38,7 +40,7 @@ namespace Project.Scripts.Fractures
             // Set anchored chunks as kinematic
             AnchorChunks(gameObject, anchor);
 
-            var fractureGameObject = new GameObject("Fracture");
+            var fractureGameObject = new GameObject(gameObject.name + "Fracture");
             foreach (var chunk in chunks)
             {
                 chunk.transform.SetParent(fractureGameObject.transform, false);
@@ -76,6 +78,7 @@ namespace Project.Scripts.Fractures
             }).ToList();
         }
 
+        // Voronoi 다이어그램을 사용해 조각 생성
         private static List<Mesh> FractureMeshesInNvblast(int totalChunks, NvMesh nvMesh)
         {
             var fractureTool = new NvFractureTool();
@@ -84,7 +87,7 @@ namespace Project.Scripts.Fractures
             var sites = new NvVoronoiSitesGenerator(nvMesh);
             sites.uniformlyGenerateSitesInMesh(totalChunks);
             fractureTool.voronoiFracturing(0, sites);
-            fractureTool.finalizeFracturing();
+            fractureTool.finalizeFracturing(); // 조각화 완료
 
             // Extract meshes
             var meshCount = fractureTool.getChunkCount();
@@ -159,6 +162,7 @@ namespace Project.Scripts.Fractures
             return chunkMesh;
         }
 
+        // 오브젝트의 전체 메시 얻기, 자식 오브젝트의 메시도 결합해서 하나의 메시로 반환
         private static Mesh GetWorldMesh(GameObject gameObject)
         {
             var combineInstances = gameObject
@@ -175,6 +179,7 @@ namespace Project.Scripts.Fractures
             return totalMesh;
         }
         
+        // 분해 가능한지 확인
         private static bool ValidateMesh(Mesh mesh)
         {
             if (mesh.isReadable == false)
@@ -198,6 +203,7 @@ namespace Project.Scripts.Fractures
             return true;
         }
 
+        // 조각 생성
         private static GameObject BuildChunk(Material insideMaterial, Material outsideMaterial, Mesh mesh, float mass)
         {
             var chunk = new GameObject($"Chunk");

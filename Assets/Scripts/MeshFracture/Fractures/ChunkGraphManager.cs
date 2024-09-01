@@ -10,6 +10,7 @@ namespace Project.Scripts.Fractures
     {
         private ChunkNode[] nodes;
 
+        // 각 조각들에 ChunkNode 컴포넌트 부여 후 초기화
         public void Setup(Rigidbody[] bodies)
         {
             nodes = new ChunkNode[bodies.Length];
@@ -42,6 +43,8 @@ namespace Project.Scripts.Fractures
             Color.yellow
         };
         
+        // ChunkNode 배열을 입력으로 받아 그래프 탐색
+        // 각 ChunkNode가 서로 연결되어 있는지 탐색해서 서로 연결된 조각들에 같은  색상 할당
         public void SearchGraph(ChunkNode[] objects)
         {
             var anchors = objects.Where(o => o.IsStatic).ToList();
@@ -69,6 +72,7 @@ namespace Project.Scripts.Fractures
             }
         }
 
+        // DFS를 이용해 ChunkNode 들이 서로 연결되어 있는지 탐색
         private void Traverse(ChunkNode o, ISet<ChunkNode> search, ISet<ChunkNode> visited)
         {
             if (search.Contains(o) && visited.Contains(o) == false)
