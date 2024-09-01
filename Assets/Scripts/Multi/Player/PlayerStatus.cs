@@ -194,7 +194,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
     /// </summary>
     public void DischargeSp()
     {
-        Sp -= Time.deltaTime * 20;
+        Sp -= Time.deltaTime * 10;
         Sp = Mathf.Clamp(Sp, 0, MaxSp);
     }
 

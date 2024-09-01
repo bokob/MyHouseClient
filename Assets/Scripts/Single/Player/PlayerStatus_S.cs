@@ -50,7 +50,7 @@ public class PlayerStatus_S : MonoBehaviour, IStatus
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null && _weaponManager_S._selectedWeapon.tag != "Gun")
+        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null && _animator.GetBool("isReload") == false)
         {
             _isPickUp = true;
             GetMeleeItem();
