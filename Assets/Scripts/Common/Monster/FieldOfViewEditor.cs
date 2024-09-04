@@ -20,10 +20,10 @@
 //        Handles.DrawLine(fov.transform.position, fov.transform.position + viewAngle01 * fov._radius);
 //        Handles.DrawLine(fov.transform.position, fov.transform.position + viewAngle02 * fov._radius);
 
-//        if (fov._canSeePlayer)
+//        if (fov.CanSeePlayer)
 //        {
 //            Handles.color = Color.green;
-//            Handles.DrawLine(fov.transform.position, fov._target.position);
+//            Handles.DrawLine(fov.transform.position, fov.Target.position);
 //        }
 //    }
 

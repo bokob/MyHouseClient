@@ -10,17 +10,10 @@ public class Define
     {
         None,
         Houseowner,
-        Robber
+        Robber,
+        Monster
     }
-    public enum MonsterState
-    {
-        None,
-        Idle,
-        Chase,
-        Attack,
-        Patrol,
-        Hit,
-    }
+
     public enum View
     {
         None,

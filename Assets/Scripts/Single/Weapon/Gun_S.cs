@@ -70,7 +70,10 @@ public class Gun_S : Weapon
 
     private void Update() {
         _bulletCount.text = _currentBulletCount.ToString();
-        _totalbulletCount.text = _totalBulletCount.ToString(); 
+        _totalbulletCount.text = _totalBulletCount.ToString();
+
+        _playerInputs.swing = false;
+        _playerInputs.stab = false;
     }
 
     void HitRayCheck()
