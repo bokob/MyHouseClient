@@ -107,9 +107,6 @@ namespace Project.Scripts.Fractures
             rb.gameObject.layer = LayerMask.NameToLayer("FrozenChunks");
             frozenPos = rb.transform.position;
             forzenRot = rb.transform.rotation;
-
-            // 사격 대상임을 인식하기 위해 BulletTarget 추가
-            gameObject.AddComponent<BulletTarget>();
         }
 
         private void OnDrawGizmos()

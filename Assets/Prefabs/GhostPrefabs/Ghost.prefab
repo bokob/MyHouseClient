@@ -26,17 +26,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 46f311046d2104da8b56be3d0a49a119,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -2.4515893
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 46f311046d2104da8b56be3d0a49a119,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1.4747605
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 46f311046d2104da8b56be3d0a49a119,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -36.78
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 46f311046d2104da8b56be3d0a49a119,
         type: 3}
@@ -108,7 +108,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 46f311046d2104da8b56be3d0a49a119,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8716736947296453488}
+      addedObject: {fileID: 7318342749117597636}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 46f311046d2104da8b56be3d0a49a119,
         type: 3}
       insertIndex: -1
@@ -159,7 +159,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 1.5
+  m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -167,7 +167,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &8716736947296453488
+--- !u!114 &7318342749117597636
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -176,29 +176,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 19588385245968726}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4cd932125746ae147a4c5f6cc2df8583, type: 3}
+  m_Script: {fileID: 11500000, guid: fca56b9a84ebba14ca5036ed4c3e0463, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _state: 4
+  _state: 3
   _isDead: 0
+  <Hp>k__BackingField: 300
+  <_attack>k__BackingField: 30
   _radius: 10
-  _angle: 45
+  _angle: 270
   _targetMask:
     serializedVersion: 2
     m_Bits: 8
   _obstructionMask:
     serializedVersion: 2
-    m_Bits: 0
-  _canSeePlayer: 0
+    m_Bits: 8193
   _chaseRange: 10
   _lostDistance: 0
-  _centerPoint: {fileID: 174848733327858528, guid: 8b5b180bb1fdcaf48874b59c494ef4cf,
-    type: 3}
-  _range: 10
-  _patrolSpeed: 2
-  _attackRange: 0.1
-  _attackDelay: 2
-  _target: {fileID: 0}
+  _isTakingDamage: 0
   _monsterCount: 0
 --- !u!54 &4854686820582876448
 Rigidbody:

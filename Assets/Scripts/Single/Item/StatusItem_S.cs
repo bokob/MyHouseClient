@@ -42,6 +42,8 @@ public class StatusItem_S : Item
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!other.CompareTag("Player")) return;
+
         Debug.Log("아이템이 사정거리 안에 존재");
 
         // 아이템 쿨타임 아닐시에만 적용
