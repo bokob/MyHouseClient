@@ -33,31 +33,41 @@ public class WeaponItem_S : Item
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!other.CompareTag("Player")) return;
+
         Debug.Log("아이템이 사정거리 안에 입장");
 
-        PlayerStatus_S status = other.GetComponent<PlayerStatus_S>();
-        if(status != null)
-            status.nearMeleeObject = gameObject;
+        WeaponManager_S playerWeaponManager = other.GetComponent<PlayerStatus_S>()._weaponManager_S;
+        if (playerWeaponManager != null)
+            playerWeaponManager.nearMeleeObject = gameObject;
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if(other.tag != "Player") return;
+        if (!other.CompareTag("Player")) return;
+
         Debug.Log("아이템이 사정거리 안에 존재");
-        PlayerStatus_S status = other.GetComponent<PlayerStatus_S>();
+        WeaponManager_S playerWeaponManager = other.GetComponent<PlayerStatus_S>()._weaponManager_S;
+
+        if (playerWeaponManager == null) return;
+
         // 플레이어가 있고, 근처 근접 무기 탐색에 성공했고, 아이템 줍기 버튼을 눌렀고, 아이템 쿨타임 아닐 때
-        if (status != null && status.nearMeleeObject != null && status._isPickUp && !_itemCylinder._usedItem)
+        if (playerWeaponManager.nearMeleeObject != null && playerWeaponManager._isPickUp && !_itemCylinder._usedItem)
+        {
             TakeWeaponItem(other);
-        status._isPickUp = false;
+            playerWeaponManager._isUsePickUpWeapon = true;
+        }
+        playerWeaponManager._isPickUp = false;
     }
 
     private void OnTriggerExit(Collider other)
     {
+        if (!other.CompareTag("Player")) return;
+
         Debug.Log("아이템이 사정거리 벗어남");
-        PlayerStatus_S status = other.GetComponent<PlayerStatus_S>();
+        WeaponManager_S playerWeaponManager = other.GetComponent<PlayerStatus_S>()._weaponManager_S.GetComponent<WeaponManager_S>();
+        if (playerWeaponManager == null) return;
 
-        if (status == null) return;
-
-        status.nearMeleeObject = null;
+        playerWeaponManager.nearMeleeObject = null;
     }
 }

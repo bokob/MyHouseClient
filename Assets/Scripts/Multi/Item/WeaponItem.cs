@@ -33,6 +33,8 @@ public class WeaponItem : Item
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!other.CompareTag("Player")) return;
+
         Debug.Log("아이템이 사정거리 안에 입장");
 
         WeaponManager playerWeaponManager = other.GetComponent<PlayerStatus>()._weaponManager;
@@ -42,6 +44,8 @@ public class WeaponItem : Item
 
     private void OnTriggerStay(Collider other)
     {
+        if (!other.CompareTag("Player")) return;
+
         Debug.Log("아이템이 사정거리 안에 존재");
         WeaponManager playerWeaponManager = other.GetComponent<PlayerStatus>()._weaponManager;
 
@@ -58,6 +62,8 @@ public class WeaponItem : Item
 
     private void OnTriggerExit(Collider other)
     {
+        if (!other.CompareTag("Player")) return;
+
         Debug.Log("아이템이 사정거리 벗어남");
         WeaponManager playerWeaponManager = other.GetComponent<PlayerStatus>()._weaponHolder.GetComponent<WeaponManager>();
         if (playerWeaponManager == null) return;
