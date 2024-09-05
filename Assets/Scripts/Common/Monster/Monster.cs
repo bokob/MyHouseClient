@@ -14,6 +14,7 @@ public class Monster : MonoBehaviour, IStatus
 
     #region 상태 및 능력치 관련
     public bool _isDead = false;
+    public bool _isHit = false;
     List<Renderer> _renderers; // 피해 입었을 때 렌더러 색 변환에 사용할 리스트
     List<Color> _originColors;
 
@@ -95,7 +96,7 @@ public class Monster : MonoBehaviour, IStatus
 
             float angleToTarget = Vector3.Angle(transform.forward, directionToTarget);
 
-            if (angleToTarget < _angle / 2 || angleToTarget > 360 - (_angle / 2)) // 플레이어로부터 부채꼴처럼 볼 수 있게, 270도
+            if (angleToTarget < _angle / 2 || angleToTarget > 360 - (_angle / 2)) // 플레이어로부터 부채꼴 모양, 270도가 적절
             {
                 float distanceToTarget = Vector3.Distance(transform.position, findTarget.position);
 
@@ -130,6 +131,7 @@ public class Monster : MonoBehaviour, IStatus
         // 피해가 음수라면 회복되는 현상이 일어나므로 피해의 값을 0이상으로 되게끔 설정
         float damage = Mathf.Max(0, attack);
         Hp -= damage;
+        _anim.SetTrigger("setHit");
         HitChangeMaterials();
         Debug.Log(gameObject.name + "(이)가 " + damage + " 만큼 피해를 입었음!");
         Debug.Log("남은 체력: " + Hp);
@@ -169,9 +171,9 @@ public class Monster : MonoBehaviour, IStatus
         }
 
         _isDead = true;
-        Agent.ResetPath(); // 비활성화 되기 전에 해주기
+        Agent.ResetPath(); // 비활성화 되기 전에 남아 있던 경로 리셋
         _collider.enabled = false;
-        _anim.Play("Die", 0, 0);
+        _anim.SetTrigger("setDie");
         StartCoroutine(DeadSinkCoroutine());
     }
 
