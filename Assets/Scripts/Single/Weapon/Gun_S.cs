@@ -204,7 +204,6 @@ public class Gun_S : Weapon
                 other.TakedDamage(Attack);
                 if(other.Hp <= 0)
                 {
-                    GameManager_S._instance.Score++;
                     _totalBulletCount += 10;
                 }
             }

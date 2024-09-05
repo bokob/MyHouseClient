@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PlayerStatus_S : MonoBehaviour, IStatus
@@ -23,7 +24,7 @@ public class PlayerStatus_S : MonoBehaviour, IStatus
     bool _isDead = false;
     public bool _isPickUp = false;
 
-    WeaponManager_S _weaponManager_S;
+    public WeaponManager_S _weaponManager_S;
     public GameObject nearMeleeObject;
     private string meleeItemName;
 
@@ -34,7 +35,7 @@ public class PlayerStatus_S : MonoBehaviour, IStatus
 
         _weaponManager_S = transform.root.GetComponentInChildren<WeaponManager_S>();
 
-        // ???? ????????
+        // 매터리얼 얻기
         _renderers = new List<Renderer>();
         Transform[] underTransforms = GetComponentsInChildren<Transform>(true);
         for (int i = 0; i < underTransforms.Length; i++)
@@ -43,52 +44,27 @@ public class PlayerStatus_S : MonoBehaviour, IStatus
             if (renderer != null)
             {
                 _renderers.Add(renderer);
-                // if (renderer.material.color == null) Debug.Log("?? ???? ???");
             }
         }
     }
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null && _animator.GetBool("isReload") == false)
-        {
-            _isPickUp = true;
-            GetMeleeItem();
-        }
-    }
-
-    /// <summary>
-    /// ???? ????
-    /// </summary>
     public void InitRole()
     {
-        /*
-         TODO
-        ??????, Houseowner???? ???, ????????? Robber
-
-        ????? ?????θ?
-         */
         Role = Define.Role.Houseowner;
     }
 
-
-
-    /// <summary>
-    /// ?????? ???
-    /// </summary>
-    /// <param name="attack"> ???? ????? </param>
+    // 데미지 입기
     public void TakedDamage(int attack)
     {
         if (Role == Define.Role.None) return; // 시체일 경우 종료
 
-        // ???????? ??????????? ???복되??? ????????? ????????????? ????????? 값을 0??????????? ???게끔 ??????
         float damage = Mathf.Max(0, attack);
         Hp -= damage;
         if (Hp > 0)
         {
             HitChangeMaterials();
-            Debug.Log(gameObject.name + "(???)?? " + damage + " 만큼 ???????? ?????????!");
-            Debug.Log("?????? 체력: " + Hp);
+            Debug.Log(gameObject.name + "가" + damage + " 만큼 피해입음");
+            Debug.Log("데미지 입고 난 후 체력: " + Hp);
         }
         else
         {
@@ -96,25 +72,14 @@ public class PlayerStatus_S : MonoBehaviour, IStatus
         }
     }
 
-    /// <summary>
-    /// ??? ????? 0.2??? ???
-    /// </summary>
     public void Heal()
     {
-        // ???? ????? ??? ??º??? ???? ???? ??? ????
         if (Hp < MaxHp)
         {
             // ?????
             float healAmount = MaxHp * 0.2f;
-
-            // ??????? ???? ??°??? ???? ??? ????? ???? ????? ????
             float healedAmount = Mathf.Clamp(Hp + healAmount, 0, MaxHp) - Hp;
-
-            Debug.Log("???? ???" + Hp);
-            // ??? ???
             Hp += healedAmount;
-            Debug.Log("????? " + healedAmount + "??? ???!");
-            Debug.Log("???? ???: " + Hp);
         }
         else
         {
@@ -122,80 +87,59 @@ public class PlayerStatus_S : MonoBehaviour, IStatus
         }
     }
 
-    /// <summary>
-    /// ??? ?????????? ???? ???
-    /// </summary>
+    // Sp 회복
     public void SpUp()
     {
-        // ???? ???????? ??? ?????????? ???? ???? ??? ????
         if (Sp < MaxSp)
         {
-            // ??????? ???? ?????????? ???? ??? ???????? ???? ????? ????
             float healedAmount = Mathf.Clamp(Sp + MaxSp, 0, MaxHp) - Sp;
-
-            Debug.Log("???? ??????" + Sp);
-            // ?????? ???
             Sp += healedAmount;
-            Debug.Log("???? ???! ???? Sp: " + Sp);
         }
         else
         {
-            Debug.Log("??? Sp. ????? ??? ????.");
+            Debug.Log("Sp 회복 X");
         }
     }
 
-    /// <summary>
-    /// ?????? ????????
-    /// </summary>
+    // SP 자연 회복
     public void ChargeSp()
     {
         Sp += Time.deltaTime * 20;
         Sp = Mathf.Clamp(Sp, 0, MaxSp);
     }
 
-    /// <summary>
-    /// ?????? ?????
-    /// </summary>
+    // 뛸 때 Sp 감소
     public void DischargeSp()
     {
         Sp -= Time.deltaTime * 20;
         Sp = Mathf.Clamp(Sp, 0, MaxSp);
     }
 
-    /// <summary>
-    /// ??????, ?????? ????
-    /// </summary>
+    // 점프 Sp 감소
     public void JumpSpDown()
     {
         Sp -= 3;
     }
 
-    /// <summary>
-    /// ???? ????
-    /// </summary>
+    // 방어력 증가
     public void DefenceUp()
     {
 
     }
 
-    /// <summary>
-    /// ????
-    /// </summary>
-    public void Dead()
+    public void Dead() // 사망
     {
         if (Role != Define.Role.None && Hp <= 0)
         {
             _isDead = true;
             Role = Define.Role.None; // 시체
             _animator.SetTrigger("setDie");
+            GetComponent<PlayerInput>().enabled = false;
             StartCoroutine(DeadSinkCoroutine());
         }
     }
 
-    /// <summary>
-    /// ???? ??????
-    /// </summary>
-    /// <returns></returns>
+    // 시체 처리
     IEnumerator DeadSinkCoroutine()
     {
         yield return new WaitForSeconds(5f);
@@ -206,40 +150,25 @@ public class PlayerStatus_S : MonoBehaviour, IStatus
 #endif
     }
 
-    /// <summary>
-    /// ???? ?????? Material ??? ???
-    /// </summary>
+    // 피해 입었을 때 색 변함
     public void HitChangeMaterials()
     {
         for (int i = 0; i < _renderers.Count; i++)
         {
             _renderers[i].material.color = Color.red;
-            Debug.Log("???????.");
+            Debug.Log("색 변함");
             //Debug.Log(_renderers[i].material.name);
         }
         StartCoroutine(ResetMaterialAfterDelay(1.7f));
     }
 
-    /// <summary>
-    /// ???? ??? Material ???????? ????
-    /// </summary>
-    /// <param name="delay"></param>
-    /// <returns></returns>
+    // 매터리얼 색 복구
     IEnumerator ResetMaterialAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
 
         for (int i = 0; i < _renderers.Count; i++)
             _renderers[i].material.color = Color.white;
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        //// ??? ?????? ???? ???? ????
-        if (other.transform.root.name == gameObject.name) return;
-
-        // if (other.tag == "Monster")
-        //     HitChangeMaterials();
     }
 
     public void GetMeleeItem()
