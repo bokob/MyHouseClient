@@ -18,6 +18,13 @@ public class WeaponManager_S : MonoBehaviour
     public GameObject _recentMelee; // the most recent Melee
     public bool _isHoldGun;
 
+    // 무기 아이템 관련
+    public GameObject nearMeleeObject;
+    public string meleeItemName;
+    public bool _isPickUp = false; // 사거리 내에서 그 무기 주웠는지 안주웠는지 판단
+    public bool _isUsePickUpWeapon = false; // 주운 무기를 사용하고 있는지 판단
+    public int _pickUpWeaponIdx = 0;
+
     void Awake()
     {
         _playerInputs = transform.root.GetChild(2).GetComponent<PlayerInputs>();
@@ -40,6 +47,13 @@ public class WeaponManager_S : MonoBehaviour
 
         if (!_playerInputs.aim && !_playerInputs.reload) // 조준하지 않고, 장전하지 않을 때 무기 교체 가능
             WeaponSwitching(); // 무기 교체
+
+        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null && !_playerInputs.reload)
+        {
+            _isPickUp = true;
+            meleeItemName = nearMeleeObject.name;
+            PickUpWeapon(meleeItemName);
+        }
 
         if (Input.GetKeyDown(KeyCode.Q) && _selectedWeapon.name != "Rifle" && _selectedWeapon.name != "Knife")
         {
@@ -157,17 +171,19 @@ public class WeaponManager_S : MonoBehaviour
     {
         Transform newMelee = transform.Find(meleeName);
         _selectedWeaponIdx = newMelee.GetSiblingIndex(); // 교체할 무기가 몇 번째 자식인지
+        _pickUpWeaponIdx = _selectedWeaponIdx;
+        SelectWeapon(_selectedWeaponIdx);
+        
+        //if (_isHoldGun)
+        //{
 
-        if (_isHoldGun)
-        {
-
-        }        
-        else
-        {
-            _selectedWeapon.SetActive(false);
-            _selectedWeapon = newMelee.gameObject;
-            newMelee.gameObject.SetActive(true);
-        }
+        //}        
+        //else
+        //{
+        //    _selectedWeapon.SetActive(false);
+        //    _selectedWeapon = newMelee.gameObject;
+        //    newMelee.gameObject.SetActive(true);
+        //}
     }
 
     /// <summary>
