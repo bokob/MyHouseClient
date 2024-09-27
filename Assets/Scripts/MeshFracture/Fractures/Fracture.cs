@@ -8,10 +8,10 @@ namespace Project.Scripts.Fractures
     public static class Fracture
     {
         // 오브젝트를 조각으로 분해하는 전체적인 과정 담당
-        public static ChunkGraphManager FractureGameObject(GameObject gameObject, Anchor anchor, int seed, int totalChunks,Material insideMaterial, Material outsideMaterial, float jointBreakForce, float density)
+        public static ChunkGraphManager FractureGameObject(GameObject gameObject, Anchor anchor, int seed, int totalChunks,Material insideMaterial, Material outsideMaterial, float jointBreakForce, float density, bool isAlone)
         {
-            // Translate all meshes to one world mesh
-            var mesh = GetWorldMesh(gameObject); // 전체 메시 얻기
+            // 조건에 따라 하위 메시까지 통합해서 적용할 것인지 단일로만 적용할 것인지 결정
+            Mesh mesh = (isAlone) ? GetObjectMesh(gameObject) : GetWorldMesh(gameObject);
             
             NvBlastExtUnity.setSeed(seed);
 
@@ -173,9 +173,24 @@ namespace Project.Scripts.Fractures
                     mesh = mf.mesh,
                     transform = mf.transform.localToWorldMatrix
                 }).ToArray();
-            
+
             var totalMesh = new Mesh();
             totalMesh.CombineMeshes(combineInstances, true);
+            return totalMesh;
+
+        }
+
+        // 단일 오브젝트 메시만 구하기
+        private static Mesh GetObjectMesh(GameObject gameObject)
+        {
+            CombineInstance[] combineInstance = new CombineInstance[1];
+            combineInstance[0] = new CombineInstance()
+            {
+                mesh = gameObject.GetComponent<MeshFilter>().mesh,
+                transform = gameObject.GetComponent<MeshFilter>().transform.localToWorldMatrix
+            };
+            var totalMesh = new Mesh();
+            totalMesh.CombineMeshes(combineInstance, true);
             return totalMesh;
         }
         

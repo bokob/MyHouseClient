@@ -13,6 +13,8 @@ namespace Project.Scripts.Fractures
         [SerializeField] private Material insideMaterial;       // 부서졌을 때 내부 매터리얼
         [SerializeField] private Material outsideMaterial;      // 부서졌을 때 외부 매터리얼
 
+        [SerializeField] bool isAlone;
+
         private Random rng = new Random();  // 무작위 분해를 위해 사용
 
         private void Awake()
@@ -51,7 +53,8 @@ namespace Project.Scripts.Fractures
                 insideMaterial,
                 outsideMaterial,
                 internalStrength,
-                density
+                density,
+                isAlone
             );
         }
     }
