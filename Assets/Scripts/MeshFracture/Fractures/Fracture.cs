@@ -30,11 +30,11 @@ namespace Project.Scripts.Fractures
             // Build chunks gameobjects
             var chunkMass = mesh.Volume() * density / totalChunks;                        // 조각이 얼마나 차지할지 설정
             var chunks = BuildChunks(insideMaterial, outsideMaterial, meshes, chunkMass); // 매터리얼 설정
-            
+
             // Connect blocks that are touching with fixed joints
             foreach (var chunk in chunks)
             {
-                ConnectTouchingChunks(chunk, jointBreakForce);
+                ConnectTouchingChunks(chunk, jointBreakForce, isAlone);
             }
 
             // Set anchored chunks as kinematic
@@ -243,7 +243,8 @@ namespace Project.Scripts.Fractures
             return chunk;
         }
         
-        private static void ConnectTouchingChunks(GameObject chunk, float jointBreakForce, float touchRadius = .01f)
+        // chunk에 닿은 오브젝트감지해서 chunk와 연결
+        private static void ConnectTouchingChunks(GameObject chunk, float jointBreakForce, bool isAlone, float touchRadius = .01f)
         {
             var rb = chunk.GetComponent<Rigidbody>();
             var mesh = chunk.GetComponent<MeshFilter>().mesh;
@@ -254,14 +255,18 @@ namespace Project.Scripts.Fractures
             {
                 var worldPosition = chunk.transform.TransformPoint(vertices[i]);
                 var hits = Physics.OverlapSphere(worldPosition, touchRadius);
+
                 for (var j = 0; j < hits.Length; j++)
                 {
+                    if (isAlone && !hits[j].name.Contains("Chunk")) 
+                        continue;
+
                     overlaps.Add(hits[j].GetComponent<Rigidbody>());
                 }
             }
 
             foreach (var overlap in overlaps)
-            { 
+            {
                 if (overlap.gameObject != chunk.gameObject)
                 {
                     var joint = overlap.gameObject.AddComponent<FixedJoint>();
