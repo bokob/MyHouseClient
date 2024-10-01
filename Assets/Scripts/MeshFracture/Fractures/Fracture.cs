@@ -8,10 +8,10 @@ namespace Project.Scripts.Fractures
     public static class Fracture
     {
         // 오브젝트를 조각으로 분해하는 전체적인 과정 담당
-        public static ChunkGraphManager FractureGameObject(GameObject gameObject, Anchor anchor, int seed, int totalChunks,Material insideMaterial, Material outsideMaterial, float jointBreakForce, float density)
+        public static ChunkGraphManager FractureGameObject(GameObject gameObject, Anchor anchor, int seed, int totalChunks,Material insideMaterial, Material outsideMaterial, float jointBreakForce, float density, bool isAlone)
         {
-            // Translate all meshes to one world mesh
-            var mesh = GetWorldMesh(gameObject); // 전체 메시 얻기
+            // 조건에 따라 하위 메시까지 통합해서 적용할 것인지 단일로만 적용할 것인지 결정
+            Mesh mesh = (isAlone) ? GetObjectMesh(gameObject) : GetWorldMesh(gameObject);
             
             NvBlastExtUnity.setSeed(seed);
 
@@ -30,11 +30,11 @@ namespace Project.Scripts.Fractures
             // Build chunks gameobjects
             var chunkMass = mesh.Volume() * density / totalChunks;                        // 조각이 얼마나 차지할지 설정
             var chunks = BuildChunks(insideMaterial, outsideMaterial, meshes, chunkMass); // 매터리얼 설정
-            
+
             // Connect blocks that are touching with fixed joints
             foreach (var chunk in chunks)
             {
-                ConnectTouchingChunks(chunk, jointBreakForce);
+                ConnectTouchingChunks(chunk, jointBreakForce, isAlone);
             }
 
             // Set anchored chunks as kinematic
@@ -173,9 +173,24 @@ namespace Project.Scripts.Fractures
                     mesh = mf.mesh,
                     transform = mf.transform.localToWorldMatrix
                 }).ToArray();
-            
+
             var totalMesh = new Mesh();
             totalMesh.CombineMeshes(combineInstances, true);
+            return totalMesh;
+
+        }
+
+        // 단일 오브젝트 메시만 구하기
+        private static Mesh GetObjectMesh(GameObject gameObject)
+        {
+            CombineInstance[] combineInstance = new CombineInstance[1];
+            combineInstance[0] = new CombineInstance()
+            {
+                mesh = gameObject.GetComponent<MeshFilter>().mesh,
+                transform = gameObject.GetComponent<MeshFilter>().transform.localToWorldMatrix
+            };
+            var totalMesh = new Mesh();
+            totalMesh.CombineMeshes(combineInstance, true);
             return totalMesh;
         }
         
@@ -228,7 +243,8 @@ namespace Project.Scripts.Fractures
             return chunk;
         }
         
-        private static void ConnectTouchingChunks(GameObject chunk, float jointBreakForce, float touchRadius = .01f)
+        // chunk에 닿은 오브젝트감지해서 chunk와 연결
+        private static void ConnectTouchingChunks(GameObject chunk, float jointBreakForce, bool isAlone, float touchRadius = .01f)
         {
             var rb = chunk.GetComponent<Rigidbody>();
             var mesh = chunk.GetComponent<MeshFilter>().mesh;
@@ -239,14 +255,18 @@ namespace Project.Scripts.Fractures
             {
                 var worldPosition = chunk.transform.TransformPoint(vertices[i]);
                 var hits = Physics.OverlapSphere(worldPosition, touchRadius);
+
                 for (var j = 0; j < hits.Length; j++)
                 {
+                    if (isAlone && !hits[j].name.Contains("Chunk")) 
+                        continue;
+
                     overlaps.Add(hits[j].GetComponent<Rigidbody>());
                 }
             }
 
             foreach (var overlap in overlaps)
-            { 
+            {
                 if (overlap.gameObject != chunk.gameObject)
                 {
                     var joint = overlap.gameObject.AddComponent<FixedJoint>();

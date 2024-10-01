@@ -63,7 +63,7 @@ public class CameraController : MonoBehaviour
         _quaterFollowCamera.SetActive(false);
         _thirdFollowCamera.SetActive(true);
         _aimCamera.SetActive(true);
-        _minimapCamera.SetActive(false);
+        _minimapCamera.GetComponent<MinimapCameraPosition>().OnOffMinimapPanel(false);
     }
 
     /// <summary>

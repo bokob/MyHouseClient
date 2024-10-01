@@ -8,10 +8,12 @@ public class MinimapCameraPosition : MonoBehaviour
     [SerializeField] bool x, y, z;
     [SerializeField] GameObject player;
     Transform target;
+    [SerializeField] GameObject _minimapImage;
+    [SerializeField] GameObject _minimapText;
 
     [SerializeField]  int secondFloorLayer;
 
-    private void Start()
+    void Start()
     {
         minimapCamera = GetComponent<Camera>();
 
@@ -25,7 +27,7 @@ public class MinimapCameraPosition : MonoBehaviour
 
         secondFloorLayer = LayerMask.NameToLayer("Floor");
     }
-    private void Update()
+    void Update()
     {
         if(!target) return;
 
@@ -44,5 +46,11 @@ public class MinimapCameraPosition : MonoBehaviour
         {
             minimapCamera.cullingMask &= ~(1 << secondFloorLayer);
         }
+    }
+
+    public void OnOffMinimapPanel(bool isActive)
+    {
+        _minimapImage.SetActive(isActive);
+        _minimapText.SetActive(!isActive);
     }
 }
