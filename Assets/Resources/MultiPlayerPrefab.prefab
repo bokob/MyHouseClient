@@ -12807,7 +12807,7 @@ MonoBehaviour:
   _aimSensitivity: 0.2
   _aimColliderLayerMask:
     serializedVersion: 2
-    m_Bits: 513
+    m_Bits: 2013329993
   _debugTransform: {fileID: 8681524022386579351}
   _pfBulletProjectile: {fileID: 0}
   _spawnBulletPosition: {fileID: 0}
