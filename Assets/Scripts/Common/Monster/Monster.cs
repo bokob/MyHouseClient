@@ -124,7 +124,7 @@ public class Monster : MonoBehaviour, IStatus
         }
     }
 
-    public void TakedDamage(int attack) // 상대에게 데미지 입히기
+    public void TakedDamage(int attack) // 데미지 받기
     {
         if (Hp <= 0) return; // 시체일 경우 종료
 
