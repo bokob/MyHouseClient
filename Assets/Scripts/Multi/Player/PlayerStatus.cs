@@ -107,7 +107,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
     }
 
     /// <summary>
-    /// 데미지 입기
+    /// 멀티용 데미지 입기
     /// </summary>
     /// <param name="attack"> 가할 공격력 </param>
     [PunRPC]
@@ -127,9 +127,32 @@ public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
 
             GetComponent<PhotonView>().RPC("Dead", RpcTarget.AllBuffered);
         }
-
     }
 
+    /// <summary>
+    /// 멀티에서 몬스터에게 데미지 입기
+    /// </summary>
+    /// <param name="attack"> 가할 공격력 </param>
+    public void TakedDamage(int attack)
+    {
+        // 피해가 음수라면 회복되는 현상이 일어나므로 피해의 값을 0이상으로 되게끔 설정
+        float damage = Mathf.Max(0, attack - Defence);
+        Hp -= damage;
+        Debug.Log(gameObject.name + "(이)가 " + damage + " 만큼 피해를 입었음!");
+        Debug.Log("남은 체력: " + Hp);
+
+
+        if (Hp > 0)
+        {
+            HitChangeMaterials();
+            Debug.Log(gameObject.name + "가" + damage + " 만큼 피해입음");
+            Debug.Log("데미지 입고 난 후 체력: " + Hp);
+        }
+        else
+        {
+            Dead();
+        }
+    }
 
     #region 체력 및 스테미나 관련
     /// <summary>
