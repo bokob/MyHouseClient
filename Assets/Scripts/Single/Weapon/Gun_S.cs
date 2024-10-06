@@ -38,6 +38,8 @@ public class Gun_S : Weapon
     [Tooltip("조준 중인지 여부")] [SerializeField] bool _isAim = false;
     [Tooltip("마우스 조준 좌표")][SerializeField] Vector3 _mouseWorldPosition;
 
+    CinemachineBasicMultiChannelPerlin _channels; // 카메라 흔들림 관련 변수
+
     [Header("VFX")]
     [SerializeField] GameObject _hitVFX;
 
@@ -54,6 +56,8 @@ public class Gun_S : Weapon
 
     void Start()
     {
+        _channels = _aimVirtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+
         // 캐릭터 모양이 이상해서 애니메이션이랑 안맞는 여파로 총 조준 방향이 이상해지고 있음, 따라서 조준 안 할 때는 원래대로 돌리기 위해 저장
         _originalRotation = transform.localEulerAngles;
 
@@ -142,7 +146,7 @@ public class Gun_S : Weapon
             _animator.SetBool("isAim", false);
             transform.localEulerAngles = _originalRotation;
 
-
+           
             // 원래 시점으로 카메라 변경
             _aimVirtualCamera.gameObject.SetActive(false);
             _cameraController.SetSensitivity(_normalSensitivity);
@@ -156,11 +160,6 @@ public class Gun_S : Weapon
     {
         if (_currentBulletCount <= 0)
         {
-            // 총알 없을 때 사격하려하면 자동 장전되게 하려고 했음
-            //Debug.Log("재장전시작");
-            //animator.SetBool("isReload", true);
-            //StartCoroutine(ReloadCoroutine());
-
             return;
         }
 
@@ -168,9 +167,18 @@ public class Gun_S : Weapon
         {
             // 발사 속도 계산
             _nextTimeToFire = Time.time + 1f / _fireRate;
-            
+
             if (_currentBulletCount > 0)
+            {
+                _channels.m_AmplitudeGain = 0.5f;
+                _channels.m_FrequencyGain = 0.5f;
                 Shoot();
+            }
+        }
+        else
+        {
+            _channels.m_AmplitudeGain = 0;
+            _channels.m_FrequencyGain = 0;
         }
     }
 
