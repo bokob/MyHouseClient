@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.SceneManagement;
 
 public class SoundManager : MonoBehaviour
@@ -10,7 +11,6 @@ public class SoundManager : MonoBehaviour
     public AudioClip[] bgmClips;
     [SerializeField] AudioSource _effectSource;
     [SerializeField] AudioClip[] _effectClips;
-    [SerializeField] AudioSource[] _SFXSources;
 
     void Awake()
     {
@@ -29,22 +29,13 @@ public class SoundManager : MonoBehaviour
 
     void Start()
     {
-        _bgmSource.volume = PlayerPrefs.GetFloat("MusicVolume");
-        _effectSource.volume = PlayerPrefs.GetFloat("MusicVolume");
+        UpdateMusicVolume();
     }
 
     public void UpdateMusicVolume()
     {
         _bgmSource.volume = PlayerPrefs.GetFloat("MusicVolume");
         _effectSource.volume = PlayerPrefs.GetFloat("MusicVolume");
-    }
-
-    public void UpdateSFXVolume()
-    {
-        foreach(AudioSource audioSource in _SFXSources)
-        {
-            audioSource.volume = PlayerPrefs.GetFloat("MusicVolume");
-        }
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -103,6 +94,27 @@ public class SoundManager : MonoBehaviour
             return;
         }
         _effectSource.PlayOneShot(_effectSource.clip);
+    }
+
+    // 해당 지점에서 소리 재생
+    public void PlayEffectAtPoint(string name, Transform targetTransform)
+    {
+        _effectSource.clip = null;
+        foreach (AudioClip clip in _effectClips)
+        {
+            if (clip.name == name)
+            {
+                _effectSource.clip = clip;
+            }
+        }
+
+        if (_effectSource.clip == null)
+        {
+            return;
+        }
+        _effectSource.PlayOneShot(_effectSource.clip);
+
+        AudioSource.PlayClipAtPoint(_effectSource.clip, targetTransform.position);
     }
 
 

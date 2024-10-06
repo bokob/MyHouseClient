@@ -2,6 +2,7 @@ using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 /// <summary>
 /// 한 손 근접 무기
@@ -138,6 +139,7 @@ public class Melee : Weapon
         yield return new WaitForSeconds(0.5f);
         PV.RPC("SetMeleeArea", RpcTarget.All, true);
         PV.RPC("SetTrailEffect", RpcTarget.All, true);
+        PV.RPC("PlayAttackSound", RpcTarget.All);
 
         yield return new WaitForSeconds(0.5f);
         PV.RPC("SetMeleeArea", RpcTarget.All, false);
@@ -160,6 +162,12 @@ public class Melee : Weapon
     void SetTrailEffect(bool state)
     { 
         _trailEffet.enabled = state;
+    }
+
+    [PunRPC]
+    void PlayAttackSound()
+    {
+        SoundManager._instance.PlayEffectAtPoint("MeleeAttack", transform);
     }
 
     void OnTriggerEnter(Collider other)
