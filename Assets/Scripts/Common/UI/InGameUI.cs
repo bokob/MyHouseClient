@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -53,7 +54,7 @@ public class InGameUI : MonoBehaviour
     [SerializeField] GameObject _gameOverScreen;
     [SerializeField] Image _fadeImageInGameOverScreen;
     [SerializeField] TextMeshProUGUI _quitTimer;
-    [SerializeField] TextMeshProUGUI _killGhostText;
+    [SerializeField] TextMeshProUGUI _killText;
 
     [Header("모드별 UI")]
     [SerializeField] List<Texture2D> _rightUpImages = new List<Texture2D>();
@@ -98,7 +99,7 @@ public class InGameUI : MonoBehaviour
         _gameOverScreen = transform.GetChild(8).gameObject;
         _fadeImageInGameOverScreen = _gameOverScreen.GetComponent<Image>();
         _quitTimer = _gameOverScreen.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
-        _killGhostText = _gameOverScreen.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        _killText = _gameOverScreen.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
     }
 
     void Update()
@@ -291,8 +292,13 @@ public class InGameUI : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "SinglePlayScene")
         {
             _score = GameManager_S._instance._score; // 점수 지정
-            _killGhostText.text = "Killed Ghost : " + _score.ToString();
+            _killText.text = "Killed Ghost : " + _score.ToString();
         }
+        else
+        {
+            _killText.gameObject.SetActive(false);
+        }
+
         float elapsedTime = 1.0f;
         Color color = _fadeImageInGameOverScreen.color;
         color.a = 0.0f; // 투명
@@ -324,6 +330,7 @@ public class InGameUI : MonoBehaviour
 
         // 씬 전환
         Define._sceneName = "TitleScene";
+        Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadScene("TitleScene");
     }
 }

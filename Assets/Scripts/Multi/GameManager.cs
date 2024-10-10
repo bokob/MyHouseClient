@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Photon.Pun;
 using Photon.Realtime;
@@ -20,7 +21,7 @@ public class GameManager : MonoBehaviour
     private GameObject _playerPrefab;
     public Transform[] _spawnPoints;
     public GameObject _localPlayer;
-    public TextMeshProUGUI _playerCount;
+    public GameObject[] players;
 
     // 아이템 소환 관련
     public List<ItemCylinder> _itemCylinders = new List<ItemCylinder>();
@@ -55,6 +56,8 @@ public class GameManager : MonoBehaviour
             SpawnItem();
             startSpawnItem = true;
         }
+
+        players = GameObject.FindGameObjectsWithTag("Player");
     }
 
     private void OnDestroy()
