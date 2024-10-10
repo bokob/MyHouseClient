@@ -72,6 +72,10 @@ public class Melee : Weapon
     {
         AttackDelay();
         Use();
+
+        _playerInputs.shoot = false;
+        _playerInputs.aim = false;
+        _playerInputs.reload = false;
     }
 
     void AttackDelay()

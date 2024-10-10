@@ -217,8 +217,12 @@ public class Gun : Weapon
             if(monster != null)
             {
                 monster.TakedDamage(base.Attack);
+                
+                if(monster.Hp <= 0)
+                {
+                    _totalBulletCount += 15;
+                }
             }
-
             Rigidbody hitRigidbody = _hitTransform.GetComponent<Rigidbody>();
             if (hitRigidbody != null)
             {

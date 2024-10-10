@@ -76,6 +76,7 @@ public class Melee_S : Weapon
 
         _playerInputs.shoot = false;
         _playerInputs.aim = false;
+        _playerInputs.reload = false;
     }
 
     public override void Use()

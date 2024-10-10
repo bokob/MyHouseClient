@@ -21,6 +21,8 @@ public class PatrolState : StateMachineBehaviour
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (monster.Agent.isActiveAndEnabled == false) return;
+
         // 랜덤하게 순찰 지점 정하기(플레이어 관측 X, 목표까지의 거리가 멈추는 거리보다 작아졌을 때 다시 순찰 지점 계산)
         if (!monster.CanSeePlayer && monster.Agent.remainingDistance <= monster.Agent.stoppingDistance)
         {

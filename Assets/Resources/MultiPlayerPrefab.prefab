@@ -10945,7 +10945,7 @@ GameObject:
   - component: {fileID: 5254274103552635269}
   m_Layer: 31
   m_Name: MinimapIconRobber
-  m_TagString: Untagged
+  m_TagString: MinimapIcon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12211,7 +12211,7 @@ MonoBehaviour:
   _gameOverScreen: {fileID: 0}
   _fadeImageInGameOverScreen: {fileID: 0}
   _quitTimer: {fileID: 0}
-  _killGhostText: {fileID: 0}
+  _killText: {fileID: 0}
   _rightUpImages:
   - {fileID: 2800000, guid: dad0eb368fe94c642a1637071817120d, type: 3}
   - {fileID: 2800000, guid: 7c6b09c2d6fa96b40a49a4daf8fbd4d8, type: 3}
@@ -12309,7 +12309,7 @@ GameObject:
   - component: {fileID: 3608266240119882339}
   - component: {fileID: 4063002758685381701}
   m_Layer: 5
-  m_Name: KillGhostText
+  m_Name: KillText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12362,7 +12362,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Killed Ghost :  0'
+  m_text: 'Kill :  0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -12933,7 +12933,7 @@ GameObject:
   - component: {fileID: 5701201760511210623}
   - component: {fileID: 6430400050690901876}
   - component: {fileID: 2727981350756061971}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -14142,7 +14142,7 @@ MonoBehaviour:
   player: {fileID: 0}
   _minimapImage: {fileID: 4115376202418508438}
   _minimapText: {fileID: 6080766386249894099}
-  secondFloorLayer: 0
+  _secondFloorLayer: 0
 --- !u!1 &4400560677699910937
 GameObject:
   m_ObjectHideFlags: 0
@@ -15154,7 +15154,7 @@ GameObject:
   - component: {fileID: 2777929200867273908}
   m_Layer: 31
   m_Name: MinimapIconHouseowner
-  m_TagString: Untagged
+  m_TagString: MinimapIcon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

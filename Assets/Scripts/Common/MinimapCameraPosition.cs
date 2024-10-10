@@ -1,6 +1,8 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MinimapCameraPosition : MonoBehaviour
 {
@@ -11,7 +13,7 @@ public class MinimapCameraPosition : MonoBehaviour
     [SerializeField] GameObject _minimapImage;
     [SerializeField] GameObject _minimapText;
 
-    [SerializeField]  int secondFloorLayer;
+    [SerializeField]  int _secondFloorLayer;
 
     void Start()
     {
@@ -25,7 +27,7 @@ public class MinimapCameraPosition : MonoBehaviour
         target.position = new Vector3(0, 0, 0);
         target.SetPositionAndRotation(new Vector3(0,30,0), Quaternion.Euler(90,0,0));
 
-        secondFloorLayer = LayerMask.NameToLayer("Floor");
+        _secondFloorLayer = LayerMask.NameToLayer("Floor");
     }
     void Update()
     {
@@ -40,11 +42,41 @@ public class MinimapCameraPosition : MonoBehaviour
         // 2층 렌더링 여부
         if (player.transform.position.y > 7)
         {
-            minimapCamera.cullingMask |= (1 << secondFloorLayer);
+            minimapCamera.cullingMask |= (1 << _secondFloorLayer);
         }
         else
         {
-            minimapCamera.cullingMask &= ~(1 << secondFloorLayer);
+            minimapCamera.cullingMask &= ~(1 << _secondFloorLayer);
+        }
+
+        // 높이 차이가 나는 미니맵 아이콘 활성화 여부
+        int idx = 0;
+        if(SceneManager.GetActiveScene().name == "MultiPlayScene")
+        {
+            foreach (GameObject playerObject in GameManager._instance.players)
+            {
+                GameObject minimapIcon = playerObject;
+                if(playerObject.GetComponent<PlayerStatus>().Role == Define.Role.Robber)
+                {
+                    minimapIcon = minimapIcon.transform.GetChild(0).GetChild(0).gameObject;
+                }
+                else if(playerObject.GetComponent<PlayerStatus>().Role == Define.Role.Houseowner)
+                {
+                    minimapIcon = minimapIcon.transform.GetChild(1).GetChild(0).gameObject;
+                }
+                
+
+                if (Mathf.Abs(minimapIcon.transform.position.y - player.transform.position.y) > 6)
+                {
+                    minimapIcon.gameObject.SetActive(false);
+                    Debug.Log($"{idx++}높이 차이: {minimapIcon.transform.position.y - player.transform.position.y}");
+                }
+                else
+                {
+                    minimapIcon.gameObject.SetActive(true);
+                    Debug.Log($"{idx++}높이 차이: {minimapIcon.transform.position.y - player.transform.position.y}");
+                }
+            }
         }
     }
 
