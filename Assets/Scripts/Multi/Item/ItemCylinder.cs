@@ -34,10 +34,15 @@ public class ItemCylinder : MonoBehaviour
 
         // 스크립트 보유하고 있지 않으면, 스크립트 추가
         if (_spawnItemType == Define.Item.Status && _spawnItemObject.GetComponent<StatusItem>() == null)
-            _spawnItemObject.AddComponent<StatusItem>();
+        {
+            StatusItem tmp = _spawnItemObject.AddComponent<StatusItem>();
+            tmp._statusName = (Define.StatusItem)childIdxNum;
+        }
         else if (_spawnItemType == Define.Item.Weapon && _spawnItemObject.GetComponent<WeaponItem>() == null)
-            _spawnItemObject.AddComponent<WeaponItem>();
-        _spawnItem = _spawnItemObject.GetComponent<Item>();
+        {
+            WeaponItem tmp = _spawnItemObject.AddComponent<WeaponItem>();
+            tmp._weaponName = (Define.WeaponItem)childIdxNum;
+        }
 
         _spawnItemObject.SetActive(true);
 

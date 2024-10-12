@@ -36,9 +36,15 @@ public class ItemCylinder_S : MonoBehaviour
 
         // 스크립트 보유하고 있지 않으면, 스크립트 추가
         if (_spawnItemType == Define.Item.Status && _spawnItemObject.GetComponent<StatusItem>() == null)
-            _spawnItemObject.AddComponent<StatusItem_S>();
+        {
+            StatusItem_S tmp = _spawnItemObject.AddComponent<StatusItem_S>();
+            tmp._statusName = (Define.StatusItem)childIdx;
+        }
         else if (_spawnItemType == Define.Item.Weapon && _spawnItemObject.GetComponent<WeaponItem>() == null)
-            _spawnItemObject.AddComponent<WeaponItem_S>();
+        {
+            WeaponItem_S tmp = _spawnItemObject.AddComponent<WeaponItem_S>();
+            tmp._weaponName = (Define.WeaponItem)childIdx;
+        }
         _spawnItem = _spawnItemObject.GetComponent<Item>();
 
         _spawnItemObject.SetActive(true);

@@ -293,7 +293,7 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                         photonView.RPC("SetRole", RpcTarget.AllBuffered, Define.Role.Houseowner);
 
                         // 집주인 메시 및 애니메이션 전환 호출
-                        photonView.RPC("TransformIntoHouseowner", RpcTarget.AllBuffered);
+                        //photonView.RPC("TransformIntoHouseowner", RpcTarget.AllBuffered);
                         photonView.RPC("SetRoleAnimator", RpcTarget.AllBuffered);
                     }
 
@@ -574,23 +574,12 @@ public class NetworkManager : MonoBehaviourPunCallbacks
                 // 새 마스터 클라이언트에게 Houseowner 역할 부여
                 player.GetComponent<PhotonView>().RPC("SetRole", RpcTarget.AllBuffered, Define.Role.Houseowner);
 
-                // 집주인 메시 및 애니메이션 전환 호출
-                player.GetComponent<PhotonView>().RPC("TransformIntoHouseowner", RpcTarget.AllBuffered);
+                // 집주인 애니메이션 전환 호출
                 player.GetComponent<PhotonView>().RPC("SetRoleAnimator", RpcTarget.AllBuffered);
             }
             else
             {
                 if (player.GetComponent<PlayerStatus>().Hp <= 0) return; // 죽으면 이전 집주인이 강도가 되어서 죽지 않고 서있는 문제 방지
-
-                ///////////// 주석 남겨둘 것 ////////////// -> RPC 끼리 겹처서 뒤에 들어온 클라이언트에서 집주인이 강도로 가끔 되길래 주석처리 해놓은것
-
-                //// 나머지 플레이어들에게 Robber 역할 부여
-                //player.GetComponent<PhotonView>().RPC("SetRole", RpcTarget.AllBuffered, Define.Role.Robber);
-
-                //// 도둑 메시 및 애니메이션 전환 호출
-                //player.GetComponent<PhotonView>().RPC("TransformIntoRobber", RpcTarget.AllBuffered);
-                //player.GetComponent<PhotonView>().RPC("SetRoleAnimator", RpcTarget.AllBuffered);
-                //// Debug.Log("다름: " + player._nickName + " | " + newMasterClient.NickName);
             }
         }
     }
