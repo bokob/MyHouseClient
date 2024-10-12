@@ -80,6 +80,8 @@ public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
         {
             _cameraController.gameObject.GetComponent<CameraController>().SetRobberView(); // 강도 시점으로 설정
             Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(이)가 강도로 변신 완료");
+            MaxSp = 200;
+            Sp = MaxSp;
         }
         else if(Role == Define.Role.Houseowner)
         {
@@ -87,6 +89,9 @@ public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
             transform.GetChild(0).gameObject.GetComponent<FadeObjectBlockingObject>().ResetAlphaObjectsToBeHouseowner(); // 투명화 오브젝트들 초기화
             transform.GetChild(0).gameObject.GetComponent<FadeObjectBlockingObject>().enabled = false; // 강도 층별 투명화 비활성화
             _cameraController.gameObject.GetComponent<CameraController>().SetHouseownerView(); // 집주인 시점으로 설정
+
+            MaxSp = 100;
+            Sp = MaxSp;
 
             Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(이)가 집주인으로 변신 완료");
         }
