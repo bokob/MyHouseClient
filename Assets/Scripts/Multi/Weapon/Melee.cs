@@ -176,6 +176,8 @@ public class Melee : Weapon
 
     void OnTriggerEnter(Collider other)
     {
+        if (!photonView.IsMine) return;
+
         // 자기 자신에게 닿은 경우 무시
         if (other.transform.root.name.Contains("Player") && other.transform.root.GetChild(2).GetComponent<PlayerStatus>() == _playerStatus)
         {
@@ -185,7 +187,9 @@ public class Melee : Weapon
         PlayerStatus otherPlayerStatus = other.GetComponent<PlayerStatus>();
         if (otherPlayerStatus != null)
         {
-            otherPlayerStatus.gameObject.GetComponent<PhotonView>().RPC("TakedDamage", RpcTarget.All, base.Attack);
+            PhotonView otherPhotonView = otherPlayerStatus.gameObject.GetComponent<PhotonView>();
+
+            otherPlayerStatus.gameObject.GetComponent<PhotonView>().RPC("TakedDamage", otherPhotonView.Owner, base.Attack);
             otherPlayerStatus.gameObject.GetComponent<PhotonView>().RPC("HitChangeMaterials", RpcTarget.All);
         }
 

@@ -48,7 +48,7 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] CameraController _mainCamera;
 
     // 애니메이션 관련
-    Animator _animator;
+    public Animator animator;
     // animation IDs
     int _animIDSpeed;
     int _animIDGrounded;
@@ -109,13 +109,13 @@ public class PlayerMove : MonoBehaviour
     public void SetRoleAnimator()
     {
         if (_status.Role == Define.Role.Robber)
-            _animator = transform.GetChild(0).gameObject.GetComponent<Animator>();
+            animator = transform.GetChild(0).gameObject.GetComponent<Animator>();
         else if (_status.Role == Define.Role.Houseowner)
-            _animator = transform.GetChild(1).gameObject.GetComponent<Animator>();
+            animator = transform.GetChild(1).gameObject.GetComponent<Animator>();
         else
             Debug.Log("아직 역할이 안정해졌는데?");
 
-        _hasAnimator = (_animator != null) ? true : false;
+        _hasAnimator = (animator != null) ? true : false;
 
         Debug.LogWarning("_hasAnimator: " + _hasAnimator);
     }
@@ -218,8 +218,8 @@ public class PlayerMove : MonoBehaviour
         // update animator if using character
         if (_hasAnimator)
         {
-            _animator.SetFloat(_animIDSpeed, _animationBlend);
-            _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
+            animator.SetFloat(_animIDSpeed, _animationBlend);
+            animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
         }
     }
 
@@ -233,7 +233,7 @@ public class PlayerMove : MonoBehaviour
         // "Grounded" 애니메이션 파라미터 변경
         if (_hasAnimator)
         {
-            _animator.SetBool(_animIDGrounded, _grounded);
+            animator.SetBool(_animIDGrounded, _grounded);
         }
     }
 
@@ -253,8 +253,8 @@ public class PlayerMove : MonoBehaviour
             // update animator if using character
             if (_hasAnimator)
             {
-                _animator.SetBool(_animIDJump, false);
-                _animator.SetBool(_animIDFreeFall, false);
+                animator.SetBool(_animIDJump, false);
+                animator.SetBool(_animIDFreeFall, false);
             }
 
             // stop our velocity dropping infinitely when grounded
@@ -272,8 +272,8 @@ public class PlayerMove : MonoBehaviour
                 // update animator if using character
                 if (_hasAnimator)
                 {
-                    _animator.Play("JumpStart");
-                    _animator.SetBool(_animIDJump, true);
+                    animator.Play("JumpStart");
+                    animator.SetBool(_animIDJump, true);
                     Debug.Log("점프 시작 애니메이션");
                 }
 
@@ -296,7 +296,7 @@ public class PlayerMove : MonoBehaviour
             {
                 // update animator if using character
                 if (_hasAnimator)
-                    _animator.SetBool(_animIDFreeFall, true);
+                    animator.SetBool(_animIDFreeFall, true);
             }
 
             // if we are not grounded, do not jump

@@ -69,12 +69,10 @@ public class MinimapCameraPosition : MonoBehaviour
                 if (Mathf.Abs(minimapIcon.transform.position.y - player.transform.position.y) > 6)
                 {
                     minimapIcon.gameObject.SetActive(false);
-                    Debug.Log($"{idx++}높이 차이: {minimapIcon.transform.position.y - player.transform.position.y}");
                 }
                 else
                 {
                     minimapIcon.gameObject.SetActive(true);
-                    Debug.Log($"{idx++}높이 차이: {minimapIcon.transform.position.y - player.transform.position.y}");
                 }
             }
         }

@@ -221,4 +221,54 @@ public class FadeObjectBlockingObject : MonoBehaviour
         return Hit.collider != null ? Hit.collider.GetComponent<FadingObject>() : null;
     }
 
+
+    public void ResetAlphaObjectsToBeHouseowner()
+    {
+        // 모든 현재 블록하고 있는 오브젝트들을 대상으로 초기 알파 값으로 복구하는 작업을 실행
+        foreach (FadingObject fadingObject in ObjectsBlockingView)
+        {
+            // 이미 실행 중인 투명화 코루틴이 있으면 중지
+            if (RunningCoroutines.ContainsKey(fadingObject))
+            {
+                if (RunningCoroutines[fadingObject] != null)
+                {
+                    StopCoroutine(RunningCoroutines[fadingObject]);
+                }
+                RunningCoroutines.Remove(fadingObject);
+            }
+
+            // 오브젝트의 알파 값을 즉시 원래 상태로 복구
+            foreach (Material material in fadingObject.Materials)
+            {
+                if (material.HasProperty("_Color"))
+                {
+                    material.color = new Color(
+                        material.color.r,
+                        material.color.g,
+                        material.color.b,
+                        fadingObject.InitialAlpha
+                    );
+                }
+
+                // 원래 상태의 렌더링 설정으로 복구
+                material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
+                material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+                material.SetInt("_ZWrite", 1);
+                material.SetInt("_Surface", 0);
+
+                material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
+
+                material.SetShaderPassEnabled("DepthOnly", true);
+                material.SetShaderPassEnabled("SHADOWCASTER", true);
+
+                material.SetOverrideTag("RenderType", "Opaque");
+
+                material.DisableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            }
+        }
+
+        // 작업이 끝난 후, 블록 리스트 초기화
+        ObjectsBlockingView.Clear();
+    }
 }

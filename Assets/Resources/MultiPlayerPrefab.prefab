@@ -13185,6 +13185,7 @@ MonoBehaviour:
     m_Bits: 22529
   _input: {fileID: 0}
   _mainCamera: {fileID: 3439450309009642615}
+  animator: {fileID: 0}
   _landingAudioClip: {fileID: 0}
   _footstepAudioVolume: 0.5
 --- !u!114 &6430400050690901876

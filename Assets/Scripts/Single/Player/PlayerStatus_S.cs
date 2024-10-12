@@ -92,7 +92,8 @@ public class PlayerStatus_S : MonoBehaviour, IStatus
     {
         if (Sp < MaxSp)
         {
-            float healedAmount = Mathf.Clamp(Sp + MaxSp, 0, MaxHp) - Sp;
+            Debug.Log("SP È¸º¹");
+            float healedAmount = Mathf.Clamp(Sp + MaxSp, 0, MaxSp) - Sp;
             Sp += healedAmount;
         }
         else
