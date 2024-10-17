@@ -171,13 +171,6 @@ public class PlayerStatus_S : MonoBehaviour, IStatus
             _renderers[i].material.color = Color.white;
     }
 
-    public void GetMeleeItem()
-    {
-        meleeItemName = nearMeleeObject.name;
-        _weaponManager_S.PickUpWeapon(meleeItemName);
-        //Destroy(nearMeleeObject);
-    }
-
     public void ChangeIsHoldGun(bool isHoldGun)
     {
         if (Role != Define.Role.Houseowner) return;

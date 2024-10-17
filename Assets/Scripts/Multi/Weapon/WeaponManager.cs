@@ -45,11 +45,12 @@ public class WeaponManager : MonoBehaviour
             WeaponSwitching(); // 무기 교체
 
 
-        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null && !_playerInputs.reload)
+        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null && !_playerInputs.reload && _isPickUp == false)
         {
             _isPickUp = true;
             meleeItemName = nearMeleeObject.name;
             PickUpWeapon(meleeItemName);
+            nearMeleeObject = null; // 버리고 나서 줍는 문제 방지
         }
 
         if (GetComponent<PhotonView>().IsMine && Input.GetKeyDown(KeyCode.Q))
@@ -185,9 +186,13 @@ public class WeaponManager : MonoBehaviour
     public void PickUpWeapon(string meleeName)
     {
         Transform newMelee = transform.Find(meleeName);
+
+        if (newMelee == null) return;
+
         _selectedWeaponIdx = newMelee.GetSiblingIndex(); // 교체할 무기가 몇 번째 자식인지
         _pickUpWeaponIdx =_selectedWeaponIdx;
         GetComponent<PhotonView>().RPC("SelectWeapon", RpcTarget.AllBuffered, _selectedWeaponIdx);
+        nearMeleeObject = null;
     }
 
     /// <summary>
@@ -198,7 +203,13 @@ public class WeaponManager : MonoBehaviour
         if (_selectedWeapon.tag == "Gun" || _selectedWeaponIdx == 0) return;
 
         GameObject droppedSelectedWeapon = PhotonNetwork.Instantiate(_selectedWeapon.name, _selectedWeapon.transform.position, _selectedWeapon.transform.rotation); // instatntiation. 
+        Destroy(droppedSelectedWeapon.GetComponent<Melee_S>()); // Melee_S script delete for error prevention.
         droppedSelectedWeapon.transform.localScale = droppedSelectedWeapon.transform.localScale * 1.7f; // size up.
+
+        droppedSelectedWeapon.name = "DropWeapon";
+        droppedSelectedWeapon.tag = "Untagged";
+
+        _isUsePickUpWeapon = false;
 
         StartCoroutine(DropAndBounce(droppedSelectedWeapon));
 
@@ -229,7 +240,7 @@ public class WeaponManager : MonoBehaviour
                 velocity.x *= horizontalDamping;
                 velocity.z *= horizontalDamping;
 
-                if (Mathf.Abs(velocity.y) < 0.1f)
+                if (Mathf.Abs(velocity.y) < 0.5f)
                 {
                     velocity.y = 0;
                     break;

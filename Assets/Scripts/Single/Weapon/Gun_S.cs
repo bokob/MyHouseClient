@@ -278,6 +278,8 @@ public class Gun_S : Weapon
         }
         else
         {
+            _isReload = false;
+            _playerInputs.reload = false;
             _animator.SetBool("isReload", false);
         }
     }
