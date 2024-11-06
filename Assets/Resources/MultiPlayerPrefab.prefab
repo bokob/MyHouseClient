@@ -12812,10 +12812,6 @@ MonoBehaviour:
   _pfBulletProjectile: {fileID: 0}
   _spawnBulletPosition: {fileID: 0}
   _hitTransform: {fileID: 0}
-  _vfxHitGreen: {fileID: 6401488812278237640, guid: 48c41184f0984b344a56eaa46cec602d,
-    type: 3}
-  _vfxHitRed: {fileID: 9181086373973938797, guid: 8399b48c11232234184e0b8d24bd736a,
-    type: 3}
   _isReload: 0
   _isShoot: 0
   _isAim: 0
