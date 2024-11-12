@@ -230,7 +230,7 @@ public class PlayerMove_S : MonoBehaviour
                 _verticalVelocity = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
 
                 // update animator if using character
-                if (_hasAnimator)
+                if (_hasAnimator && _animator.GetBool("JumpStart") == false && _animator.GetBool("InAir") == false)
                 {
                     _animator.Play("JumpStart");
                     _animator.SetBool(_animIDJump, true);

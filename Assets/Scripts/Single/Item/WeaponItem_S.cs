@@ -51,13 +51,13 @@ public class WeaponItem_S : Item
 
         if (playerWeaponManager == null) return;
 
-        // 플레이어가 있고, 근처 근접 무기 탐색에 성공했고, 아이템 줍기 버튼을 눌렀고, 아이템 쿨타임 아닐 때
-        if (playerWeaponManager.nearMeleeObject != null && playerWeaponManager._isPickUp && !_itemCylinder._usedItem)
+        if(playerWeaponManager.nearMeleeObject == null && playerWeaponManager._isPickUp && !_itemCylinder._usedItem) // 아이템 갓 먹은 경우
         {
+            // 아이템 실린더 쿨타임
             TakeWeaponItem(other);
             playerWeaponManager._isUsePickUpWeapon = true;
+            playerWeaponManager._isPickUp = false;
         }
-        playerWeaponManager._isPickUp = false;
     }
 
     private void OnTriggerExit(Collider other)

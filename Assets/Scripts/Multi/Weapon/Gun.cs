@@ -34,8 +34,8 @@ public class Gun : Weapon
     [Tooltip("발사되는 총알")] [SerializeField] Transform _pfBulletProjectile;
     [Tooltip("총알 발사되는 위치")] [SerializeField] Transform _spawnBulletPosition;
     [Tooltip("Raycast 맞은 오브젝트")] [SerializeField] Transform _hitTransform;
-    [Tooltip("피격 O 여부")] [SerializeField] GameObject _vfxHitGreen;
-    [Tooltip("피격 X 오브젝트")] [SerializeField] GameObject _vfxHitRed;
+    //[Tooltip("피격 O 여부")] [SerializeField] GameObject _vfxHitGreen;
+    //[Tooltip("피격 X 오브젝트")] [SerializeField] GameObject _vfxHitRed;
     [Tooltip("재장전 중인지 여부")] [SerializeField] bool _isReload = false;
     [Tooltip("사격 중인지 여부")] [SerializeField] bool _isShoot = false;
     [Tooltip("조준 중인지 여부")] [SerializeField] bool _isAim = false;
@@ -182,26 +182,11 @@ public class Gun : Weapon
         Debug.Log("발사");
         if (_hitTransform != null)
         {
-            // 무언가 맞았으면
-            if (_hitTransform.GetComponent<BulletTarget>() != null)
-            {
-                GetComponent<PhotonView>().RPC("InstantiateVFX", RpcTarget.All, _hitVFX.name, _hitTransform.position, Quaternion.identity); // 탄착 지점 효과
-
-                GameObject GreenEffect = Instantiate(_vfxHitGreen, _mouseWorldPosition, Quaternion.identity);
-                
-                // 피격 당한 입장에서 상대의 스텟에 접근하기 위함, false로 월드 좌표계 유지
-                //GreenEffect.transform.SetParent(transform);
-                Destroy(GreenEffect, 0.1f);
-                //hitTransform.GetComponent<PlayerController>().OnHit(GreenEffect.GetComponent<Collider>());
-            }
-            else
-            {
-                PhotonNetwork.Instantiate(_hitVFX.name, _mouseWorldPosition, Quaternion.identity);
-                //GetComponent<PhotonView>().RPC("InstantiateVFX", RpcTarget.All, _hitVFX.name, _hitTransform.position, Quaternion.identity); // 탄착 지점 효과
-                GameObject RedEffect = Instantiate(_vfxHitRed, _mouseWorldPosition, Quaternion.identity);
-                //RedEffect.transform.SetParent(transform);
-                Destroy(RedEffect, 0.5f);
-            }
+            PhotonNetwork.Instantiate(_hitVFX.name, _mouseWorldPosition, Quaternion.identity);
+            ////GetComponent<PhotonView>().RPC("InstantiateVFX", RpcTarget.All, _hitVFX.name, _hitTransform.position, Quaternion.identity); // 탄착 지점 효과
+            //GameObject RedEffect = Instantiate(_vfxHitRed, _mouseWorldPosition, Quaternion.identity);
+            ////RedEffect.transform.SetParent(transform);
+            //Destroy(RedEffect, 0.5f);
 
             // 몬스터나 플레이어가 맞은 경우
             PlayerStatus otherPlayerStatus = _hitTransform.GetComponent<PlayerStatus>();
@@ -251,7 +236,10 @@ public class Gun : Weapon
     // 장전
     void Realod()
     {
-        if (_playerInputs.reload && !_isReload && _currentBulletCount < _reloadBulletCount)
+        // 탄약 가득차있을 때 장전 안되게 하기
+        if (GetCurrentBullet() == _reloadBulletCount)
+            _playerInputs.reload = false;
+        else if (_playerInputs.reload && !_isReload && _currentBulletCount < _reloadBulletCount)
         {
             Debug.Log("재장전시작");
             _animator.SetBool("isReload", true);

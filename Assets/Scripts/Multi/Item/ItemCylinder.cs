@@ -20,7 +20,6 @@ public class ItemCylinder : MonoBehaviour
     [Tooltip("아이템 실린더에서 관리할 아이템 관련")]
     public Define.Item _spawnItemType = Define.Item.None;
     public GameObject _spawnItemObject;
-    public Item _spawnItem;
 
     public void InitSpawnItem(int _spawnItemTypeNum, int childIdxNum)
     {
@@ -75,8 +74,8 @@ public class ItemCylinder : MonoBehaviour
     public void HideSpawnItem()
     {
         _usedItem = true;
-        if(_spawnItem != null)
-            _spawnItem.gameObject.SetActive(false);
+        if(_spawnItemObject != null)
+            _spawnItemObject.gameObject.SetActive(false);
         //_timerHolder.SetActive(true);
     }
 

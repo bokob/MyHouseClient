@@ -51,13 +51,13 @@ public class WeaponItem : Item
 
         if (playerWeaponManager == null) return;
 
-        // 플레이어가 있고, 근처 근접 무기 탐색에 성공했고, 아이템 줍기 버튼을 눌렀고, 아이템 쿨타임 아닐 때
-        if (playerWeaponManager.nearMeleeObject != null && playerWeaponManager._isPickUp && !_itemCylinder._usedItem)
+        if (playerWeaponManager.nearMeleeObject == null && playerWeaponManager._isPickUp && !_itemCylinder._usedItem) // 아이템 갓 먹은 경우
         {
+            // 아이템 실린더 쿨타임
             TakeWeaponItem(other);
             playerWeaponManager._isUsePickUpWeapon = true;
+            playerWeaponManager._isPickUp = false;
         }
-        playerWeaponManager._isPickUp = false;
     }
 
     private void OnTriggerExit(Collider other)
@@ -65,7 +65,11 @@ public class WeaponItem : Item
         if (!other.CompareTag("Player")) return;
 
         Debug.Log("아이템이 사정거리 벗어남");
-        WeaponManager playerWeaponManager = other.GetComponent<PlayerStatus>()._weaponHolder.GetComponent<WeaponManager>();
+
+
+        PlayerStatus playerStatus = other.GetComponent<PlayerStatus>();
+        if (playerStatus == null) return;
+        WeaponManager playerWeaponManager = playerStatus._weaponHolder.GetComponent<WeaponManager>();
         if (playerWeaponManager == null) return;
 
         playerWeaponManager.nearMeleeObject = null;

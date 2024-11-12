@@ -154,7 +154,7 @@ public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
         if (Hp <= 0)
         {
             // 오직 소유자만 사망 처리를 진행
-            if (photonView.IsMine)
+            if (photonView.IsMine && PhotonNetwork.IsMasterClient)
             {
                 Player killer = info.Sender;
                 Debug.LogWarning($"{killer.NickName}가 {photonView.Owner.NickName}를 죽임");

@@ -29,6 +29,8 @@ public class StatusItem : Item
         PlayerStatus status = other.GetComponent<PlayerStatus>();
         if (status == null || base._itemType != Define.Item.Status) return;
 
+        Debug.Log("[멀티]하트 먹습니다.");
+
         //StartCoroutine(_itemCylinder.FadeOutAndRespawn());
         _itemCylinder.GetComponent<PhotonView>().RPC("HideSpawnItem", RpcTarget.AllBuffered);
         if (_statusName == Define.StatusItem.Heart)
