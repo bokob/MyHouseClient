@@ -43,16 +43,8 @@ ___
 ![구현 결과](https://github.com/user-attachments/assets/1e2c3123-210a-41f0-a73f-27837cf24524)
 ___  
 ## 게임 플레이  (Game Play)
-<img width="377" alt="image" src="https://github.com/user-attachments/assets/071df063-e2a5-44f6-a707-86d6cdb9b904">
+https://youtu.be/nlR7P0odJIU
 
-- 플레이어는 집주인과 강도라는 두 역할로 플레이 가능
-- 집주인은 모든 무기를 사용하고 TPS 시점으로 플레이
-- 강도는 근접 무기를 사용하고 탑 뷰 시점으로 플레이
-- 싱글 모드 시, 집주인으로 플레이
-  - 파괴 효과 존재
-- 멀티 모드 시, 마스터 클라이언트가 집주인으로, 그 외의 플레이어는 강도로 플레이
-  - 마스터 클라이언트 처치 시, 처치한 클라이언트가 마스터 클라이언트가 되어 집주인으로 플레이하게 됨 (Host Migration)
-  - 처치된 플레이어는 프로그램 강제 종료
 ___  
 ## 포스터  (Poster)
 <img width="411" alt="포스터" src="https://github.com/user-attachments/assets/ec551080-0986-4c14-8bc2-ffee2c8777ae">
