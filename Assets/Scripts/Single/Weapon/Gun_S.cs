@@ -31,12 +31,14 @@ public class Gun_S : Weapon
     [Tooltip("발사되는 총알")] [SerializeField] Transform _pfBulletProjectile;
     [Tooltip("총알 발사되는 위치")] [SerializeField] Transform _spawnBulletPosition;
     [Tooltip("Raycast 맞은 오브젝트")] [SerializeField] Transform _hitTransform;
-    [Tooltip("피격 O 여부")] [SerializeField] GameObject _vfxHitGreen;
-    [Tooltip("피격 X 오브젝트")] [SerializeField] GameObject _vfxHitRed;
+    //[Tooltip("피격 O 여부")] [SerializeField] GameObject _vfxHitGreen;
+    //[Tooltip("피격 X 오브젝트")] [SerializeField] GameObject _vfxHitRed;
     [Tooltip("재장전 중인지 여부")] [SerializeField] bool _isReload = false;
     [Tooltip("사격 중인지 여부")] [SerializeField] bool _isShoot = false;
     [Tooltip("조준 중인지 여부")] [SerializeField] bool _isAim = false;
     [Tooltip("마우스 조준 좌표")][SerializeField] Vector3 _mouseWorldPosition;
+
+    CinemachineBasicMultiChannelPerlin _channels; // 카메라 흔들림 관련 변수
 
     [Header("VFX")]
     [SerializeField] GameObject _hitVFX;
@@ -54,6 +56,8 @@ public class Gun_S : Weapon
 
     void Start()
     {
+        _channels = _aimVirtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+
         // 캐릭터 모양이 이상해서 애니메이션이랑 안맞는 여파로 총 조준 방향이 이상해지고 있음, 따라서 조준 안 할 때는 원래대로 돌리기 위해 저장
         _originalRotation = transform.localEulerAngles;
 
@@ -142,7 +146,7 @@ public class Gun_S : Weapon
             _animator.SetBool("isAim", false);
             transform.localEulerAngles = _originalRotation;
 
-
+           
             // 원래 시점으로 카메라 변경
             _aimVirtualCamera.gameObject.SetActive(false);
             _cameraController.SetSensitivity(_normalSensitivity);
@@ -156,11 +160,6 @@ public class Gun_S : Weapon
     {
         if (_currentBulletCount <= 0)
         {
-            // 총알 없을 때 사격하려하면 자동 장전되게 하려고 했음
-            //Debug.Log("재장전시작");
-            //animator.SetBool("isReload", true);
-            //StartCoroutine(ReloadCoroutine());
-
             return;
         }
 
@@ -168,9 +167,18 @@ public class Gun_S : Weapon
         {
             // 발사 속도 계산
             _nextTimeToFire = Time.time + 1f / _fireRate;
-            
+
             if (_currentBulletCount > 0)
+            {
+                _channels.m_AmplitudeGain = 0.5f;
+                _channels.m_FrequencyGain = 0.5f;
                 Shoot();
+            }
+        }
+        else
+        {
+            _channels.m_AmplitudeGain = 0;
+            _channels.m_FrequencyGain = 0;
         }
     }
 
@@ -182,20 +190,20 @@ public class Gun_S : Weapon
         {
             // 무언가 맞았으면
             GameObject vfxEffect = Instantiate(_hitVFX, _mouseWorldPosition, Quaternion.identity);
-            if (_hitTransform.GetComponent<BulletTarget>() != null)
-            {
-                GameObject GreenEffect = Instantiate(_vfxHitGreen, _mouseWorldPosition, Quaternion.identity);
-                // 피격 당한 입장에서 상대의 스텟에 접근하기 위함, false로 월드 좌표계 유지
-                //GreenEffect.transform.SetParent(transform);
-                Destroy(GreenEffect, 0.1f);
-                //hitTransform.GetComponent<PlayerController>().OnHit(GreenEffect.GetComponent<Collider>());
-            }
-            else
-            {
-                GameObject RedEffect = Instantiate(_vfxHitRed, _mouseWorldPosition, Quaternion.identity);
-                //RedEffect.transform.SetParent(transform);
-                Destroy(RedEffect, 0.5f);
-            }
+            //if (_hitTransform.GetComponent<BulletTarget>() != null)
+            //{
+            //    GameObject GreenEffect = Instantiate(_vfxHitGreen, _mouseWorldPosition, Quaternion.identity);
+            //    // 피격 당한 입장에서 상대의 스텟에 접근하기 위함, false로 월드 좌표계 유지
+            //    //GreenEffect.transform.SetParent(transform);
+            //    Destroy(GreenEffect, 0.1f);
+            //    //hitTransform.GetComponent<PlayerController>().OnHit(GreenEffect.GetComponent<Collider>());
+            //}
+            //else
+            //{
+            //    GameObject RedEffect = Instantiate(_vfxHitRed, _mouseWorldPosition, Quaternion.identity);
+            //    //RedEffect.transform.SetParent(transform);
+            //    Destroy(RedEffect, 0.5f);
+            //}
 
             // 몬스터가 맞은 경우
             IStatus other = _hitTransform.GetComponent<IStatus>();
@@ -232,7 +240,10 @@ public class Gun_S : Weapon
     // 장전
     void Reload()
     {
-        if (_playerInputs.reload && !_isReload && _currentBulletCount < _reloadBulletCount)
+        // 탄약 가득차있을 때 장전 안되게 하기
+        if (GetCurrentBullet() == _reloadBulletCount)
+            _playerInputs.reload = false;
+        else if (_playerInputs.reload && !_isReload && _currentBulletCount < _reloadBulletCount)
         {
             Debug.Log("재장전시작");
             _animator.SetBool("isReload", true);
@@ -270,6 +281,8 @@ public class Gun_S : Weapon
         }
         else
         {
+            _isReload = false;
+            _playerInputs.reload = false;
             _animator.SetBool("isReload", false);
         }
     }

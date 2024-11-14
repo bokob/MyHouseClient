@@ -5,6 +5,7 @@ using Cinemachine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 using Photon.Pun;
+using TMPro.Examples;
 
 //TODO
 // Player에서 접근하는게 아닌 총 자체에서 사용하는 것으로 하기
@@ -33,12 +34,14 @@ public class Gun : Weapon
     [Tooltip("발사되는 총알")] [SerializeField] Transform _pfBulletProjectile;
     [Tooltip("총알 발사되는 위치")] [SerializeField] Transform _spawnBulletPosition;
     [Tooltip("Raycast 맞은 오브젝트")] [SerializeField] Transform _hitTransform;
-    [Tooltip("피격 O 여부")] [SerializeField] GameObject _vfxHitGreen;
-    [Tooltip("피격 X 오브젝트")] [SerializeField] GameObject _vfxHitRed;
+    //[Tooltip("피격 O 여부")] [SerializeField] GameObject _vfxHitGreen;
+    //[Tooltip("피격 X 오브젝트")] [SerializeField] GameObject _vfxHitRed;
     [Tooltip("재장전 중인지 여부")] [SerializeField] bool _isReload = false;
     [Tooltip("사격 중인지 여부")] [SerializeField] bool _isShoot = false;
     [Tooltip("조준 중인지 여부")] [SerializeField] bool _isAim = false;
     [Tooltip("마우스 조준 좌표")][SerializeField] Vector3 _mouseWorldPosition;
+
+    CinemachineBasicMultiChannelPerlin _channels; // 카메라 흔들림 관련 변수
 
     [Header("VFX")]
     [SerializeField] GameObject _hitVFX;
@@ -54,6 +57,8 @@ public class Gun : Weapon
 
     void Start()
     {
+        _channels = _aimVirtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+
         // 캐릭터 모양이 이상해서 애니메이션이랑 안맞는 여파로 총 조준 방향이 이상해지고 있음, 따라서 조준 안 할 때는 원래대로 돌리기 위해 저장
         _originalRotation = transform.localEulerAngles;
 
@@ -149,11 +154,6 @@ public class Gun : Weapon
     {
         if (_currentBulletCount <= 0)
         {
-            // 총알 없을 때 사격하려하면 자동 장전되게 하려고 했음
-            //Debug.Log("재장전시작");
-            //animator.SetBool("isReload", true);
-            //StartCoroutine(ReloadCoroutine());
-
             return;
         }
 
@@ -161,9 +161,18 @@ public class Gun : Weapon
         {
             // 발사 속도 계산
             _nextTimeToFire = Time.time + 1f / _fireRate;
-            
+
             if (_currentBulletCount > 0)
+            {
+                _channels.m_AmplitudeGain = 0.5f;
+                _channels.m_FrequencyGain = 0.5f;
                 Shoot();
+            }
+        }
+        else
+        {
+            _channels.m_AmplitudeGain = 0;
+            _channels.m_FrequencyGain = 0;
         }
     }
 
@@ -173,26 +182,11 @@ public class Gun : Weapon
         Debug.Log("발사");
         if (_hitTransform != null)
         {
-            // 무언가 맞았으면
-            if (_hitTransform.GetComponent<BulletTarget>() != null)
-            {
-                GetComponent<PhotonView>().RPC("InstantiateVFX", RpcTarget.All, _hitVFX.name, _hitTransform.position, Quaternion.identity); // 탄착 지점 효과
-
-                GameObject GreenEffect = Instantiate(_vfxHitGreen, _mouseWorldPosition, Quaternion.identity);
-                
-                // 피격 당한 입장에서 상대의 스텟에 접근하기 위함, false로 월드 좌표계 유지
-                //GreenEffect.transform.SetParent(transform);
-                Destroy(GreenEffect, 0.1f);
-                //hitTransform.GetComponent<PlayerController>().OnHit(GreenEffect.GetComponent<Collider>());
-            }
-            else
-            {
-                PhotonNetwork.Instantiate(_hitVFX.name, _mouseWorldPosition, Quaternion.identity);
-                //GetComponent<PhotonView>().RPC("InstantiateVFX", RpcTarget.All, _hitVFX.name, _hitTransform.position, Quaternion.identity); // 탄착 지점 효과
-                GameObject RedEffect = Instantiate(_vfxHitRed, _mouseWorldPosition, Quaternion.identity);
-                //RedEffect.transform.SetParent(transform);
-                Destroy(RedEffect, 0.5f);
-            }
+            PhotonNetwork.Instantiate(_hitVFX.name, _mouseWorldPosition, Quaternion.identity);
+            ////GetComponent<PhotonView>().RPC("InstantiateVFX", RpcTarget.All, _hitVFX.name, _hitTransform.position, Quaternion.identity); // 탄착 지점 효과
+            //GameObject RedEffect = Instantiate(_vfxHitRed, _mouseWorldPosition, Quaternion.identity);
+            ////RedEffect.transform.SetParent(transform);
+            //Destroy(RedEffect, 0.5f);
 
             // 몬스터나 플레이어가 맞은 경우
             PlayerStatus otherPlayerStatus = _hitTransform.GetComponent<PlayerStatus>();
@@ -208,8 +202,12 @@ public class Gun : Weapon
             if(monster != null)
             {
                 monster.TakedDamage(base.Attack);
+                
+                if(monster.Hp <= 0)
+                {
+                    _totalBulletCount += 15;
+                }
             }
-
             Rigidbody hitRigidbody = _hitTransform.GetComponent<Rigidbody>();
             if (hitRigidbody != null)
             {
@@ -229,7 +227,7 @@ public class Gun : Weapon
         GetComponent<PhotonView>().RPC("PlayMuzzleFalsh", RpcTarget.All); // 총구 효과
         GetComponent<PhotonView>().RPC("PlayAudioSource", RpcTarget.All); // 사격 소리 RPC
         //PlayAudioSource(_fireSound);
-        
+
         // 총기 반동 코루틴 실행
         StartCoroutine(ReactionCoroutine());
         _playerInputs.shoot = false;
@@ -238,7 +236,10 @@ public class Gun : Weapon
     // 장전
     void Realod()
     {
-        if (_playerInputs.reload && !_isReload && _currentBulletCount < _reloadBulletCount)
+        // 탄약 가득차있을 때 장전 안되게 하기
+        if (GetCurrentBullet() == _reloadBulletCount)
+            _playerInputs.reload = false;
+        else if (_playerInputs.reload && !_isReload && _currentBulletCount < _reloadBulletCount)
         {
             Debug.Log("재장전시작");
             _animator.SetBool("isReload", true);

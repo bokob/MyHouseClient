@@ -48,14 +48,15 @@ public class WeaponManager_S : MonoBehaviour
         if (!_playerInputs.aim && !_playerInputs.reload) // 조준하지 않고, 장전하지 않을 때 무기 교체 가능
             WeaponSwitching(); // 무기 교체
 
-        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null && !_playerInputs.reload)
+        if (Input.GetKeyDown(KeyCode.E) && nearMeleeObject != null && !_playerInputs.reload && _isPickUp == false)
         {
             _isPickUp = true;
             meleeItemName = nearMeleeObject.name;
             PickUpWeapon(meleeItemName);
+            nearMeleeObject = null; // 버리고 나서 줍는 문제 방지
         }
 
-        if (Input.GetKeyDown(KeyCode.Q) && _selectedWeapon.name != "Rifle" && _selectedWeapon.name != "Knife")
+        if (Input.GetKeyDown(KeyCode.Q) && _selectedWeapon.name != "Rifle" && _selectedWeapon.name != "Knife" && _isUsePickUpWeapon)
         {
             DropWeapon();
         }
@@ -170,20 +171,11 @@ public class WeaponManager_S : MonoBehaviour
     public void PickUpWeapon(string meleeName)
     {
         Transform newMelee = transform.Find(meleeName);
+        if (newMelee == null) return;
         _selectedWeaponIdx = newMelee.GetSiblingIndex(); // 교체할 무기가 몇 번째 자식인지
         _pickUpWeaponIdx = _selectedWeaponIdx;
         SelectWeapon(_selectedWeaponIdx);
-        
-        //if (_isHoldGun)
-        //{
-
-        //}        
-        //else
-        //{
-        //    _selectedWeapon.SetActive(false);
-        //    _selectedWeapon = newMelee.gameObject;
-        //    newMelee.gameObject.SetActive(true);
-        //}
+        nearMeleeObject = null;
     }
 
     /// <summary>
@@ -193,19 +185,20 @@ public class WeaponManager_S : MonoBehaviour
     {
         GameObject droppedSelectedWeapon = Instantiate(_selectedWeapon, _selectedWeapon.transform.position, _selectedWeapon.transform.rotation); // instatntiation.
         Destroy(droppedSelectedWeapon.GetComponent<Melee_S>()); // Melee_S script delete for error prevention. 
-
         droppedSelectedWeapon.transform.localScale = droppedSelectedWeapon.transform.localScale * 1.7f; // size up.
+
+        droppedSelectedWeapon.name = "DropWeapon";
+        droppedSelectedWeapon.tag = "Untagged";
+
+        _isUsePickUpWeapon = false;
 
         StartCoroutine(DropAndBounce(droppedSelectedWeapon));
 
-        _selectedWeapon.SetActive(false);
-        _selectedWeapon = transform.Find("Knife").gameObject;
-        _selectedWeapon.SetActive(true);
-        WeaponData weapon = GameManager_S._instance.GetWeaponStatusByName("Knife");
-        Melee_S _currentWeapon = _selectedWeapon.GetComponent<Melee_S>();
-        _currentWeapon.Attack = weapon.Attack;
-        _currentWeapon.Rate = weapon.Rate;
-        _currentWeapon.Range = weapon.Range;
+        //_selectedWeapon.SetActive(false);
+        //_selectedWeapon = transform.Find("Knife").gameObject;
+        //_selectedWeapon.SetActive(true);
+
+        SelectWeapon(0);
     }
 
     IEnumerator DropAndBounce(GameObject droppedSelectedWeapon)
@@ -230,7 +223,7 @@ public class WeaponManager_S : MonoBehaviour
                 velocity.x *= horizontalDamping;
                 velocity.z *= horizontalDamping;
 
-                if (Mathf.Abs(velocity.y) < 0.1f)
+                if (Mathf.Abs(velocity.y) < 0.5f)
                 {
                     velocity.y = 0;
                     break;

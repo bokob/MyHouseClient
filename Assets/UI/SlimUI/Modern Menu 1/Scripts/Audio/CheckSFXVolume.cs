@@ -5,7 +5,7 @@ namespace SlimUI.ModernMenu{
 	public class CheckSFXVolume : MonoBehaviour {
 		public void  Start (){
 			// remember volume level from last time
-			GetComponent<AudioSource>().volume = PlayerPrefs.GetFloat("SFXVolume");
+			GetComponent<AudioSource>().volume = PlayerPrefs.GetFloat("MusicVolume");
 			Debug.Log(PlayerPrefs.GetFloat("SFXVolume"));
 		}
 

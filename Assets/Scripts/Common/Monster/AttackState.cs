@@ -14,6 +14,8 @@ public class AttackState : StateMachineBehaviour
 
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (monster.Agent.isActiveAndEnabled == false) return;
+
         if (!monster.CanSeePlayer || monster.Agent.remainingDistance > monster.Agent.stoppingDistance) // 플레이어 관측 X OR 공격 범위 X 
         {
             monster.Agent.isStopped = false;

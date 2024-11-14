@@ -76,6 +76,7 @@ public class Melee_S : Weapon
 
         _playerInputs.shoot = false;
         _playerInputs.aim = false;
+        _playerInputs.reload = false;
     }
 
     public override void Use()
@@ -101,13 +102,13 @@ public class Melee_S : Weapon
             StopCoroutine("MeleeAttackEffect");
             if (_playerInputs.swing && _isSwingReady) // ÈÖµÎ¸£±â
             {
-                _animator.SetTrigger("setSwing");
+                _animator.SetBool("isSwing", true);
                 _swingDelay = 0;
             }
             else if (_playerInputs.stab && _isStabReady) // Âî¸£±â
             {
                 Debug.Log("Âî¸£±â");
-                _animator.SetTrigger("setStab");
+                _animator.SetBool("isStab", true);
                 _stabDelay = 0;
             }
             _playerInputs.swing = false;
@@ -131,8 +132,11 @@ public class Melee_S : Weapon
         yield return new WaitForSeconds(0.5f);
         _meleeArea.enabled = true;
         _trailEffet.enabled = true;
+        SoundManager._instance.PlayEffect("MeleeAttack");   // ÈÖµÎ¸£´Â È¿°úÀ½
 
         yield return new WaitForSeconds(0.5f);
+        _animator.SetBool("isSwing", false);
+        _animator.SetBool("isStab", false);
         _meleeArea.enabled = false;
 
         yield return new WaitForSeconds(0.5f);

@@ -52,13 +52,13 @@ public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
     }
 
     [PunRPC]
-    public void SetNickname(string _name)
+    public void SetNickname(string _name) // 닉네임 설정
     {
         _nickName = _name;
     }
     
     [PunRPC]
-    public void SetRole(Define.Role role) // 역할 지정
+    public void SetRole(Define.Role role) // 역할 지정하고 그에 맞게 변신
     {
         // 역할을 직접 할당
         Debug.Log($"내 역할({_nickName}): " + Role);
@@ -69,6 +69,32 @@ public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
             _animator = transform.GetChild(0).GetComponent<Animator>();
         else if (Role == Define.Role.Houseowner)
             _animator = transform.GetChild(1).GetComponent<Animator>();
+
+
+        transform.GetChild(0).gameObject.SetActive(Role == Define.Role.Robber); // 강도 활성화
+        transform.GetChild(1).gameObject.SetActive(Role == Define.Role.Houseowner);  // 집주인 비활성화
+
+        Debug.Log("현재 상태: " + Role);
+
+        if(Role == Define.Role.Robber)
+        {
+            _cameraController.gameObject.GetComponent<CameraController>().SetRobberView(); // 강도 시점으로 설정
+            Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(이)가 강도로 변신 완료");
+            MaxSp = 200;
+            Sp = MaxSp;
+        }
+        else if(Role == Define.Role.Houseowner)
+        {
+            _inGameUI.gameObject.transform.GetChild(4).gameObject.SetActive(true); // 조준점 활성화
+            transform.GetChild(0).gameObject.GetComponent<FadeObjectBlockingObject>().ResetAlphaObjectsToBeHouseowner(); // 투명화 오브젝트들 초기화
+            transform.GetChild(0).gameObject.GetComponent<FadeObjectBlockingObject>().enabled = false; // 강도 층별 투명화 비활성화
+            _cameraController.gameObject.GetComponent<CameraController>().SetHouseownerView(); // 집주인 시점으로 설정
+
+            MaxSp = 100;
+            Sp = MaxSp;
+
+            Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(이)가 집주인으로 변신 완료");
+        }
     }
 
     /// <summary>
@@ -107,11 +133,44 @@ public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
     }
 
     /// <summary>
-    /// 데미지 입기
+    /// 멀티용 데미지 입기
     /// </summary>
     /// <param name="attack"> 가할 공격력 </param>
     [PunRPC]
     public void TakedDamage(int attack, PhotonMessageInfo info)
+    {
+        // 해당 오브젝트의 소유자가 아니면 실행하지 않음
+        if (!photonView.IsMine) return;
+
+        Debug.Log("RPC 보낸 클라이언트: " + info.Sender.NickName);
+
+        // 피해 계산
+        float damage = Mathf.Max(0, attack - Defence);
+        Hp -= damage;
+
+        Debug.LogWarning($"{_nickName}({Role})(이)가 {info.Sender.NickName}에게 {damage} 만큼 피해 입음");
+        Debug.LogWarning("남은 체력: " + Hp);
+
+        if (Hp <= 0)
+        {
+            // 오직 소유자만 사망 처리를 진행
+            if (photonView.IsMine && PhotonNetwork.IsMasterClient)
+            {
+                Player killer = info.Sender;
+                Debug.LogWarning($"{killer.NickName}가 {photonView.Owner.NickName}를 죽임");
+                PhotonNetwork.SetMasterClient(killer);
+            }
+
+            // 사망 상태를 모든 클라이언트에 전파 (모든 클라이언트에서 죽음을 동기화)
+            GetComponent<PhotonView>().RPC("Dead", RpcTarget.AllBuffered);
+        }
+    }
+
+    /// <summary>
+    /// 멀티에서 몬스터에게 데미지 입기
+    /// </summary>
+    /// <param name="attack"> 가할 공격력 </param>
+    public void TakedDamage(int attack)
     {
         // 피해가 음수라면 회복되는 현상이 일어나므로 피해의 값을 0이상으로 되게끔 설정
         float damage = Mathf.Max(0, attack - Defence);
@@ -119,17 +178,18 @@ public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
         Debug.Log(gameObject.name + "(이)가 " + damage + " 만큼 피해를 입었음!");
         Debug.Log("남은 체력: " + Hp);
 
-        if (Hp <= 0)
+
+        if (Hp > 0)
         {
-            Player killer = info.Sender;
-
-            GameManager._instance.OnPlayerKilled(photonView.Owner, killer);
-
-            GetComponent<PhotonView>().RPC("Dead", RpcTarget.AllBuffered);
+            HitChangeMaterials();
+            Debug.Log(gameObject.name + "가" + damage + " 만큼 피해입음");
+            Debug.Log("데미지 입고 난 후 체력: " + Hp);
         }
-
+        else
+        {
+            Dead();
+        }
     }
-
 
     #region 체력 및 스테미나 관련
     /// <summary>
@@ -212,44 +272,6 @@ public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
     }
     #endregion
 
-
-    /// <summary>
-    /// 강도로 변신
-    /// </summary>
-    [PunRPC]
-    public void TransformIntoRobber()
-    {
-        transform.GetChild(0).gameObject.SetActive(true); // 강도 활성화
-        transform.GetChild(1).gameObject.SetActive(false);  // 집주인 비활성화
-
-        Debug.Log("현재 상태: " + Role);
-
-        _cameraController.gameObject.GetComponent<CameraController>().SetRobberView(); // 강도 시점으로 설정
-
-        Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(이)가 강도로 변신 완료");
-    }
-
-
-    /// <summary>
-    /// 집주인으로 변신
-    /// </summary>
-    [PunRPC]
-    public void TransformIntoHouseowner()
-    {
-        transform.GetChild(0).gameObject.SetActive(false); // 강도 비활성화
-        transform.GetChild(1).gameObject.SetActive(true);  // 집주인 활성화
-
-        _inGameUI.gameObject.transform.GetChild(4).gameObject.SetActive(true); // 조준점 활성화
-
-        transform.GetChild(0).gameObject.GetComponent<FadeObjectBlockingObject>().enabled = false; // 강도 층별 투명화 비활성화
-
-        Debug.Log($"현재 상태({transform.root.GetChild(2).GetComponent<PlayerStatus>()._nickName}): " + Role);
-
-        _cameraController.gameObject.GetComponent<CameraController>().SetHouseownerView(); // 집주인 시점으로 설정
-
-        Debug.Log(gameObject.GetComponent<PlayerStatus>()._nickName + "(이)가 집주인으로 변신 완료");
-    }
-
     IEnumerator TombCoroutine()
     {
         SmokeEffect(transform.position);
@@ -280,8 +302,8 @@ public class PlayerStatus : MonoBehaviourPunCallbacks, IStatus
         for (int i = 0; i < _renderers.Count; i++)
         {
             _renderers[i].material.color = Color.red;
-            Debug.Log("색변한다.");
-            Debug.Log(_renderers[i].material.name);
+            //Debug.Log("색변한다.");
+            //Debug.Log(_renderers[i].material.name);
         }
 
         StartCoroutine(ResetMaterialAfterDelay(1.7f));

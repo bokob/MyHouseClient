@@ -12,6 +12,7 @@ TagManager:
   - CinemachineTarget
   - MeleeItem
   - FxTemporaire
+  - MinimapIcon
   layers:
   - Default
   - TransparentFX
